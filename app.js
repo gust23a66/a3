@@ -264,26 +264,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selected === correctAnswer) {
             feedbackMessage.textContent = "✅ Você acertou!";
             score += 10;
+            timeLeft += 2; // Adiciona 5 segundos
+            timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`; // Atualiza o tempo na tela
             acertoAudio.play();
         } else {
             feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
             errorCount++;
             erroAudio.play();
         }
-
+    
         feedbackMessage.style.display = "block";
         setTimeout(() => feedbackMessage.style.display = "none", 2000);
-
+    
         errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
-
+    
         if (errorCount >= 3) {
             clearInterval(timerInterval);
             setTimeout(showGameOver, 1000);
             return;
         }
-
+    
         nextQuestion();
     }
+    
 
     function nextQuestion() {
         currentQuestion++;
