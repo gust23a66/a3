@@ -52,16 +52,11 @@ button:hover {
     background-color: #45a049;
 }
 
-button:focus {
-    outline: none;
-}
-
 #options button {
     width: 80%;
     margin: 10px 0;
     font-size: 1.2em;
     background-color: #2e7d32;
-    color: white;
 }
 
 #options button:hover {
@@ -74,7 +69,6 @@ button:focus {
 }
 
 #gameOverMessage {
-    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -95,29 +89,6 @@ button:focus {
     display: block;
 }
 
-#gameOverMessage h2 {
-    font-size: 2em;
-}
-
-#gameOverMessage p {
-    font-size: 1.5em;
-}
-
-#gameOverMessage button {
-    margin: 10px;
-    padding: 10px 20px;
-    font-size: 1.2em;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#gameOverMessage button:hover {
-    background-color: #45a049;
-}
-
 #feedbackMessage {
     position: absolute;
     bottom: 10%;
@@ -128,48 +99,6 @@ button:focus {
     padding: 10px 20px;
     border-radius: 8px;
     font-size: 1.2em;
-    display: none;
-}
-
-#gameScreen {
-    display: none;
-}
-
-#rankingScreen, #achievementsScreen {
-    display: none;
-    text-align: left;
-}
-
-#timeLeft, #errorCount {
-    font-size: 1.1em;
-    color: #555;
-    margin-top: 10px;
-}
-
-#rankingScreen button, #achievementsScreen button {
-    background-color: #00796b;
-    color: white;
-    padding: 10px 20px;
-    margin-top: 20px;
-    border-radius: 8px;
-}
-
-#gameContainer h2, #gameScreen h2 {
-    font-size: 1.5em;
-    color: #333;
-    margin-bottom: 15px;
-}
-
-@media (max-width: 600px) {
-    #gameContainer {
-        margin: 10px;
-        padding: 15px;
-    }
-
-    input, button {
-        font-size: 1em;
-        padding: 10px 15px;
-    }
 }
 
 #menuButton {
@@ -186,4 +115,16 @@ button:focus {
 
 #exitButton:hover {
     background-color: #d32f2f;
+}
+
+@media (max-width: 600px) {
+    #gameContainer {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    input, button {
+        font-size: 1em;
+        padding: 10px 15px;
+    }
 }
