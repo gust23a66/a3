@@ -60,17 +60,22 @@ document.addEventListener('DOMContentLoaded', () => {
     function startGame() {
         username = document.getElementById("username").value.trim();
         if (!username) {
-            alert("Por favor, digite seu nome!");
+            feedbackMessage.textContent = "⚠️ Por favor, digite seu nome!";
+            feedbackMessage.style.display = "block";
+            setTimeout(() => {
+                feedbackMessage.style.display = "none";
+            }, 2000);
             return;
         }
-
+    
         loginScreen.style.display = "none";
         gameScreen.style.display = "block";
-
+    
         if (musicPlaying) audio.play();
-
+    
         resetGame();
     }
+    
 
     function resetGame() {
         score = 0;
@@ -149,6 +154,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // Quando o jogador perde (ex: 3 erros), chamar essa função:
     function showGameOver() {
+
+// Salva no ranking
+let players = JSON.parse(localStorage.getItem("ranking")) || [];
+players.push({ name: username, score: score });
+localStorage.setItem("ranking", JSON.stringify(players));
+
+
         const gameOverMessage = document.getElementById("gameOverMessage");
         const finalScore = document.getElementById("finalScore");
     
@@ -186,8 +198,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showRanking() {
-        alert("Aqui será o ranking!");
+        loginScreen.style.display = "none";
+        gameScreen.style.display = "none";
+        achievementsScreen.style.display = "none";
+        gameOverMessage.style.display = "none";
+        rankingScreen.style.display = "block";
+    
+        // Exemplo de lista de jogadores
+        const rankingList = document.getElementById("rankingList");
+        const players = JSON.parse(localStorage.getItem("ranking")) || [];
+    
+        // Organiza do maior para o menor
+        players.sort((a, b) => b.score - a.score);
+    
+        // Exibe
+        rankingList.innerHTML = players.map(player => `<p>${player.name}: ${player.score} pontos</p>`).join('');
     }
+    
 
     function showAchievements() {
         alert("Aqui serão suas conquistas!");
