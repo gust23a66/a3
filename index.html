@@ -9,6 +9,7 @@
 <body>
     <div id="gameContainer">
         <h1>EcoPlay 🌱</h1>
+        <!-- Tela de Login -->
         <div id="loginScreen">
             <label for="username">Digite seu nome:</label>
             <input type="text" id="username" placeholder="Seu nome...">
@@ -17,19 +18,24 @@
             <button id="achievementsButton">Ver Conquistas 🏅</button>
             <button id="musicToggleButton">🔈 Ligar/Desligar Música</button>
         </div>
+
+        <!-- Tela de Jogo -->
         <div id="gameScreen" style="display: none;">
             <h2 id="themeTitle"></h2>
             <p id="questionText"></p>
             <div id="options"></div>
-            <p id="feedbackMessage"></p>
             <p id="timeLeft"></p>
             <p id="errorCount">Erros: 0/3</p>
         </div>
+
+        <!-- Tela de Ranking -->
         <div id="rankingScreen" style="display: none;">
             <h2>🏆 Ranking Local</h2>
             <div id="rankingList"></div>
             <button id="backToLogin">Voltar</button>
         </div>
+
+        <!-- Tela de Conquistas -->
         <div id="achievementsScreen" style="display: none;">
             <h2>🏅 Conquistas</h2>
             <div id="achievementsList"></div>
@@ -48,6 +54,8 @@
         <button id="exitButton">Sair</button>
     </div>
 
+    
     <script src="app.js"></script>
 </body>
 </html>
+
