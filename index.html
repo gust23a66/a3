@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoPlay 🌱</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <h1>EcoPlay 🌱</h1>
+        <div id="loginScreen">
+            <label for="username">Digite seu nome:</label>
+            <input type="text" id="username" placeholder="Seu nome...">
+            <button id="startButton">Começar</button>
+            <button id="rankingButton">Ver Ranking 🏆</button>
+            <button id="achievementsButton">Ver Conquistas 🏅</button>
+            <button id="musicToggleButton">🔈 Ligar/Desligar Música</button>
+        </div>
+        <div id="gameScreen" style="display: none;">
+            <h2 id="themeTitle"></h2>
+            <p id="questionText"></p>
+            <div id="options"></div>
+            <p id="feedbackMessage"></p>
+            <p id="timeLeft"></p>
+            <p id="errorCount">Erros: 0/3</p>
+        </div>
+        <div id="rankingScreen" style="display: none;">
+            <h2>🏆 Ranking Local</h2>
+            <div id="rankingList"></div>
+            <button id="backToLogin">Voltar</button>
+        </div>
+        <div id="achievementsScreen" style="display: none;">
+            <h2>🏅 Conquistas</h2>
+            <div id="achievementsList"></div>
+            <button id="backToLoginFromAchievements">Voltar</button>
+        </div>
+    </div>
+
+    <!-- Mensagem de feedback durante o jogo -->
+    <div id="feedbackMessage" class="message" style="display: none;"></div>
+
+    <!-- Mensagem de Game Over -->
+    <div id="gameOverMessage" class="message" style="display: none;">
+        <h2 id="finalScore"></h2>
+        <button id="restartButton">Reiniciar</button>
+        <button id="menuButton">Menu</button>
+        <button id="exitButton">Sair</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
