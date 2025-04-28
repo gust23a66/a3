@@ -31,6 +31,9 @@ let musicPlaying = true;
    let correctAnswersCount = 0; // Quantidade de respostas corretas
    let correctStreak = 0; // Acertos seguidos
    let gamesPlayed = 0; // Partidas jogadas
+   let shuffledThemes = [];
+let currentThemeIndex = 0;
+
 
 
 
@@ -210,8 +213,13 @@ let musicPlaying = true;
     }
 
     function shuffleArray(array) {
-        return array.sort(() => Math.random() - 0.5);
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]]; // troca os elementos
+        }
+        return array;
     }
+    
     
 
     function startGame() {
@@ -238,17 +246,24 @@ let musicPlaying = true;
         score = 0;
         errorCount = 0;
         currentQuestion = 0;
-        currentTheme = getRandomTheme();
         timeLeft = 30;
+        correctAnswersCount = 0;
+        correctStreak = 0;
+        gamesPlayed = 0;
+    
         timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
         errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
     
-        // Embaralha as perguntas do tema escolhido
-        shuffledQuestions = shuffleArray([...challenges[currentTheme]]); // copia + embaralha
+        shuffledThemes = shuffleArray(Object.keys(challenges)); // << embaralha os temas
+        currentThemeIndex = 0;
+        currentTheme = shuffledThemes[currentThemeIndex];
+    
+        shuffledQuestions = shuffleArray([...challenges[currentTheme]]);
     
         loadQuestion();
         startTimer();
     }
+    
     
 
     function startTimer() {
@@ -335,12 +350,19 @@ let musicPlaying = true;
 
     function nextQuestion() {
         currentQuestion++;
-        if (currentQuestion >= challenges[currentTheme].length) {
-            currentTheme = getRandomTheme();
+        if (currentQuestion >= shuffledQuestions.length) {
+            currentThemeIndex++;
+            if (currentThemeIndex >= shuffledThemes.length) {
+                shuffledThemes = shuffleArray(Object.keys(challenges)); // reembaralha quando acabar todos temas
+                currentThemeIndex = 0;
+            }
+            currentTheme = shuffledThemes[currentThemeIndex];
+            shuffledQuestions = shuffleArray([...challenges[currentTheme]]);
             currentQuestion = 0;
         }
         loadQuestion();
     }
+    
     // Quando o jogador perde (ex: 3 erros), chamar essa função:
     function showGameOver() {
         if (errorCount === 0) {
