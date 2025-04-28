@@ -20,7 +20,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameOverMessage = document.getElementById("gameOverMessage");
     const timeLeftDisplay = document.getElementById("timeLeft");
     const errorCountDisplay = document.getElementById("errorCount");
-
+    const restartButtonWin = document.getElementById("restartButtonWin");
+    const menuButtonWin = document.getElementById("menuButtonWin");
+    
+    restartButtonWin.addEventListener("click", () => {
+        winScreen.style.display = "none";
+        startGame();
+    });
+    
+    menuButtonWin.addEventListener("click", showLoginScreen);
     // Áudios
     // Áudios
 const audio = new Audio('musica_fundo.mp3');
@@ -330,14 +338,15 @@ let currentThemeIndex = 0;
     }
     
     
-
     function nextQuestion() {
         currentQuestion++;
         if (currentQuestion >= shuffledQuestions.length) {
             currentThemeIndex++;
             if (currentThemeIndex >= shuffledThemes.length) {
-                shuffledThemes = shuffleArray(Object.keys(challenges)); // reembaralha quando acabar todos temas
-                currentThemeIndex = 0;
+                // Terminar o jogo: mostrar tela de vitória
+                clearInterval(timerInterval); // parar o cronômetro
+                showWinScreen(); // <<<<<< CHAMA TELA DE WIN
+                return;
             }
             currentTheme = shuffledThemes[currentThemeIndex];
             shuffledQuestions = shuffleArray([...challenges[currentTheme]]);
@@ -345,6 +354,24 @@ let currentThemeIndex = 0;
         }
         loadQuestion();
     }
+    
+    function showWinScreen() {
+        loginScreen.style.display = "none";
+        gameScreen.style.display = "none";
+        rankingScreen.style.display = "none";
+        achievementsScreen.style.display = "none";
+        gameOverMessage.style.display = "none";
+    
+        document.getElementById("finalScoreWin").textContent = `Pontuação Final: ${score}`;
+        
+        const winScreen = document.getElementById("winScreen");
+        winScreen.style.display = "block";
+    
+        setTimeout(() => {
+            winScreen.classList.add("show");
+        }, 50);
+    }
+    
     
     // Quando o jogador perde (ex: 3 erros), chamar essa função:
     function showGameOver() {
@@ -410,7 +437,9 @@ let currentThemeIndex = 0;
         rankingScreen.style.display = "none";
         achievementsScreen.style.display = "none";
         gameOverMessage.style.display = "none";
+        document.getElementById("winScreen").style.display = "none"; // 👈 ADICIONE ISTO
     }
+    
     function toggleDarkMode() {
         // Alterna o modo escuro
         document.body.classList.toggle('dark-mode');
