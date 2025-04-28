@@ -708,15 +708,18 @@ shuffledQuestions = shuffleArray(allQuestions);
     
         if (selected === correctAnswer) {
             feedbackMessage.textContent = "✅ Você acertou!";
-            score += 10;
+            score += 10;  // Atualiza a pontuação
             correctAnswersCount++;
             correctStreak++;
     
-            // +5 segundos ao acertar
+            // +2 segundos ao acertar
             timeLeft += 2;
             timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
     
             acertoAudio.play();
+    
+            // Atualiza a pontuação na tela
+            document.getElementById("scoreValue").textContent = score;
     
             // Conquistas
             if (correctAnswersCount === 5) {
@@ -742,7 +745,7 @@ shuffledQuestions = shuffleArray(allQuestions);
         } else {
             feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
             errorCount++;
-            correctStreak = 0; // Zera a sequência de acertos
+            correctStreak = 0;
     
             erroAudio.play();
         }
@@ -755,11 +758,11 @@ shuffledQuestions = shuffleArray(allQuestions);
         // Verifica se o jogador errou 3 vezes
         if (errorCount >= 3) {
             clearInterval(timerInterval);
-            setTimeout(showGameOver, 1000); // Mostra a tela de Game Over
+            setTimeout(showGameOver, 1000);
             return;
         }
     
-        nextQuestion(); // Vai para a próxima pergunta após responder
+        nextQuestion();
     }
     
     function nextQuestion() {
@@ -967,4 +970,3 @@ shuffledQuestions = shuffleArray(allQuestions);
     menuButton.addEventListener("click", showLoginScreen);
     exitButton.addEventListener("click", exitGame);
 });
-
