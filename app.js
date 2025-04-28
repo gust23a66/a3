@@ -20,10 +20,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorCountDisplay = document.getElementById("errorCount");
 
     // Áudios
-    const audio = new Audio('musica_fundo.mp3');
-    const acertoAudio = new Audio('acerto.mp3');
-    const erroAudio = new Audio('erro.mp3');
-    let musicPlaying = true;
+    // Áudios
+const audio = new Audio('musica_fundo.mp3');
+audio.loop = true; // <<<<<< adicionar aqui!
+const acertoAudio = new Audio('acerto.mp3');
+const erroAudio = new Audio('erro.mp3');
+let musicPlaying = true;
+
 
    let correctAnswersCount = 0; // Quantidade de respostas corretas
    let correctStreak = 0; // Acertos seguidos
@@ -191,6 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let errorCount = 0;
     let timeLeft = 30;
     let timerInterval;
+    let shuffledQuestions = [];
+
 
     // Funções principais
     function toggleMusic() {
@@ -203,6 +208,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         musicPlaying = !musicPlaying;
     }
+
+    function shuffleArray(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+    
 
     function startGame() {
         username = document.getElementById("username").value.trim();
@@ -232,9 +242,14 @@ document.addEventListener('DOMContentLoaded', () => {
         timeLeft = 30;
         timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
         errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
+    
+        // Embaralha as perguntas do tema escolhido
+        shuffledQuestions = shuffleArray([...challenges[currentTheme]]); // copia + embaralha
+    
         loadQuestion();
         startTimer();
     }
+    
 
     function startTimer() {
         clearInterval(timerInterval);
@@ -249,24 +264,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadQuestion() {
-        const theme = challenges[currentTheme];
-        const question = theme[currentQuestion];
+        const question = shuffledQuestions[currentQuestion]; // agora usa a lista embaralhada
+    
         document.getElementById("themeTitle").textContent = `Desafio: ${currentTheme}`;
         document.getElementById("questionText").textContent = question.question;
-
+    
         const optionsContainer = document.getElementById("options");
         optionsContainer.innerHTML = '';
-
-        question.options.forEach(option => {
+    
+        // Embaralha as opções também
+        const shuffledOptions = shuffleArray([...question.options]);
+    
+        shuffledOptions.forEach(option => {
             const button = document.createElement("button");
             button.textContent = option;
             button.onclick = () => checkAnswer(option);
             optionsContainer.appendChild(button);
         });
     }
-
+    
     function checkAnswer(selected) {
-        const correctAnswer = challenges[currentTheme][currentQuestion].answer;
+        const correctAnswer = shuffledQuestions[currentQuestion].answer;
         if (selected === correctAnswer) {
             feedbackMessage.textContent = "✅ Você acertou!";
             score += 10;
@@ -274,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
             correctStreak++;
     
             // +5 segundos ao acertar
-            timeLeft += 5;
+            timeLeft += 2;
             timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
     
             acertoAudio.play();
@@ -328,51 +346,52 @@ document.addEventListener('DOMContentLoaded', () => {
         if (errorCount === 0) {
             unlockAchievement("Partida Perfeita 🎯");
             gamesPlayed++;
-if (gamesPlayed === 5) {
-    unlockAchievement("Jogou 5 Partidas 🎮");
-}
-
-if (errorCount === 0) {
-    unlockAchievement("Zero Erros 🌟");
-}
-
-if (timeLeft > 15) {
-    unlockAchievement("Tempo Sobrando ⏳");
-}
-
-if (errorCount === 2) {
-    unlockAchievement("Resiliente 💪");
-}
-
+            if (gamesPlayed === 5) {
+                unlockAchievement("Jogou 5 Partidas 🎮");
+            }
+            if (errorCount === 0) {
+                unlockAchievement("Zero Erros 🌟");
+            }
+            if (timeLeft > 15) {
+                unlockAchievement("Tempo Sobrando ⏳");
+            }
+            if (errorCount === 2) {
+                unlockAchievement("Resiliente 💪");
+            }
         }
-        
-// Salva no ranking
-let players = JSON.parse(localStorage.getItem("ranking")) || [];
-players.push({ name: username, score: score });
-localStorage.setItem("ranking", JSON.stringify(players));
-
-
+    
+        // --- >>>> Parte nova para salvar corretamente <<<< ---
+        let players = JSON.parse(localStorage.getItem("ranking")) || [];
+    
+        const existingPlayer = players.find(player => player.name === username);
+    
+        if (existingPlayer) {
+            if (score > existingPlayer.score) {
+                existingPlayer.score = score;
+            }
+        } else {
+            players.push({ name: username, score: score });
+        }
+    
+        players.sort((a, b) => b.score - a.score);
+        localStorage.setItem("ranking", JSON.stringify(players));
+        // -----------------------------------------------------
+    
         const gameOverMessage = document.getElementById("gameOverMessage");
         const finalScore = document.getElementById("finalScore");
     
-        // Esconde as outras telas
         document.getElementById("gameScreen").style.display = "none";
         document.getElementById("loginScreen").style.display = "none";
         document.getElementById("rankingScreen").style.display = "none";
         document.getElementById("achievementsScreen").style.display = "none";
     
-        // Atualiza o placar final
         finalScore.textContent = `Pontuação Final: ${score}`;
     
-        // Mostra a tela de Game Over
-        gameOverMessage.style.display = "block";  // <<<<< adiciona esta linha!!!
+        gameOverMessage.style.display = "block";
         setTimeout(() => {
-            gameOverMessage.classList.add("show"); 
-        }, 50); // Pequeno delay para o transition do CSS funcionar
+            gameOverMessage.classList.add("show");
+        }, 50);
     }
-    
-
-    
     
 
     function getRandomTheme() {
