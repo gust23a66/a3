@@ -41,144 +41,55 @@ let musicPlaying = true;
    let correctAnswersCount = 0; // Quantidade de respostas corretas
    let correctStreak = 0; // Acertos seguidos
    let gamesPlayed = 0; // Partidas jogadas
-   let shuffledThemes = [];
-let currentThemeIndex = 0;
+   let shuffledThemes = shuffleArray(Object.keys(challenges)); // Embaralha os temas
+   let currentThemeIndex = 0;
+   let correctByTheme = {};
+  
 
 
 
 
     // Dados dos desafios
     const challenges = {
-        "Água": [{
-            "question": "Qual dessas ações ajuda a economizar água?",
-            "options": [
-                "Tomar banhos longos",
-                "Escovar os dentes com a torneira aberta",
-                "Reutilizar a água da chuva",
-                "Lavar o carro todo dia"
-            ],
-            "answer": "Reutilizar a água da chuva"
-        },
-            {
-                "question": "Melhor horário para regar plantas:",
-                "options": [
-                    "Meio-dia",
-                    "Final da tarde",
-                    "Manhã cedo",
-                    "Qualquer hora"
-                ],
-                "answer": "Manhã cedo"
-            },
-            {
-                "question": "Qual equipamento economiza mais água ao lavar louça?",
-                "options": [
-                    "Mangueira com jato forte",
-                    "Esponja nova",
-                    "Torneira arejadora",
-                    "Sabão em barra"
-                ],
-                "answer": "Torneira arejadora"
-            },
-            {
-                "question": "Ao lavar o carro de forma sustentável, o ideal é:",
-                "options": [
-                    "Usar mangueira com água corrente",
-                    "Levar a lava-rápido todo dia",
-                    "Usar balde e pano",
-                    "Usar sabão demais para limpar melhor"
-                ],
-                "answer": "Usar balde e pano"
-            },
-          
-            {
-                "question": "Água invisível é aquela que:",
-                "options": [
-                    "É usada em produtos sem percebermos",
-                    "É potável, mas transparente demais",
-                    "Só aparece na conta de luz",
-                    "Evapora muito rápido"
-                ],
-                "answer": "É usada em produtos sem percebermos"
-            }
+        "Água": [
+    {
+        "question": "O que é a água reciclada?",
+        "options": [
+            "Água proveniente de fontes naturais",
+            "Água tratada para reutilização",
+            "Água da chuva",
+            "Nenhuma das anteriores"
         ],
-        "Energia": [{
-            "question": "Qual lâmpada consome menos energia?",
-            "options": ["Incandescente", "Halógena", "LED", "Fluorescente"],
-            "answer": "LED"
-        },
-            {
-                "question": "Uma boa prática para economizar energia é:",
-                "options": ["Deixar luzes acesas", "Desligar aparelhos da tomada", "Usar o ar-condicionado o dia todo",
-                            "Carregar celular a noite inteira"],
-                "answer": "Desligar aparelhos da tomada"
-            },
-            {
-                "question": "Painéis solares são usados para:",
-                "options": ["Esquentar a casa", "Produzir energia elétrica limpa", "Controlar o clima", "Filtrar água"],
-                "answer": "Produzir energia elétrica limpa"
-            },
-            {
-                "question": "Energia eólica vem de:",
-                "options": ["Sol", "Água", "Vento", "Carvão"],
-                "answer": "Vento"
-            },
-            {
-                "question": "Eletrodomésticos com selo Procel A são:",
-                "options": ["Mais bonitos", "Mais baratos", "Mais econômicos", "Mais pesados"],
-                "answer": "Mais econômicos"
-            }],
-        "Lixo": [{
-            "question": "Qual é a cor da lixeira para papel?",
-            "options": ["Azul", "Vermelha", "Verde", "Amarela"],
-            "answer": "Azul"
-        },
-            {
-                "question": "Vidros devem ser descartados:",
-                "options": ["No lixo orgânico", "Na lixeira verde", "Com restos de comida", "Com pilhas e baterias"],
-                "answer": "Na lixeira verde"
-            },
-            {
-                "question": "Qual material demora mais para se decompor?",
-                "options": ["Papel", "Vidro", "Casca de banana", "Papelão"],
-                "answer": "Vidro"
-            },
-            {
-                "question": "Reciclar ajuda a:",
-                "options": ["Aumentar o lixo", "Economizar recursos naturais", "Poluir menos", "Ambas anteriores"],
-                "answer": "Ambas anteriores"
-            },
-            {
-                "question": "Lixo eletrônico deve ser descartado:",
-                "options": ["No lixo comum", "Em pontos de coleta especiais", "Na rua", "Com lixo reciclável"],
-                "answer": "Em pontos de coleta especiais"
-            }],
-        "Alimentação": [{
-            "question": "Uma alimentação sustentável inclui:",
-            "options": ["Alimentos ultraprocessados", "Produtos locais e sazonais", "Refrigerantes", "Fast food"],
-            "answer": "Produtos locais e sazonais"
-        },
-            {
-                "question": "Comer menos carne ajuda o planeta porque:",
-                "options": ["Reduz a emissão de gases poluentes", "Gera mais lixo", "Desmata florestas",
-                            "Aumenta a energia elétrica"],
-                "answer": "Reduz a emissão de gases poluentes"
-            },
-            {
-                "question": "Desperdício de alimentos pode ser evitado com:",
-                "options": ["Compras em excesso", "Guardar sobras corretamente", "Jogar fora alimentos com aparência feia",
-                            "Ignorar datas de validade"],
-                "answer": "Guardar sobras corretamente"
-            },
-            {
-                "question": "Plantar alimentos em casa ajuda porque:",
-                "options": ["Gera lixo", "Evita o supermercado", "Reduz embalagem e transporte", "É caro"],
-                "answer": "Reduz embalagem e transporte"
-            },
-            {
-                "question": "Alimentos orgânicos são melhores pois:",
-                "options": ["Usam mais veneno", "São mais processados", "Não usam agrotóxicos", "Duram menos"],
-                "answer": "Não usam agrotóxicos"
-            }]
+        "answer": "Água tratada para reutilização"
+    }],
+       
+ 
+
+        "Energia": [
+   
+    {
+        "question": "Qual é a principal desvantagem da energia eólica?",
+        "options": ["Emissão de gases poluentes", "Geração de resíduos radioativos", "Dependência de condições climáticas", "Custo elevado de instalação"],
+        "answer": "Dependência de condições climáticas"
+    }],
+    
+    "Lixo": [
+    
+    {
+        "question": "Qual é a cor da lixeira destinada ao descarte de resíduos domiciliares?",
+        "options": ["Preta", "Verde", "Amarela", "Azul"],
+        "answer": "Preta"
+    }],
+
+       "Alimentação": [
+  
+    {
+        "question": "Reaproveitar sobras de comida em novas receitas ajuda a:",
+        "options": ["Poluir mais", "Economizar e reduzir o lixo", "Gastar mais gás", "Comprar mais alimentos"],
+        "answer": "Economizar e reduzir o lixo"
+    }
+]
+
     }
 
     let username = "";
@@ -241,19 +152,36 @@ let currentThemeIndex = 0;
         correctAnswersCount = 0;
         correctStreak = 0;
         gamesPlayed = 0;
+        correctByTheme = {
+            "Água": 0,
+            "Energia": 0,
+            "Lixo": 0,
+            "Alimentação": 0
+        };
     
+        // Exibe o tempo e os erros no início
         timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
         errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
     
-        shuffledThemes = shuffleArray(Object.keys(challenges)); // << embaralha os temas
-        currentThemeIndex = 0;
-        currentTheme = shuffledThemes[currentThemeIndex];
+        // Embaralha os temas de forma aleatória
+        let shuffledThemes = shuffleArray(Object.keys(challenges)); 
     
-        shuffledQuestions = shuffleArray([...challenges[currentTheme]]);
+        // Junta todas as perguntas de todos os temas em uma única lista
+        let allQuestions = [];
+        shuffledThemes.forEach(tema => {
+            challenges[tema].forEach(pergunta => {
+                allQuestions.push({ ...pergunta, tema }); // Adiciona o tema à pergunta
+            });
+        });
     
+        // Embaralha todas as perguntas
+        shuffledQuestions = shuffleArray(allQuestions);
+    
+        // Começa o jogo com as perguntas embaralhadas
         loadQuestion();
         startTimer();
     }
+    
     
     
 
@@ -272,7 +200,7 @@ let currentThemeIndex = 0;
     function loadQuestion() {
         const question = shuffledQuestions[currentQuestion]; // agora usa a lista embaralhada
     
-        document.getElementById("themeTitle").textContent = `Desafio: ${currentTheme}`;
+        document.getElementById("themeTitle").textContent = `Desafio: ${question.tema}`;
         document.getElementById("questionText").textContent = question.question;
     
         const optionsContainer = document.getElementById("options");
@@ -306,6 +234,16 @@ let currentThemeIndex = 0;
             // Conquistas
             if (correctAnswersCount === 5) {
                 unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
+                const tema = shuffledQuestions[currentQuestion].tema;
+                correctByTheme[tema]++;
+                const venceu = Object.values(correctByTheme).every(count => count >= 5);
+if (venceu) {
+    clearInterval(timerInterval);
+    showWinScreen();
+    return;
+}
+
+
             }
             if (correctStreak === 3) {
                 unlockAchievement("Acertou 3 seguidas 🔥");
@@ -337,23 +275,29 @@ let currentThemeIndex = 0;
         nextQuestion();
     }
     
-    
     function nextQuestion() {
-        currentQuestion++;
+        currentQuestion++;  // Avança para a próxima pergunta
+    
+        // Verifica se todas as perguntas do tema atual foram respondidas
         if (currentQuestion >= shuffledQuestions.length) {
-            currentThemeIndex++;
+            currentThemeIndex++;  // Avança para o próximo tema
+    
+            // Se todos os temas foram completados, o jogo termina
             if (currentThemeIndex >= shuffledThemes.length) {
-                // Terminar o jogo: mostrar tela de vitória
-                clearInterval(timerInterval); // parar o cronômetro
-                showWinScreen(); // <<<<<< CHAMA TELA DE WIN
+                clearInterval(timerInterval);  // Para o cronômetro
+                showWinScreen();  // Chama a tela de vitória
                 return;
             }
+    
+            // Carrega o próximo tema e embaralha as perguntas do novo tema
             currentTheme = shuffledThemes[currentThemeIndex];
             shuffledQuestions = shuffleArray([...challenges[currentTheme]]);
-            currentQuestion = 0;
+            currentQuestion = 0;  // Reseta o contador de perguntas para o novo tema
         }
-        loadQuestion();
+    
+        loadQuestion();  // Carrega a próxima pergunta
     }
+    
     
     function showWinScreen() {
         loginScreen.style.display = "none";
