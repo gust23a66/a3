@@ -684,20 +684,18 @@ shuffledQuestions = shuffleArray(allQuestions);
     }
 
     function loadQuestion() {
-        const question = shuffledQuestions[currentQuestion]; // agora usa a lista embaralhada
-        
-        // Armazenar o tempo de início antes de exibir a pergunta
-        startTime = Date.now();
+        const question = shuffledQuestions[currentQuestion]; // Agora usa a lista embaralhada
     
         document.getElementById("themeTitle").textContent = `Desafio: ${question.tema}`;
         document.getElementById("questionText").textContent = question.question;
     
         const optionsContainer = document.getElementById("options");
-        optionsContainer.innerHTML = '';
+        optionsContainer.innerHTML = ''; // Limpa as opções anteriores
     
         // Embaralha as opções também
         const shuffledOptions = shuffleArray([...question.options]);
     
+        // Cria os botões de resposta
         shuffledOptions.forEach(option => {
             const button = document.createElement("button");
             button.textContent = option;
@@ -707,20 +705,10 @@ shuffledQuestions = shuffleArray(allQuestions);
     }
     function checkAnswer(selected) {
         const correctAnswer = shuffledQuestions[currentQuestion].answer;
-        const timeTaken = Date.now() - startTime; // Tempo gasto para clicar na resposta
-    
-        let bonusPoints = 0;
-    
-        // Atribuindo pontos com base no tempo que o jogador levou para responder
-        if (timeTaken <= 3000) {
-            bonusPoints = 20; // Respostas dentro de 3 segundos ganham 20 pontos extras
-        } else if (timeTaken <= 5000) {
-            bonusPoints = 10; // Respostas entre 3 e 5 segundos ganham 10 pontos extras
-        }
     
         if (selected === correctAnswer) {
-            feedbackMessage.textContent = `✅ Você acertou!`;
-            score += 10 + bonusPoints; // Adiciona os pontos bônus ao total
+            feedbackMessage.textContent = "✅ Você acertou!";
+            score += 10;
             correctAnswersCount++;
             correctStreak++;
     
@@ -754,7 +742,8 @@ shuffledQuestions = shuffleArray(allQuestions);
         } else {
             feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
             errorCount++;
-            correctStreak = 0; // Errou? Zera a sequência
+            correctStreak = 0; // Zera a sequência de acertos
+    
             erroAudio.play();
         }
     
@@ -763,37 +752,35 @@ shuffledQuestions = shuffleArray(allQuestions);
     
         errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
     
+        // Verifica se o jogador errou 3 vezes
         if (errorCount >= 3) {
             clearInterval(timerInterval);
-            setTimeout(showGameOver, 1000);
+            setTimeout(showGameOver, 1000); // Mostra a tela de Game Over
             return;
         }
     
-        // Atualiza a pontuação na tela
-        document.getElementById("scoreValue").textContent = score;
-    
-        nextQuestion();
+        nextQuestion(); // Vai para a próxima pergunta após responder
     }
-    
-    
-    
     
     function nextQuestion() {
         currentQuestion++;
+    
+        // Verifica se já chegou ao final das perguntas
         if (currentQuestion >= shuffledQuestions.length) {
             currentThemeIndex++;
             if (currentThemeIndex >= shuffledThemes.length) {
-                // Terminar o jogo: mostrar tela de vitória
-                clearInterval(timerInterval); // parar o cronômetro
-                showWinScreen(); // <<<<<< CHAMA TELA DE WIN
+                clearInterval(timerInterval); // Parar o cronômetro
+                showWinScreen(); // Mostra a tela de vitória
                 return;
             }
             currentTheme = shuffledThemes[currentThemeIndex];
             shuffledQuestions = shuffleArray([...challenges[currentTheme]]);
             currentQuestion = 0;
         }
-        loadQuestion();
+    
+        loadQuestion(); // Carrega a próxima pergunta
     }
+    
     
     function showWinScreen() {
         loginScreen.style.display = "none";
@@ -980,3 +967,4 @@ shuffledQuestions = shuffleArray(allQuestions);
     menuButton.addEventListener("click", showLoginScreen);
     exitButton.addEventListener("click", exitGame);
 });
+
