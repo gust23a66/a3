@@ -128,3 +128,73 @@ button:hover {
         padding: 10px 15px;
     }
 }
+/* Estilo normal já existe */
+
+/* Estilo para o modo dark */
+.dark-mode {
+    background-color: #1e1e1e; /* Cor de fundo escura */
+    color: #6f6f6f; /* Cor do texto clara */
+}
+
+/* Ajusta o container principal */
+.dark-mode #gameContainer {
+    background: #1e1e1e; /* Cor de fundo mais escura para o container */
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra suave */
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
+
+/* Ajusta os botões no modo dark */
+.dark-mode button {
+    background-color: #333;
+    color: #bcbbbb;
+    border: 1px solid #f5f5f5;
+}
+
+/* Ajusta o container das perguntas */
+.dark-mode #options button {
+    background-color: #333;
+    color: #bcbbbb;
+}
+
+/* Título do tema no Dark Mode */
+.dark-mode #themeTitle {
+    color: #bcbbbb; /* Título branco */
+}
+
+/* Ajusta as mensagens de feedback no modo dark */
+.dark-mode #feedbackMessage {
+    background-color: #2c2c2c;  /* Cor mais clara para feedback */
+    color: #bcbbbb;
+    border: 1px solid #888;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Tempo e erros */
+.dark-mode #timeLeft,
+.dark-mode #errorCount {
+    color: #bcbbbb;
+}
+
+/* Ajusta a cor do texto do label no modo dark */
+.dark-mode #loginScreen label {
+    color: #bcbbbb; /* Cor clara do texto */
+}
+/* Ajusta a cor do título EcoPlay no modo dark */
+.dark-mode h1 {
+    color: #bcbbbb; /* Cor preta */
+}
+
+/* Estilo para a caixa de texto onde o usuário digita o nome no modo dark */
+.dark-mode #username {
+    background-color: #424040;  /* Cor de fundo escura */
+    color: #f5f5f5;  /* Cor do texto em branco */
+    border: 1px solid #f5f5f5;  /* Borda clara */
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1.1em;
+}
