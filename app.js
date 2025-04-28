@@ -45,6 +45,8 @@ let musicPlaying = true;
    let currentThemeIndex = 0;
    let correctByTheme = {};
    let startTime = 0;
+   let questionStartTime = 0;
+
   
 
 
@@ -684,18 +686,18 @@ shuffledQuestions = shuffleArray(allQuestions);
     }
 
     function loadQuestion() {
-        const question = shuffledQuestions[currentQuestion]; // Agora usa a lista embaralhada
+        questionStartTime = Date.now(); // ⏱️ Registra o momento da pergunta
+    
+        const question = shuffledQuestions[currentQuestion];
     
         document.getElementById("themeTitle").textContent = `Desafio: ${question.tema}`;
         document.getElementById("questionText").textContent = question.question;
     
         const optionsContainer = document.getElementById("options");
-        optionsContainer.innerHTML = ''; // Limpa as opções anteriores
+        optionsContainer.innerHTML = '';
     
-        // Embaralha as opções também
         const shuffledOptions = shuffleArray([...question.options]);
     
-        // Cria os botões de resposta
         shuffledOptions.forEach(option => {
             const button = document.createElement("button");
             button.textContent = option;
@@ -703,12 +705,24 @@ shuffledQuestions = shuffleArray(allQuestions);
             optionsContainer.appendChild(button);
         });
     }
+    
     function checkAnswer(selected) {
         const correctAnswer = shuffledQuestions[currentQuestion].answer;
     
+        const timeTaken = (Date.now() - questionStartTime) / 1000; // Tempo em segundos
+        let bonus = 0;
+    
+        if (timeTaken <= 3) {
+            bonus = 5;
+        } else if (timeTaken <= 6) {
+            bonus = 3;
+        } else if (timeTaken <= 10) {
+            bonus = 1;
+        }
+    
         if (selected === correctAnswer) {
             feedbackMessage.textContent = "✅ Você acertou!";
-            score += 10;  // Atualiza a pontuação
+            score += 10 + bonus;  // Pontos base + bônus por velocidade
             correctAnswersCount++;
             correctStreak++;
     
@@ -755,7 +769,6 @@ shuffledQuestions = shuffleArray(allQuestions);
     
         errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
     
-        // Verifica se o jogador errou 3 vezes
         if (errorCount >= 3) {
             clearInterval(timerInterval);
             setTimeout(showGameOver, 1000);
@@ -764,6 +777,7 @@ shuffledQuestions = shuffleArray(allQuestions);
     
         nextQuestion();
     }
+    
     
     function nextQuestion() {
         currentQuestion++;
@@ -970,3 +984,4 @@ shuffledQuestions = shuffleArray(allQuestions);
     menuButton.addEventListener("click", showLoginScreen);
     exitButton.addEventListener("click", exitGame);
 });
+
