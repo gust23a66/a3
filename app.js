@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Elementos da interface
+
     const startButton = document.getElementById("startButton");
     const rankingButton = document.getElementById("rankingButton");
     const achievementsButton = document.getElementById("achievementsButton");
@@ -29,18 +29,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     menuButtonWin.addEventListener("click", showLoginScreen);
-    // Áudios
-    // Áudios
+    
+   
 const audio = new Audio('musica_fundo.mp3');
-audio.loop = true; // <<<<<< adicionar aqui!
+audio.loop = true;
 const acertoAudio = new Audio('acerto.mp3');
 const erroAudio = new Audio('erro.mp3');
 let musicPlaying = true;
 
 
-   let correctAnswersCount = 0; // Quantidade de respostas corretas
-   let correctStreak = 0; // Acertos seguidos
-   let gamesPlayed = 0; // Partidas jogadas
+   let correctAnswersCount = 0;
+   let correctStreak = 0; 
+   let gamesPlayed = 0;
    let shuffledThemes = [];
    let currentThemeIndex = 0;
    let correctByTheme = {};
@@ -52,7 +52,7 @@ let musicPlaying = true;
 
 
 
-    // Dados dos desafios
+  
     const challenges = {
         "Água": [
     {
@@ -597,7 +597,7 @@ let musicPlaying = true;
     let shuffledQuestions = [];
 
 
-    // Funções principais
+  
     function toggleMusic() {
         if (musicPlaying) {
             audio.pause();
@@ -612,7 +612,7 @@ let musicPlaying = true;
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]]; // troca os elementos
+            [array[i], array[j]] = [array[j], array[i]]; 
         }
         return array;
     }
@@ -657,11 +657,11 @@ let musicPlaying = true;
         timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
         errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
     
-        // Junta todas as perguntas de todos os temas em uma única lista
+      
 let allQuestions = [];
 for (let tema in challenges) {
     challenges[tema].forEach(pergunta => {
-        allQuestions.push({ ...pergunta, tema }); // adiciona também o tema para exibir
+        allQuestions.push({ ...pergunta, tema }); 
     });
 }
 shuffledQuestions = shuffleArray(allQuestions);
@@ -686,7 +686,7 @@ shuffledQuestions = shuffleArray(allQuestions);
     }
 
     function loadQuestion() {
-        questionStartTime = Date.now(); // ⏱️ Registra o momento da pergunta
+        questionStartTime = Date.now(); 
     
         const question = shuffledQuestions[currentQuestion];
     
@@ -754,7 +754,7 @@ shuffledQuestions = shuffleArray(allQuestions);
                 unlockAchievement("Pontuação 100 🔥");
             }
     
-            nextQuestion(); // avança só se não venceu
+            nextQuestion();
         } else {
             feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
             errorCount++;
@@ -767,7 +767,7 @@ shuffledQuestions = shuffleArray(allQuestions);
                 clearInterval(timerInterval);
                 setTimeout(showGameOver, 1000);
             } else {
-                nextQuestion(); // continua o jogo normalmente
+                nextQuestion(); 
             }
         }
     
@@ -781,12 +781,12 @@ shuffledQuestions = shuffleArray(allQuestions);
     function nextQuestion() {
         currentQuestion++;
     
-        // Verifica se já chegou ao final das perguntas
+        
         if (currentQuestion >= shuffledQuestions.length) {
             currentThemeIndex++;
             if (currentThemeIndex >= shuffledThemes.length) {
-                clearInterval(timerInterval); // Parar o cronômetro
-                showWinScreen(); // Mostra a tela de vitória
+                clearInterval(timerInterval); 
+                showWinScreen(); 
                 return;
             }
             currentTheme = shuffledThemes[currentThemeIndex];
@@ -794,7 +794,7 @@ shuffledQuestions = shuffleArray(allQuestions);
             currentQuestion = 0;
         }
     
-        loadQuestion(); // Carrega a próxima pergunta
+        loadQuestion(); 
     }
     
     
@@ -816,7 +816,7 @@ shuffledQuestions = shuffleArray(allQuestions);
     }
     
     
-    // Quando o jogador perde (ex: 3 erros), chamar essa função:
+ 
     function showGameOver() {
         if (errorCount === 0) {
             unlockAchievement("Partida Perfeita 🎯");
@@ -835,7 +835,7 @@ shuffledQuestions = shuffleArray(allQuestions);
             }
         }
     
-        // --- Parte nova para salvar corretamente ---
+      
         let players = JSON.parse(localStorage.getItem("ranking")) || [];
 
 const existingPlayerIndex = players.findIndex(player => player.name === username);
@@ -852,9 +852,7 @@ players.sort((a, b) => b.score - a.score);
 
 localStorage.setItem("ranking", JSON.stringify(players));
 
-        // -----------------------------------------------------
-    
-        // Exibe a tela de game over
+       
         const gameOverMessage = document.getElementById("gameOverMessage");
         const finalScore = document.getElementById("finalScore");
     
@@ -884,11 +882,11 @@ localStorage.setItem("ranking", JSON.stringify(players));
         rankingScreen.style.display = "none";
         achievementsScreen.style.display = "none";
         gameOverMessage.style.display = "none";
-        document.getElementById("winScreen").style.display = "none"; // 👈 ADICIONE ISTO
+        document.getElementById("winScreen").style.display = "none"; 
     }
     
     function toggleDarkMode() {
-        // Alterna o modo escuro
+        
         document.body.classList.toggle('dark-mode');
         gameScreen.classList.toggle('dark-mode');
         loginScreen.classList.toggle('dark-mode');
@@ -896,7 +894,7 @@ localStorage.setItem("ranking", JSON.stringify(players));
         achievementsScreen.classList.toggle('dark-mode');
         gameOverMessage.classList.toggle('dark-mode');
         
-        // Atualiza o texto do botão para o modo correto
+     
         if (document.body.classList.contains('dark-mode')) {
             darkModeToggleButton.textContent = "☀️ Modo Claro";
         } else {
@@ -913,14 +911,13 @@ localStorage.setItem("ranking", JSON.stringify(players));
         gameOverMessage.style.display = "none";
         rankingScreen.style.display = "block";
     
-        // Exemplo de lista de jogadores
+        
         const rankingList = document.getElementById("rankingList");
         const players = JSON.parse(localStorage.getItem("ranking")) || [];
     
-        // Organiza do maior para o menor
         players.sort((a, b) => b.score - a.score);
     
-        // Exibe
+      
         rankingList.innerHTML = players.map(player => `<p>${player.name}: ${player.score} pontos</p>`).join('');
     }
     
@@ -951,7 +948,7 @@ localStorage.setItem("ranking", JSON.stringify(players));
         achievementItem.textContent = `🏅 ${achievementName}`;
         achievementsList.appendChild(achievementItem);
     
-        // Salvar conquista no localStorage
+     
         let achievements = JSON.parse(localStorage.getItem("achievements")) || [];
         if (!achievements.includes(achievementName)) {
             achievements.push(achievementName);
@@ -965,7 +962,7 @@ localStorage.setItem("ranking", JSON.stringify(players));
         window.close();
     }
 
-    // Eventos
+  
     startButton.addEventListener("click", startGame);
     rankingButton.addEventListener("click", showRanking);
     achievementsButton.addEventListener("click", showAchievements);
