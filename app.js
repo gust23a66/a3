@@ -709,7 +709,7 @@ shuffledQuestions = shuffleArray(allQuestions);
     function checkAnswer(selected) {
         const correctAnswer = shuffledQuestions[currentQuestion].answer;
     
-        const timeTaken = (Date.now() - questionStartTime) / 1000; // Tempo em segundos
+        const timeTaken = (Date.now() - questionStartTime) / 1000;
         let bonus = 0;
     
         if (timeTaken <= 3) {
@@ -722,20 +722,16 @@ shuffledQuestions = shuffleArray(allQuestions);
     
         if (selected === correctAnswer) {
             feedbackMessage.textContent = "✅ Você acertou!";
-            score += 10 + bonus;  // Pontos base + bônus por velocidade
+            score += 10 + bonus;
             correctAnswersCount++;
             correctStreak++;
     
-            // +2 segundos ao acertar
             timeLeft += 2;
             timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
     
             acertoAudio.play();
-    
-            // Atualiza a pontuação na tela
             document.getElementById("scoreValue").textContent = score;
     
-            // Conquistas
             if (correctAnswersCount === 5) {
                 unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
                 const tema = shuffledQuestions[currentQuestion].tema;
@@ -747,6 +743,7 @@ shuffledQuestions = shuffleArray(allQuestions);
                     return;
                 }
             }
+    
             if (correctStreak === 3) {
                 unlockAchievement("Acertou 3 seguidas 🔥");
             }
@@ -756,27 +753,29 @@ shuffledQuestions = shuffleArray(allQuestions);
             if (score >= 100) {
                 unlockAchievement("Pontuação 100 🔥");
             }
+    
+            nextQuestion(); // avança só se não venceu
         } else {
             feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
             errorCount++;
             correctStreak = 0;
-    
             erroAudio.play();
+    
+            errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
+    
+            if (errorCount >= 3) {
+                clearInterval(timerInterval);
+                setTimeout(showGameOver, 1000);
+            } else {
+                nextQuestion(); // continua o jogo normalmente
+            }
         }
     
         feedbackMessage.style.display = "block";
         setTimeout(() => feedbackMessage.style.display = "none", 2000);
-    
-        errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
-    
-        if (errorCount >= 3) {
-            clearInterval(timerInterval);
-            setTimeout(showGameOver, 1000);
-            return;
-        }
-    
-        nextQuestion();
     }
+    
+            
     
     
     function nextQuestion() {
@@ -984,4 +983,3 @@ shuffledQuestions = shuffleArray(allQuestions);
     menuButton.addEventListener("click", showLoginScreen);
     exitButton.addEventListener("click", exitGame);
 });
-
