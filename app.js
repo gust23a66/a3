@@ -25,6 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const erroAudio = new Audio('erro.mp3');
     let musicPlaying = true;
 
+   let correctAnswersCount = 0; // Quantidade de respostas corretas
+   let correctStreak = 0; // Acertos seguidos
+   let gamesPlayed = 0; // Partidas jogadas
+
+
+
     // Dados dos desafios
     const challenges = {
         "Água": [{
@@ -264,12 +270,32 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selected === correctAnswer) {
             feedbackMessage.textContent = "✅ Você acertou!";
             score += 10;
-            timeLeft += 2; // Adiciona 5 segundos
-            timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`; // Atualiza o tempo na tela
+            correctAnswersCount++;
+            correctStreak++;
+    
+            // +5 segundos ao acertar
+            timeLeft += 5;
+            timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
+    
             acertoAudio.play();
+    
+            // Conquistas
+            if (correctAnswersCount === 5) {
+                unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
+            }
+            if (correctStreak === 3) {
+                unlockAchievement("Acertou 3 seguidas 🔥");
+            }
+            if (score === 10) {
+                unlockAchievement("Primeira Resposta Correta ✅");
+            }
+            if (score >= 100) {
+                unlockAchievement("Pontuação 100 🔥");
+            }
         } else {
             feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
             errorCount++;
+            correctStreak = 0; // Errou? Zera a sequência
             erroAudio.play();
         }
     
@@ -287,6 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nextQuestion();
     }
     
+    
 
     function nextQuestion() {
         currentQuestion++;
@@ -298,7 +325,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // Quando o jogador perde (ex: 3 erros), chamar essa função:
     function showGameOver() {
+        if (errorCount === 0) {
+            unlockAchievement("Partida Perfeita 🎯");
+            gamesPlayed++;
+if (gamesPlayed === 5) {
+    unlockAchievement("Jogou 5 Partidas 🎮");
+}
 
+if (errorCount === 0) {
+    unlockAchievement("Zero Erros 🌟");
+}
+
+if (timeLeft > 15) {
+    unlockAchievement("Tempo Sobrando ⏳");
+}
+
+if (errorCount === 2) {
+    unlockAchievement("Resiliente 💪");
+}
+
+        }
+        
 // Salva no ranking
 let players = JSON.parse(localStorage.getItem("ranking")) || [];
 players.push({ name: username, score: score });
@@ -361,8 +408,39 @@ localStorage.setItem("ranking", JSON.stringify(players));
     
 
     function showAchievements() {
-        alert("Aqui serão suas conquistas!");
+        loginScreen.style.display = "none";
+        gameScreen.style.display = "none";
+        rankingScreen.style.display = "none";
+        gameOverMessage.style.display = "none";
+        achievementsScreen.style.display = "block";
+    
+        const achievementsList = document.getElementById("achievementsList");
+        achievementsList.innerHTML = "";
+    
+        const achievements = JSON.parse(localStorage.getItem("achievements")) || [];
+        achievements.forEach(achievement => {
+            const p = document.createElement("p");
+            p.textContent = `🏅 ${achievement}`;
+            achievementsList.appendChild(p);
+        });
     }
+    
+
+    function unlockAchievement(achievementName) {
+        const achievementsList = document.getElementById("achievementsList");
+        const achievementItem = document.createElement("p");
+        achievementItem.textContent = `🏅 ${achievementName}`;
+        achievementsList.appendChild(achievementItem);
+    
+        // Salvar conquista no localStorage
+        let achievements = JSON.parse(localStorage.getItem("achievements")) || [];
+        if (!achievements.includes(achievementName)) {
+            achievements.push(achievementName);
+            localStorage.setItem("achievements", JSON.stringify(achievements));
+        }
+    }
+    
+    
 
     function exitGame() {
         window.close();
