@@ -832,23 +832,29 @@ shuffledQuestions = shuffleArray(allQuestions);
             }
         }
     
-        // --- >>>> Parte nova para salvar corretamente <<<< ---
-        let players = JSON.parse(localStorage.getItem("ranking")) || [];
+        // --- Parte nova para salvar corretamente ---
+        let players = JSON.parse(localStorage.getItem("ranking")) || []; // Carrega o ranking, ou cria um array vazio se não existir.
     
-        const existingPlayer = players.find(player => player.name === username);
+        const existingPlayer = players.find(player => player.name === username); // Verifica se o jogador já existe no ranking.
     
         if (existingPlayer) {
+            // Se o jogador já estiver no ranking e sua pontuação for maior, atualize a pontuação.
             if (score > existingPlayer.score) {
                 existingPlayer.score = score;
             }
         } else {
+            // Se o jogador não estiver no ranking, adicione-o.
             players.push({ name: username, score: score });
         }
     
+        // Ordena o ranking pela pontuação (do maior para o menor).
         players.sort((a, b) => b.score - a.score);
+    
+        // Salva o ranking atualizado no localStorage.
         localStorage.setItem("ranking", JSON.stringify(players));
         // -----------------------------------------------------
     
+        // Exibe a tela de game over
         const gameOverMessage = document.getElementById("gameOverMessage");
         const finalScore = document.getElementById("finalScore");
     
@@ -864,6 +870,7 @@ shuffledQuestions = shuffleArray(allQuestions);
             gameOverMessage.classList.add("show");
         }, 50);
     }
+    
     
 
     function getRandomTheme() {
@@ -916,6 +923,7 @@ shuffledQuestions = shuffleArray(allQuestions);
         // Exibe
         rankingList.innerHTML = players.map(player => `<p>${player.name}: ${player.score} pontos</p>`).join('');
     }
+    
     
 
     function showAchievements() {
