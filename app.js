@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const restartButton = document.getElementById("restartButton");
     const menuButton = document.getElementById("menuButton");
     const exitButton = document.getElementById("exitButton");
+    const darkModeToggleButton = document.getElementById("darkModeToggleButton");
+
 
     const loginScreen = document.getElementById("loginScreen");
     const gameScreen = document.getElementById("gameScreen");
@@ -409,6 +411,24 @@ let currentThemeIndex = 0;
         achievementsScreen.style.display = "none";
         gameOverMessage.style.display = "none";
     }
+    function toggleDarkMode() {
+        // Alterna o modo escuro
+        document.body.classList.toggle('dark-mode');
+        gameScreen.classList.toggle('dark-mode');
+        loginScreen.classList.toggle('dark-mode');
+        rankingScreen.classList.toggle('dark-mode');
+        achievementsScreen.classList.toggle('dark-mode');
+        gameOverMessage.classList.toggle('dark-mode');
+        
+        // Atualiza o texto do botão para o modo correto
+        if (document.body.classList.contains('dark-mode')) {
+            darkModeToggleButton.textContent = "☀️ Modo Claro";
+        } else {
+            darkModeToggleButton.textContent = "🌙 Modo Black";
+        }
+    }
+    
+    
 
     function showRanking() {
         loginScreen.style.display = "none";
@@ -473,6 +493,7 @@ let currentThemeIndex = 0;
     rankingButton.addEventListener("click", showRanking);
     achievementsButton.addEventListener("click", showAchievements);
     musicToggleButton.addEventListener("click", toggleMusic);
+    darkModeToggleButton.addEventListener("click", toggleDarkMode);
     backToLoginButton.addEventListener("click", showLoginScreen);
     backToLoginFromAchievementsButton.addEventListener("click", showLoginScreen);
     restartButton.addEventListener("click", () => {
