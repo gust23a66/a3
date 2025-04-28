@@ -79,26 +79,7 @@ let currentThemeIndex = 0;
                 ],
                 "answer": "Usar balde e pano"
             },
-            {
-                "question": "Descargas modernas com duplo acionamento servem para:",
-                "options": [
-                    "Liberar mais água",
-                    "Liberar menos água em cada uso",
-                    "Deixar o vaso mais limpo",
-                    "Evitar entupimentos"
-                ],
-                "answer": "Liberar menos água em cada uso"
-            },
-            {
-                "question": "Qual dessas atitudes evita o desperdício de água?",
-                "options": [
-                    "Lavar a calçada com mangueira",
-                    "Revisar vazamentos regularmente",
-                    "Usar água quente para limpar tudo",
-                    "Deixar a torneira pingando"
-                ],
-                "answer": "Revisar vazamentos regularmente"
-            },
+          
             {
                 "question": "Água invisível é aquela que:",
                 "options": [
