@@ -726,7 +726,7 @@ shuffledQuestions = shuffleArray(allQuestions);
             correctAnswersCount++;
             correctStreak++;
     
-            timeLeft += 5;
+            timeLeft += 10;
             timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
     
             acertoAudio.play();
