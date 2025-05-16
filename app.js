@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuButton = document.getElementById("menuButton");
     const exitButton = document.getElementById("exitButton");
     const darkModeToggleButton = document.getElementById("darkModeToggleButton");
+    const winScreen = document.getElementById("winScreen");
 
 
     const loginScreen = document.getElementById("loginScreen");
@@ -22,7 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorCountDisplay = document.getElementById("errorCount");
     const restartButtonWin = document.getElementById("restartButtonWin");
     const menuButtonWin = document.getElementById("menuButtonWin");
-    
+    const difficultyScreen = document.getElementById("difficultyScreen");
+
     restartButtonWin.addEventListener("click", () => {
         winScreen.style.display = "none";
         startGame();
@@ -32,6 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
    
 const audio = new Audio('musica_fundo.mp3');
+audio.loop = true;
+audio.addEventListener('canplaythrough', () => {
+    if (musicPlaying) audio.play();
+});
+
 audio.loop = true;
 const acertoAudio = new Audio('acerto.mp3');
 const erroAudio = new Audio('erro.mp3');
@@ -48,6 +55,12 @@ let musicPlaying = true;
    let questionStartTime = 0;
 
   
+difficultyScreen.addEventListener("click", (e) => {
+    if (e.target.classList.contains("difficultyBtn")) {
+        const nivel = e.target.getAttribute("data-dificuldade");
+        escolherDificuldade(nivel);
+    }
+});
 
 
 
@@ -595,6 +608,7 @@ let musicPlaying = true;
     let timeLeft = 30;
     let timerInterval;
     let shuffledQuestions = [];
+let currentDifficulty = "dificil"; // padrão
 
 
   
@@ -630,46 +644,43 @@ let musicPlaying = true;
             return;
         }
     
-        loginScreen.style.display = "none";
-        gameScreen.style.display = "block";
+           loginScreen.style.display = "none";
+    difficultyScreen.style.display = "block";
     
         if (musicPlaying) audio.play();
     
-        resetGame();
+       
     }
     
 
-    function resetGame() {
-        score = 0;
-        errorCount = 0;
-        currentQuestion = 0;
-        timeLeft = 30;
-        correctAnswersCount = 0;
-        correctStreak = 0;
-        gamesPlayed = 0;
-        correctByTheme = {
-            "Água": 0,
-            "Energia": 0,
-            "Lixo": 0,
-            "Alimentação": 0
-        };
-        
-        timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
-        errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
-    
-      
-let allQuestions = [];
-for (let tema in challenges) {
-    challenges[tema].forEach(pergunta => {
-        allQuestions.push({ ...pergunta, tema }); 
-    });
+   function resetGame() {
+    score = 0;
+    errorCount = 0;
+    currentQuestion = 0;
+    correctAnswersCount = 0;
+    correctStreak = 0;
+    gamesPlayed = 0;
+    correctByTheme = {
+        "Água": 0,
+        "Energia": 0,
+        "Lixo": 0,
+        "Alimentação": 0
+    };
+
+    timeLeft = getInitialTimeByDifficulty();
+    timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
+    errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
+
+    // Inicializa os temas e questões embaralhadas
+    shuffledThemes = shuffleArray(Object.keys(challenges));
+    currentThemeIndex = 0;
+    currentTheme = shuffledThemes[currentThemeIndex];
+    shuffledQuestions = shuffleArray([...challenges[currentTheme]]);
+
+    loadQuestion();
+    startTimer();
 }
-shuffledQuestions = shuffleArray(allQuestions);
 
-    
-        loadQuestion();
-        startTimer();
-    }
     
     
 
@@ -689,7 +700,8 @@ shuffledQuestions = shuffleArray(allQuestions);
         questionStartTime = Date.now(); 
     
         const question = shuffledQuestions[currentQuestion];
-    
+    if (!question) return;
+
         document.getElementById("themeTitle").textContent = `Desafio: ${question.tema}`;
         document.getElementById("questionText").textContent = question.question;
     
@@ -706,8 +718,11 @@ shuffledQuestions = shuffleArray(allQuestions);
         });
     }
     
-    function checkAnswer(selected) {
-        const correctAnswer = shuffledQuestions[currentQuestion].answer;
+   function checkAnswer(selected) {
+    const current = shuffledQuestions[currentQuestion];
+    if (!current) return;
+
+    const correctAnswer = current.answer;
     
         const timeTaken = (Date.now() - questionStartTime) / 1000;
         let bonus = 0;
@@ -726,7 +741,7 @@ shuffledQuestions = shuffleArray(allQuestions);
             correctAnswersCount++;
             correctStreak++;
     
-            timeLeft += 10;
+            timeLeft += 5;
             timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
     
             acertoAudio.play();
@@ -799,6 +814,7 @@ shuffledQuestions = shuffleArray(allQuestions);
     
     
     function showWinScreen() {
+        updateRanking();
         loginScreen.style.display = "none";
         gameScreen.style.display = "none";
         rankingScreen.style.display = "none";
@@ -806,8 +822,7 @@ shuffledQuestions = shuffleArray(allQuestions);
         gameOverMessage.style.display = "none";
     
         document.getElementById("finalScoreWin").textContent = `Pontuação Final: ${score}`;
-        
-        const winScreen = document.getElementById("winScreen");
+      
         winScreen.style.display = "block";
     
         setTimeout(() => {
@@ -815,9 +830,57 @@ shuffledQuestions = shuffleArray(allQuestions);
         }, 50);
     }
     
-    
+  function escolherDificuldade(nivel) {
+    currentDifficulty = nivel;
+    switch (nivel) {
+        case "facil":
+            timeLeft = 100;
+            break;
+        case "medio":
+            timeLeft = 60;
+            break;
+        case "dificil":
+            timeLeft = 30;
+            break;
+        default:
+            timeLeft = 30;
+    }
+
+    difficultyScreen.style.display = "none";
+    gameScreen.style.display = "block";
+
+    resetGame();
+}
+
+function getInitialTimeByDifficulty() {
+    switch(currentDifficulty) {
+        case "facil": return 100;
+        case "medio": return 60;
+        case "dificil": return 30;
+        default: return 30;
+    }
+}
+
+       function updateRanking() {
+    let players = JSON.parse(localStorage.getItem("ranking")) || [];
+
+    const existingPlayerIndex = players.findIndex(player => player.name === username);
+
+    if (existingPlayerIndex !== -1) {
+        if (score > players[existingPlayerIndex].score) {
+            players[existingPlayerIndex].score = score;
+        }
+    } else {
+        players.push({ name: username, score: score });
+    }
+
+    players.sort((a, b) => b.score - a.score);
+
+    localStorage.setItem("ranking", JSON.stringify(players));
+}
  
     function showGameOver() {
+        updateRanking();
         if (errorCount === 0) {
             unlockAchievement("Partida Perfeita 🎯");
             gamesPlayed++;
@@ -836,21 +899,8 @@ shuffledQuestions = shuffleArray(allQuestions);
         }
     
       
-        let players = JSON.parse(localStorage.getItem("ranking")) || [];
 
-const existingPlayerIndex = players.findIndex(player => player.name === username);
 
-if (existingPlayerIndex !== -1) {
-    if (score > players[existingPlayerIndex].score) {
-        players[existingPlayerIndex].score = score;
-    }
-} else {
-    players.push({ name: username, score: score });
-}
-
-players.sort((a, b) => b.score - a.score);
-
-localStorage.setItem("ranking", JSON.stringify(players));
 
        
         const gameOverMessage = document.getElementById("gameOverMessage");
