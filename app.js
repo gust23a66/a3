@@ -743,7 +743,8 @@ difficultyScreen.addEventListener("click", (e) => {
     
         const question = shuffledQuestions[currentQuestion];
     
-        document.getElementById("themeTitle").textContent = `Desafio: ${question.tema}`;
+       document.getElementById("themeTitle").textContent = `Tema: ${currentTheme}`;
+
         document.getElementById("questionText").textContent = question.question;
     
 if (!question.options || question.options.length === 0) {
