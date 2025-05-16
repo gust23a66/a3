@@ -713,10 +713,13 @@ difficultyScreen.addEventListener("click", (e) => {
     errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
 
  
-    shuffledThemes = shuffleArray(Object.keys(challenges));
-    currentThemeIndex = 0;
-    currentTheme = shuffledThemes[currentThemeIndex];
-    shuffledQuestions = shuffleArray([...challenges[currentTheme]]);
+   shuffledQuestions = shuffleArray(
+    Object.entries(challenges).flatMap(([tema, perguntas]) =>
+        perguntas.map(pergunta => ({ ...pergunta, tema }))
+    )
+);
+currentQuestion = 0;
+
 
     loadQuestion();
     startTimer();
@@ -743,7 +746,7 @@ difficultyScreen.addEventListener("click", (e) => {
     
         const question = shuffledQuestions[currentQuestion];
     
-       document.getElementById("themeTitle").textContent = `Tema: ${currentTheme}`;
+       document.getElementById("themeTitle").textContent = `Tema: ${question.tema}`;
 
         document.getElementById("questionText").textContent = question.question;
     
@@ -802,7 +805,8 @@ if (!question.options || question.options.length === 0) {
         acertoAudio.play();
         document.getElementById("scoreValue").textContent = score;
 
-       const tema = shuffledQuestions[currentQuestion].tema;
+      const tema = current.tema;
+
 correctByTheme[tema] = (correctByTheme[tema] || 0) + 1;
 
 if (correctByTheme[tema] === 5) {
