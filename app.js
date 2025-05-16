@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const exitButton = document.getElementById("exitButton");
     const darkModeToggleButton = document.getElementById("darkModeToggleButton");
     const winScreen = document.getElementById("winScreen");
+    const temas = ["lixo", "energia", "alimentacao", "agua"];
 
 
     const loginScreen = document.getElementById("loginScreen");
@@ -24,6 +25,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const restartButtonWin = document.getElementById("restartButtonWin");
     const menuButtonWin = document.getElementById("menuButtonWin");
     const difficultyScreen = document.getElementById("difficultyScreen");
+    const ALL_ACHIEVEMENTS = [
+    "Primeira Vitória",
+    "Perfeição Verde",
+    "Quase Lá!",
+    "Persistente",
+    "Viciado em Sustentabilidade",
+    "Rápido no Gatilho",
+    "Relâmpago Verde",
+    "Sem Pressa",
+    "Rei da Reciclagem",
+    "Herói da Energia",
+    "Mestre da Alimentação",
+    "Desafio Aceito",
+    "Veterano Verde",
+    "Aprendiz Verde",
+    "Primeiro Erro",
+    "Sem Segunda Chance",
+    "Começo Promissor",
+    "Primeira Resposta Correta ✅",
+    "Respondeu 5 Perguntas Corretamente 🎓",
+    "Acertou 3 seguidas 🔥",
+    "Pontuação 100 🔥",
+    "Partida Perfeita 🎯",
+    "Jogou 5 Partidas 🎮",
+    "Zero Erros 🌟",
+    "Tempo Sobrando ⏳",
+    "Resiliente 💪",
+    "Acabou o tempo ⏰",
+    "Resposta Rápida ⚡"
+];
+
+
 
     restartButtonWin.addEventListener("click", () => {
         winScreen.style.display = "none";
@@ -32,27 +65,35 @@ document.addEventListener('DOMContentLoaded', () => {
     
     menuButtonWin.addEventListener("click", showLoginScreen);
     
-   
+   let musicPlaying = true;
+
 const audio = new Audio('musica_fundo.mp3');
 audio.loop = true;
-audio.addEventListener('canplaythrough', () => {
+audio.addEventListener('canplaythrough', () => { 
     if (musicPlaying) audio.play();
 });
 
 audio.loop = true;
 const acertoAudio = new Audio('acerto.mp3');
 const erroAudio = new Audio('erro.mp3');
-let musicPlaying = true;
 
-
+   let gamesPlayed = parseInt(localStorage.getItem("gamesPlayed") || "0");
    let correctAnswersCount = 0;
    let correctStreak = 0; 
-   let gamesPlayed = 0;
    let shuffledThemes = [];
    let currentThemeIndex = 0;
-   let correctByTheme = {};
    let startTime = 0;
    let questionStartTime = 0;
+   let gameStartTime = 0;
+   let errorsMade = 0;
+   let correctByTheme = {
+  "Lixo": 0,
+  "Energia": 0,
+  "Água": 0,
+  "Alimentação": 0
+};
+
+
 
   
 difficultyScreen.addEventListener("click", (e) => {
@@ -63,10 +104,8 @@ difficultyScreen.addEventListener("click", (e) => {
 });
 
 
-
-
   
-    const challenges = {
+  const challenges = {
         "Água": [
     {
         "question": "Qual dessas ações ajuda a economizar água?",
@@ -600,15 +639,18 @@ difficultyScreen.addEventListener("click", (e) => {
 
     }
 
+
     let username = "";
     let currentTheme = "";
     let currentQuestion = 0;
     let score = 0;
+    let currentSessionAchievements = [];
     let errorCount = 0;
     let timeLeft = 30;
     let timerInterval;
     let shuffledQuestions = [];
-let currentDifficulty = "dificil"; // padrão
+    let currentDifficulty = "dificil"; 
+    let perdeuSeguidas = parseInt(localStorage.getItem("perdeuSeguidas") || "0");
 
 
   
@@ -659,7 +701,6 @@ let currentDifficulty = "dificil"; // padrão
     currentQuestion = 0;
     correctAnswersCount = 0;
     correctStreak = 0;
-    gamesPlayed = 0;
     correctByTheme = {
         "Água": 0,
         "Energia": 0,
@@ -671,7 +712,7 @@ let currentDifficulty = "dificil"; // padrão
     timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
     errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
 
-    // Inicializa os temas e questões embaralhadas
+ 
     shuffledThemes = shuffleArray(Object.keys(challenges));
     currentThemeIndex = 0;
     currentTheme = shuffledThemes[currentThemeIndex];
@@ -685,26 +726,31 @@ let currentDifficulty = "dificil"; // padrão
     
 
     function startTimer() {
-        clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            timeLeft--;
-            timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                showGameOver();
-            }
-        }, 1000);
-    }
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            unlockAchievement("Acabou o tempo ⏰");  
+            showGameOver();
+        }
+    }, 1000);
+}
 
     function loadQuestion() {
         questionStartTime = Date.now(); 
     
         const question = shuffledQuestions[currentQuestion];
-    if (!question) return;
-
+    
         document.getElementById("themeTitle").textContent = `Desafio: ${question.tema}`;
         document.getElementById("questionText").textContent = question.question;
     
+if (!question.options || question.options.length === 0) {
+    feedbackMessage.textContent = "⚠️ Pergunta inválida. Verifique os dados.";
+    return;
+}
+
         const optionsContainer = document.getElementById("options");
         optionsContainer.innerHTML = '';
     
@@ -720,77 +766,86 @@ let currentDifficulty = "dificil"; // padrão
     
    function checkAnswer(selected) {
     const current = shuffledQuestions[currentQuestion];
-    if (!current) return;
+   
+
 
     const correctAnswer = current.answer;
-    
-        const timeTaken = (Date.now() - questionStartTime) / 1000;
-        let bonus = 0;
-    
-        if (timeTaken <= 3) {
-            bonus = 5;
-        } else if (timeTaken <= 6) {
-            bonus = 3;
-        } else if (timeTaken <= 10) {
-            bonus = 1;
+
+    const timeTaken = (Date.now() - questionStartTime) / 1000;
+    let bonus = 0;
+
+    if (timeTaken <= 3) {
+        bonus = 5;
+        if (timeTaken <= 2) {
+            unlockAchievement("Resposta Rápida ⚡");  
         }
-    
-        if (selected === correctAnswer) {
-            feedbackMessage.textContent = "✅ Você acertou!";
-            score += 10 + bonus;
-            correctAnswersCount++;
-            correctStreak++;
-    
-            timeLeft += 5;
-            timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
-    
-            acertoAudio.play();
-            document.getElementById("scoreValue").textContent = score;
-    
-            if (correctAnswersCount === 5) {
-                unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
-                const tema = shuffledQuestions[currentQuestion].tema;
-                correctByTheme[tema]++;
-                const venceu = Object.values(correctByTheme).every(count => count >= 5);
-                if (venceu) {
-                    clearInterval(timerInterval);
-                    showWinScreen();
-                    return;
-                }
-            }
-    
-            if (correctStreak === 3) {
-                unlockAchievement("Acertou 3 seguidas 🔥");
-            }
-            if (score === 10) {
-                unlockAchievement("Primeira Resposta Correta ✅");
-            }
-            if (score >= 100) {
-                unlockAchievement("Pontuação 100 🔥");
-            }
-    
-            nextQuestion();
-        } else {
-            feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
-            errorCount++;
-            correctStreak = 0;
-            erroAudio.play();
-    
-            errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
-    
-            if (errorCount >= 3) {
-                clearInterval(timerInterval);
-                setTimeout(showGameOver, 1000);
-            } else {
-                nextQuestion(); 
-            }
-        }
-    
-        feedbackMessage.style.display = "block";
-        setTimeout(() => feedbackMessage.style.display = "none", 2000);
+    } else if (timeTaken <= 6) {
+        bonus = 3;
+    } else if (timeTaken <= 10) {
+        bonus = 1;
     }
-    
-            
+
+    if (selected === correctAnswer) {
+        correctAnswersCount++;
+        feedbackMessage.textContent = "✅ Você acertou!";
+        score += 10 + bonus;
+        if (correctAnswersCount === 5) {
+    unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
+}
+        correctStreak++;
+
+        timeLeft = Math.min(timeLeft + 5, getInitialTimeByDifficulty());
+
+        timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
+
+        acertoAudio.play();
+        document.getElementById("scoreValue").textContent = score;
+
+       const tema = shuffledQuestions[currentQuestion].tema;
+correctByTheme[tema] = (correctByTheme[tema] || 0) + 1;
+
+if (correctByTheme[tema] === 5) {
+    unlockAchievement(`Mestre da ${tema}`);
+}
+
+const venceu = Object.values(correctByTheme).every(count => count >= 5);
+if (venceu) {
+    clearInterval(timerInterval);
+    showWinScreen();
+    return;
+}
+
+
+        if (correctStreak === 3) {
+            unlockAchievement("Acertou 3 seguidas 🔥");
+        }
+        if (score === 10) {
+            unlockAchievement("Primeira Resposta Correta ✅");
+        }
+        if (score >= 100) {
+            unlockAchievement("Pontuação 100 🔥");
+        }
+
+        nextQuestion();
+    } else {
+        feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
+        errorCount++;
+        correctStreak = 0;
+        erroAudio.play();
+
+        errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
+
+        if (errorCount >= 3) {
+            clearInterval(timerInterval);
+            setTimeout(showGameOver, 1000);
+        } else {
+            nextQuestion();
+        }
+    }
+
+    feedbackMessage.style.display = "block";
+    setTimeout(() => (feedbackMessage.style.display = "none"), 2000);
+}
     
     
     function nextQuestion() {
@@ -814,23 +869,61 @@ let currentDifficulty = "dificil"; // padrão
     
     
     function showWinScreen() {
-        updateRanking();
-        loginScreen.style.display = "none";
-        gameScreen.style.display = "none";
-        rankingScreen.style.display = "none";
-        achievementsScreen.style.display = "none";
-        gameOverMessage.style.display = "none";
+        unlockAchievement("Primeira Vitória");
+
+if (errorCount === 0 && timeLeft > 15) {
+    unlockAchievement("Perfeição Verde");
+}
+    updateRanking();
+    loginScreen.style.display = "none";
+    gameScreen.style.display = "none";
+    rankingScreen.style.display = "none";
+    achievementsScreen.style.display = "none";
+    gameOverMessage.style.display = "none";
+
+    document.getElementById("finalScoreWin").textContent = `Pontuação Final: ${score}`;
     
-        document.getElementById("finalScoreWin").textContent = `Pontuação Final: ${score}`;
-      
-        winScreen.style.display = "block";
-    
-        setTimeout(() => {
-            winScreen.classList.add("show");
-        }, 50);
+   
+    const sessionAchievementsDiv = document.getElementById("sessionAchievements");
+    if (currentSessionAchievements.length > 0) {
+        sessionAchievementsDiv.innerHTML = "<h3>🏆 Conquistas desbloqueadas:</h3>" +
+            "<ul>" + currentSessionAchievements.map(a => `<li>🏅 ${a}</li>`).join('') + "</ul>";
+    } else {
+        sessionAchievementsDiv.innerHTML = "<p>Nenhuma conquista desbloqueada nesta partida.</p>";
     }
+
+    winScreen.style.display = "block";
+
+    setTimeout(() => {
+        winScreen.classList.add("show");
+    }, 50);
+
+
+    currentSessionAchievements = [];
+    gamesPlayed++;
+    localStorage.setItem("gamesPlayed", gamesPlayed);
+
+if (gamesPlayed === 1) {
+    unlockAchievement("Aprendiz Verde");
+}
+if (gamesPlayed === 10) {
+    unlockAchievement("Veterano Verde");
+}
+if (gamesPlayed === 20) {
+    unlockAchievement("Viciado em Sustentabilidade");
+}
+
+perdeuSeguidas = 0;
+localStorage.setItem("perdeuSeguidas", perdeuSeguidas);
+
+
+}
+
     
   function escolherDificuldade(nivel) {
+    if (nivel === "dificil") {
+    unlockAchievement("Desafio Aceito");
+}
     currentDifficulty = nivel;
     switch (nivel) {
         case "facil":
@@ -864,7 +957,7 @@ function getInitialTimeByDifficulty() {
        function updateRanking() {
     let players = JSON.parse(localStorage.getItem("ranking")) || [];
 
-    const existingPlayerIndex = players.findIndex(player => player.name === username);
+   const existingPlayerIndex = players.findIndex(player => player.name.toLowerCase() === username.toLowerCase());
 
     if (existingPlayerIndex !== -1) {
         if (score > players[existingPlayerIndex].score) {
@@ -880,44 +973,69 @@ function getInitialTimeByDifficulty() {
 }
  
     function showGameOver() {
-        updateRanking();
-        if (errorCount === 0) {
-            unlockAchievement("Partida Perfeita 🎯");
-            gamesPlayed++;
-            if (gamesPlayed === 5) {
-                unlockAchievement("Jogou 5 Partidas 🎮");
-            }
-            if (errorCount === 0) {
-                unlockAchievement("Zero Erros 🌟");
-            }
-            if (timeLeft > 15) {
-                unlockAchievement("Tempo Sobrando ⏳");
-            }
-            if (errorCount === 2) {
-                unlockAchievement("Resiliente 💪");
-            }
+        if (score >= 80 && errorCount >= 3) {
+    unlockAchievement("Quase Lá!");
+}
+
+    updateRanking();
+
+    if (errorCount === 0) {
+        unlockAchievement("Partida Perfeita 🎯");
+        gamesPlayed++;
+        localStorage.setItem("gamesPlayed", gamesPlayed);
+
+        if (gamesPlayed === 5) {
+            unlockAchievement("Jogou 5 Partidas 🎮");
         }
-    
-      
+        unlockAchievement("Zero Erros 🌟");
 
-
-
-       
-        const gameOverMessage = document.getElementById("gameOverMessage");
-        const finalScore = document.getElementById("finalScore");
-    
-        document.getElementById("gameScreen").style.display = "none";
-        document.getElementById("loginScreen").style.display = "none";
-        document.getElementById("rankingScreen").style.display = "none";
-        document.getElementById("achievementsScreen").style.display = "none";
-    
-        finalScore.textContent = `Pontuação Final: ${score}`;
-    
-        gameOverMessage.style.display = "block";
-        setTimeout(() => {
-            gameOverMessage.classList.add("show");
-        }, 50);
+        if (timeLeft > 15) {
+            unlockAchievement("Tempo Sobrando ⏳");
+        }
     }
+
+   
+    if (errorCount === 2) {
+        unlockAchievement("Resiliente 💪");
+    }
+
+    const gameOverMessage = document.getElementById("gameOverMessage");
+    const finalScore = document.getElementById("finalScore");
+
+    document.getElementById("gameScreen").style.display = "none";
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("rankingScreen").style.display = "none";
+    document.getElementById("achievementsScreen").style.display = "none";
+
+    finalScore.textContent = `Pontuação Final: ${score}`;
+
+    gameOverMessage.style.display = "block";
+    setTimeout(() => {
+        gameOverMessage.classList.add("show");
+    }, 50);
+
+gamesPlayed++;
+localStorage.setItem("gamesPlayed", gamesPlayed);
+
+if (gamesPlayed === 1) {
+    unlockAchievement("Aprendiz Verde");
+}
+if (gamesPlayed === 10) {
+    unlockAchievement("Veterano Verde");
+}
+if (gamesPlayed === 20) {
+    unlockAchievement("Viciado em Sustentabilidade");
+}
+
+perdeuSeguidas++;
+localStorage.setItem("perdeuSeguidas", perdeuSeguidas);
+
+if (perdeuSeguidas === 3) {
+    unlockAchievement("Persistente");
+}
+
+
+}
     
     
 
@@ -971,42 +1089,72 @@ function getInitialTimeByDifficulty() {
         rankingList.innerHTML = players.map(player => `<p>${player.name}: ${player.score} pontos</p>`).join('');
     }
     
-    
+    function verificarConquistasFinais() {
+    if (errorCount === 0) {
+        unlockAchievement("Partida Perfeita 🎯");
+        unlockAchievement("Zero Erros 🌟");
 
-    function showAchievements() {
-        loginScreen.style.display = "none";
-        gameScreen.style.display = "none";
-        rankingScreen.style.display = "none";
-        gameOverMessage.style.display = "none";
-        achievementsScreen.style.display = "block";
-    
-        const achievementsList = document.getElementById("achievementsList");
-        achievementsList.innerHTML = "";
-    
-        const achievements = JSON.parse(localStorage.getItem("achievements")) || [];
-        achievements.forEach(achievement => {
-            const p = document.createElement("p");
-            p.textContent = `🏅 ${achievement}`;
-            achievementsList.appendChild(p);
-        });
-    }
-    
-
-    function unlockAchievement(achievementName) {
-        const achievementsList = document.getElementById("achievementsList");
-        const achievementItem = document.createElement("p");
-        achievementItem.textContent = `🏅 ${achievementName}`;
-        achievementsList.appendChild(achievementItem);
-    
-     
-        let achievements = JSON.parse(localStorage.getItem("achievements")) || [];
-        if (!achievements.includes(achievementName)) {
-            achievements.push(achievementName);
-            localStorage.setItem("achievements", JSON.stringify(achievements));
+        if (timeLeft > 15) {
+            unlockAchievement("Tempo Sobrando ⏳");
         }
     }
+
+    if (score >= 80 && errorCount >= 3) {
+        unlockAchievement("Quase Lá!");
+    }
+
+    if (errorCount === 2) {
+        unlockAchievement("Resiliente 💪");
+    }
+
+    if (gamesPlayed === 1) {
+        unlockAchievement("Aprendiz Verde");
+    } else if (gamesPlayed === 10) {
+        unlockAchievement("Veterano Verde");
+    } else if (gamesPlayed === 20) {
+        unlockAchievement("Viciado em Sustentabilidade");
+    }
+
+    if (perdeuSeguidas === 3) {
+        unlockAchievement("Persistente");
+    }
+}
+
+
+    function showAchievements() {
+    loginScreen.style.display = "none";
+    gameScreen.style.display = "none";
+    rankingScreen.style.display = "none";
+    gameOverMessage.style.display = "none";
+    achievementsScreen.style.display = "block";
+
+    const achievementsList = document.getElementById("achievementsList");
+    achievementsList.innerHTML = "";
+
+    const unlocked = JSON.parse(localStorage.getItem("achievements")) || [];
+
+    ALL_ACHIEVEMENTS.forEach(achievement => {
+        const p = document.createElement("p");
+        p.textContent = unlocked.includes(achievement)
+            ? `🏅 ${achievement}`
+            : `🔒 ${achievement}`;
+        achievementsList.appendChild(p);
+    });
+}
+
     
-    
+function unlockAchievement(achievementName) {
+    let achievements = JSON.parse(localStorage.getItem("achievements")) || [];
+
+    if (!achievements.includes(achievementName)) {
+        achievements.push(achievementName);
+        localStorage.setItem("achievements", JSON.stringify(achievements));
+        
+       
+        currentSessionAchievements.push(achievementName);
+    }
+}
+ 
 
     function exitGame() {
         window.close();
@@ -1022,7 +1170,8 @@ function getInitialTimeByDifficulty() {
     backToLoginFromAchievementsButton.addEventListener("click", showLoginScreen);
     restartButton.addEventListener("click", () => {
         gameOverMessage.style.display = "none";
-        startGame();
+        gameScreen.style.display = "block";
+       resetGame();
     });
     menuButton.addEventListener("click", showLoginScreen);
     exitButton.addEventListener("click", exitGame);
