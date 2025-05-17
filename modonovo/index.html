@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coleta Sustentável</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Botão de Pausa -->
+
+
+  <!-- Menu de Pausa -->
+  <div id="pauseMenu">
+    <h2>⏸ Jogo Pausado</h2>
+    <button onclick="togglePause()">▶ Retomar</button>
+    <button onclick="restartGame()">↻ Reiniciar</button>
+    <button onclick="voltarParaMenu()">⬅ Voltar ao Menu</button>
+  </div>
+
+  <!-- Container do jogo -->
+ <div id="gameContainer">
+  <h1>Coleta Sustentável</h1>
+  <div id="canvasWrapper">
+    <canvas id="gameCanvas" width="400" height="500"></canvas>
+    <button id="pauseButton" onclick="togglePause()">⏸️</button> 
+    <div id="livesContainer"></div>
+  </div>
+  <div id="scoreBoard">Pontuação: <span id="score">0</span></div>
+ 
+</div>
+
+
+
+  <!-- Tela de fim de jogo -->
+  <div id="gameOverScreen">
+    <div>
+      <p id="finalScore"></p>
+      <button onclick="restartGame()">Reiniciar</button>
+    </div>
+  </div>
+
+
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+</html>
