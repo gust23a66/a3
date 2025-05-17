@@ -1,0 +1,165 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #e0f7e9;
+  margin: 0;
+  padding: 0;
+}
+
+#gameContainer {
+  position: relative;
+  padding: 0 20px 20px 20px; /* remove o padding-top */
+}
+
+
+
+canvas {
+  background-color: #fff;
+  border: 2px solid #333;
+}
+
+#scoreBoard {
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+#gameOverScreen {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 24px;
+  z-index: 1000;
+}
+
+#gameOverScreen button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+}
+#livesContainer {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  z-index: 10;
+}
+
+#livesContainer img {
+  width: 25px;
+  height: 25px;
+  margin-right: 5px;
+  transition: transform 0.2s ease;
+}
+
+#livesContainer img:last-child {
+  animation: pop 0.2s ease;
+}
+
+@keyframes pop {
+  0% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+button:active {
+  background-color: #3e8e41;
+  transform: scale(0.98);
+}
+
+#pauseMenu {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#pauseMenu button {
+  margin: 10px;
+  padding: 12px 24px;
+  font-size: 18px;
+  cursor: pointer;
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  border-radius: 10px;
+}
+
+#pauseMenu h2 {
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+
+#pauseButton:hover {
+  transform: scale(1.1);
+}
+body.paused #pauseButton,
+body.game-over #pauseButton {
+  display: none;
+}
+
+#canvasWrapper {
+  position: relative;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+#pauseButton {
+  position: absolute;
+  top: 0px;
+  right: 1px;
+  background-color: #246d08;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  transition: transform 0.2s;
+transform: translateY(-17px);
+
+
+
+  /* NOVO: Centralização do conteúdo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
