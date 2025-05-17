@@ -51,6 +51,8 @@ function startGame() {
 document.getElementById('pauseMenu').style.display = 'none';
 document.getElementById('pauseButton').textContent = '⏸';
 
+drawHearts(); // mostra os corações no início
+
 }
 
 // Desenhar corações (vidas)
@@ -203,7 +205,47 @@ canvas.addEventListener('touchmove', function (e) {
   player.x = touchX;
 }, { passive: false });
 
-window.onload = startGame;
+window.onload = function () {
+  loadImages(startGame);
+};
+function loadImages(callback) {
+  let loaded = 0;
+  const total = 5; // Número total de imagens
+
+  function checkLoaded() {
+    loaded++;
+    if (loaded === total) callback();
+  }
+
+  binImg.onload = checkLoaded;
+  trashImg.onload = checkLoaded;
+  organicTrashImg.onload = checkLoaded;
+  backgroundImg.onload = checkLoaded;
+  specialTrashImg.onload = checkLoaded;
+
+  // Carregue os corações separadamente
+  heartFullImg.onload = checkLoaded;
+  heartEmptyImg.onload = checkLoaded;
+}
+
+
+// Ajustar canvas para dispositivos móveis
+function ajustarCanvas() {
+  const maxWidth = 500;
+  const screenWidth = window.innerWidth;
+  const width = Math.min(screenWidth - 20, maxWidth); // margem lateral
+  const height = width * 1.25; // proporção 4:5
+
+  canvas.width = width;
+  canvas.height = height;
+}
+
+window.addEventListener('resize', ajustarCanvas);
+window.onload = function () {
+  ajustarCanvas();
+  startGame();
+};
+
 
 let isPaused = false;
 
