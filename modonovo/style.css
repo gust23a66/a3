@@ -7,10 +7,12 @@ body {
 }
 
 #gameContainer {
-  position: relative;
-  padding: 0 20px 20px 20px; /* remove o padding-top */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 }
-
 
 
 canvas {
@@ -19,8 +21,15 @@ canvas {
 }
 
 #scoreBoard {
-  margin-top: 10px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
   font-size: 18px;
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo translúcido opcional */
+  color: white;
+  padding: 5px 10px;
+  border-radius: 8px;
+  z-index: 10;
 }
 
 #gameOverScreen {
@@ -45,6 +54,7 @@ canvas {
   font-size: 18px;
   cursor: pointer;
 }
+
 #livesContainer {
   position: absolute;
   top: 10px;
@@ -123,10 +133,10 @@ button:active {
   font-size: 28px;
 }
 
-
 #pauseButton:hover {
   transform: scale(1.1);
 }
+
 body.paused #pauseButton,
 body.game-over #pauseButton {
   display: none;
@@ -153,13 +163,56 @@ body.game-over #pauseButton {
   z-index: 10;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
   transition: transform 0.2s;
-transform: translateY(-17px);
+  transform: translateY(-17px);
 
-
-
-  /* NOVO: Centralização do conteúdo */
+  /* Centraliza ícone dentro do botão */
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
+}
+
+/* Responsivo para dispositivos móveis */
+@media (max-width: 600px) {
+  #gameContainer {
+    padding: 10px;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  #pauseButton {
+    top: 5px;
+    right: 5px;
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+  }
+
+  #livesContainer img {
+    width: 20px;
+    height: 20px;
+    margin-right: 3px;
+  }
+
+  button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  #pauseMenu button {
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+
+  #pauseMenu h2 {
+    font-size: 22px;
+  }
+}
+
+html, body {
+  overflow: hidden;
+  height: 100%;
 }
