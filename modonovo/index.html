@@ -2,13 +2,12 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
   <title>Coleta Sustentável</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Botão de Pausa -->
-
 
   <!-- Menu de Pausa -->
   <div id="pauseMenu">
@@ -19,27 +18,26 @@
   </div>
 
   <!-- Container do jogo -->
- <div id="gameContainer">
-  <h1>Coleta Sustentável</h1>
-  <div id="canvasWrapper">
-    <canvas id="gameCanvas" width="400" height="500"></canvas>
-    <button id="pauseButton" onclick="togglePause()">⏸️</button> 
-    <div id="livesContainer"></div>
+  <div id="gameContainer">
+    <h1>Coleta Sustentável</h1>
+    <div id="scoreBoard">Pontuação: <span id="score">0</span></div>
+    <div id="canvasWrapper">
+      <canvas id="gameCanvas" width="400" height="500"></canvas>
+      <button id="pauseButton" onclick="togglePause()">⏸</button> 
+      <div id="livesContainer"></div>
+    </div>
+    
   </div>
-  <div id="scoreBoard">Pontuação: <span id="score">0</span></div>
- 
-</div>
-
-
 
   <!-- Tela de fim de jogo -->
-  <div id="gameOverScreen">
-    <div>
-      <p id="finalScore"></p>
-      <button onclick="restartGame()">Reiniciar</button>
-    </div>
+<!-- Tela de fim de jogo -->
+<div id="gameOverScreen">
+  <div style="display: flex; flex-direction: column; align-items: center;">
+    <p id="finalScore"></p>
+    <button onclick="restartGame()">↻ Reiniciar</button>
+    <button onclick="voltarParaMenu()" style="margin-top: 10px;">⬅ Voltar ao Menu</button>
   </div>
-
+</div>
 
 
   <!-- Script -->
