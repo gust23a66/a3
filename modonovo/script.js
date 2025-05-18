@@ -77,14 +77,11 @@ window.onload = function () {
   startGame();
 };
 
+
 // Atualização do jogo
 function updateGame() {
   if (gameOver || isPaused) return; // Adicione "isPaused" aqui
 
-  
-  if (gameOver) return;
-
-  if (isPaused) return; // <-- pausa o jogo
 
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -254,12 +251,35 @@ function togglePause() {
   document.getElementById('pauseButton').textContent = isPaused ? '▶' : '⏸';
 }
 
-document.getElementById('leftButton').addEventListener('touchstart', () => {
-  if (player.x > 0) player.x -= 20;
-});
 
 document.getElementById('rightButton').addEventListener('touchstart', () => {
   if (player.x + player.width < canvas.width) player.x += 20;
 });
 
 
+let moveInterval = null;
+
+function startMoving(direction) {
+  stopMoving(); // evita múltiplos intervalos
+  moveInterval = setInterval(() => {
+    if (direction === 'left' && player.x > 0) {
+      player.x -= 10;
+    } else if (direction === 'right' && player.x + player.width < canvas.width) {
+      player.x += 10;
+    }
+  }, 16); // 60 FPS
+}
+
+function stopMoving() {
+  if (moveInterval) {
+    clearInterval(moveInterval);
+    moveInterval = null;
+  }
+}
+
+// Setas móveis
+document.getElementById('leftButton').addEventListener('touchstart', () => startMoving('left'));
+document.getElementById('rightButton').addEventListener('touchstart', () => startMoving('right'));
+
+document.getElementById('leftButton').addEventListener('touchend', stopMoving);
+document.getElementById('rightButton').addEventListener('touchend', stopMoving);
