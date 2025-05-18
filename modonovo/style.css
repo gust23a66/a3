@@ -218,43 +218,59 @@ html, body {
 }
 
 /* Oculta por padrão */
+/* Remove a exibição centralizada */
 #mobileControls {
   display: none;
 }
 
-/* Mostra apenas em telas menores que 768px (típico de celulares) */
+/* Exibe os botões e os coloca nos cantos em telas pequenas */
 @media (max-width: 768px) {
   #mobileControls {
+    display: block;
     position: fixed;
     bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 30px;
+    width: 100%;
     z-index: 999;
+    pointer-events: none; /* deixa o container clicável só nos botões */
   }
 
-  #mobileControls button {
+  #leftButton,
+  #rightButton {
+    position: absolute;
+    bottom: 20px;
     width: 60px;
     height: 60px;
     font-size: 30px;
     border: none;
     border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: #246d08;
     color: white;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+    pointer-events: auto;
+    touch-action: none;
+  }
+
+  #leftButton {
+    left: 20px;
+  }
+
+  #rightButton {
+    right: 20px;
+  }
+
+  #canvasWrapper {
+    margin-bottom: 100px; /* espaço para os botões não cobrirem o jogo */
   }
 }
+
+
 #gameCanvas {
   display: block;
-  margin: 20px auto 0 auto; /* sobe o canvas */
+  margin: 5px auto 0 auto; /* sobe o canvas */
 }
 
 body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-}
-#gameCanvas {
-  display: block;
-  margin: 0 auto;
 }
