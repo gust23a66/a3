@@ -1,36 +1,45 @@
-body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  background-color: #e0f7e9;
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100svh;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+
+#gameContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100svh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e0f7e9;
+  overflow: hidden;
+}
+
+#gameCanvas {
+  background-color: #fff;
+  border: none;
+  height: 90svh;
+  aspect-ratio: 9 / 16;
+  max-height: 100svh;
+  max-width: 100vw;
+  display: block;
+  touch-action: none;
+  margin: 0 auto; /* centraliza em layouts que não usam flex */
   padding: 0;
 }
 
-#gameContainer {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-}
 
-
-canvas {
-  background-color: #fff;
-  border: 2px solid #333;
-}
-
-#scoreBoard {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 18px;
-  background-color: rgba(0, 0, 0, 0.5); /* Fundo translúcido opcional */
-  color: white;
-  padding: 5px 10px;
-  border-radius: 8px;
-  z-index: 10;
-}
 
 #gameOverScreen {
   display: none;
@@ -55,13 +64,7 @@ canvas {
   cursor: pointer;
 }
 
-#livesContainer {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  display: flex;
-  z-index: 10;
-}
+
 
 #livesContainer img {
   width: 25px;
@@ -144,44 +147,17 @@ body.game-over #pauseButton {
 
 #canvasWrapper {
   position: relative;
-  width: fit-content;
-  margin: 0 auto;
-}
-
-#pauseButton {
-  position: absolute;
-  top: 0px;
-  right: 1px;
-  background-color: #246d08;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 20px;
-  cursor: pointer;
-  z-index: 10;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  transition: transform 0.2s;
-  transform: translateY(-17px);
-
-  /* Centraliza ícone dentro do botão */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100vw;
+  height: 100svh;
+  margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Responsivo para dispositivos móveis */
 @media (max-width: 600px) {
-  #gameContainer {
-    padding: 10px;
-  }
-
-  canvas {
-    width: 100% !important;
-    height: auto !important;
-  }
+ 
 
   #pauseButton {
     top: 5px;
@@ -212,10 +188,6 @@ body.game-over #pauseButton {
   }
 }
 
-html, body {
-  overflow: hidden;
-  height: 100%;
-}
 
 /* Oculta por padrão */
 /* Remove a exibição centralizada */
@@ -258,16 +230,16 @@ html, body {
     right: 20px;
   }
 
-  #canvasWrapper {
-    margin-bottom: 100px; /* espaço para os botões não cobrirem o jogo */
-  }
+ 
 }
 
 
 #gameCanvas {
-  display: block;
-  margin: 5px auto 0 auto; /* sobe o canvas */
+  flex: 1; /* ocupa o espaço restante depois do topBar */
+  width: 100%;
+  height: 100%;
 }
+
 
 body {
   margin: 0;
@@ -275,3 +247,79 @@ body {
   overflow-x: hidden;
 }
 
+
+#leftButton:active,
+#rightButton:active {
+  transform: scale(0.95);
+  background-color: #1e5806;
+}
+
+#topBar {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+  z-index: 20;
+  pointer-events: none; /* passa eventos apenas para os filhos */
+}
+
+#topBar > * {
+  pointer-events: auto;
+}
+
+#scoreBoard {
+  font-size: 18px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 8px;
+}
+
+#pauseButton {
+  background-color: #246d08;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+#livesContainer {
+  display: flex;
+}
+
+#livesContainer img {
+  width: 25px;
+  height: 25px;
+  margin-right: 5px;
+}
+
+@media (min-width: 768px) {
+  #livesContainer img {
+    width: 35px;
+    height: 35px;
+  }
+
+  #pauseButton {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+
+  #scoreBoard {
+    font-size: 20px;
+    padding: 8px 14px;
+  }
+}
