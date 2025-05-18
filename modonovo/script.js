@@ -1,16 +1,30 @@
+const isPC = !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const acertoSom = new Audio('acerto.mp3');
 const erroSom = new Audio('erro.mp3');
 
 // Jogador e variáveis do jogo
+let baseWidth = 60;
+let baseHeight = 60;
+
+if (isPC) {
+  baseWidth = 80;
+  baseHeight = 80;
+}
 let player = { x: 170, width: 60, height: 60 };
+let lastSpeedIncreaseScore = 0;
+
+
+
 let trash = [];
 let score = 0;
 let lives = 3;
 let gameInterval;
 let trashInterval;
 let gameOver = false;
+let fallSpeed = 4;
+let elapsedTime = 0;
 
 
 // Imagens
@@ -25,6 +39,7 @@ organicTrashImg.src = 'organic_trash.png';
 
 
 
+
 const backgroundImg = new Image();
 backgroundImg.src = 'fundo.png'; // Substitua pelo nome real da sua imagem de fundo
 
@@ -33,6 +48,9 @@ specialTrashImg.src = 'special_trash.png'; // Substitua pelo nome do seu arquivo
 
 // Início do jogo
 function startGame() {
+ 
+  fallSpeed = 4;
+elapsedTime = 0;
   document.getElementById('gameOverScreen').style.display = 'none';
   score = 0;
   lives = 3;
@@ -71,17 +89,49 @@ function drawHearts() {
     container.appendChild(img);
   }
 }
+function ajustarCanvas() {
+  const maxWidth = 500;
+  const width = Math.min(window.innerWidth - 20, maxWidth);
+  const height = width * 1.25;
 
-window.onload = function () {
+  canvas.width = width;
+  canvas.height = height;
+}
+
+// Sempre ajustar quando a tela mudar
+window.addEventListener("resize", () => {
   ajustarCanvas();
-  startGame();
-};
+  ajustarTamanhos(); // adiciona isso!
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  ajustarCanvas();
+  ajustarTamanhos(); // ✅ agora sim é executado
+  loadImages(startGame);
+});
 
 
-// Atualização do jogo
+function ajustarTamanhos() {
+  player.x = (canvas.width - player.width) / 2;
+
+  if (isMobile()) {
+    player.width = 60;
+    player.height = 50;
+  } else {
+    player.width = 40;    // ajuste como quiser
+    player.height = 80;
+  }
+}
+
+
+
 function updateGame() {
-  if (gameOver || isPaused) return; // Adicione "isPaused" aqui
+  if (gameOver || isPaused) return;
 
+if (score >= lastSpeedIncreaseScore + 10 && fallSpeed < 15) {
+  fallSpeed += 0.5;
+  lastSpeedIncreaseScore = score;
+}
 
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -95,21 +145,27 @@ function updateGame() {
   // Lixo
   for (let i = 0; i < trash.length; i++) {
     let t = trash[i];
-    t.y += 4;
+    t.y += fallSpeed;
 
     const img = 
       t.type === 'organic' ? organicTrashImg :
       t.type === 'special' ? specialTrashImg :
       trashImg;
 
-    ctx.drawImage(img, t.x, t.y, t.size, t.size);
+    let drawSize = t.size;
+    if (t.type === 'special') {
+      drawSize *= 1.5;
+    }
 
-    // Colisão com a lixeira
+    ctx.drawImage(img, t.x, t.y, t.width, t.height);
+
+
+    // Colisão
     if (
-      t.y + t.size >= canvas.height - player.height &&
-      t.x < player.x + player.width &&
-      t.x + t.size > player.x
-    ) {
+  t.y + t.height >= canvas.height - player.height &&
+  t.x < player.x + player.width &&
+  t.x + t.width > player.x
+) {
       if (t.type === 'recycle') {
         score++;
         acertoSom.play();
@@ -119,21 +175,20 @@ function updateGame() {
         if (lives <= 0) endGame();
       } else if (t.type === 'special') {
         score += 10;
-        acertoSom.play(); // ou um som especial
+        acertoSom.play();
       }
 
       trash.splice(i, 1);
       i--;
       document.getElementById('score').innerText = score;
       drawHearts();
-    }
-
-    // Se cair no chão (sem penalidade)
-    else if (t.y > canvas.height) {
+    } else if (t.y > canvas.height) {
       trash.splice(i, 1);
       i--;
     }
   }
+
+
 }
 
   function voltarParaMenu() {
@@ -143,22 +198,35 @@ function updateGame() {
 
 // Gerar lixo
 function spawnTrash() {
-  if (isPaused || gameOver) return; // ✅ IMPORTANTE
+  if (isPaused || gameOver) return;
 
-  let size = 30;
-  let x = Math.random() * (canvas.width - size);
+let baseWidth, baseHeight;
+
+if (isMobile()) {
+  baseWidth = 25;
+  baseHeight = 25;
+} else {
+  baseWidth = 15;  // 👈 Aqui você define a largura no PC
+  baseHeight = 40; // 👈 Aqui a altura no PC
+}
+
+let x = Math.random() * (canvas.width - baseWidth);
+
   let random = Math.random();
   let type;
 
   if (random < 0.1) {
-    type = 'special'; // 10%
+    type = 'special';
+  
   } else if (random < 0.3) {
-    type = 'organic'; // 20%
+    type = 'organic';
   } else {
-    type = 'recycle'; // 70%
+    type = 'recycle';
   }
 
-  trash.push({ x, y: 0, size, type });
+trash.push({ x, y: 0, width: baseWidth, height: baseHeight, type });
+
+
 }
 
 
@@ -188,42 +256,50 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
-// Controle por mouse (arrastar)
-canvas.addEventListener('mousemove', function (e) {
-  const rect = canvas.getBoundingClientRect();
-  let mouseX = e.clientX - rect.left;
-  if (mouseX < 0) mouseX = 0;
-  if (mouseX > canvas.width - player.width) mouseX = canvas.width - player.width;
-  player.x = mouseX;
-});
+
+
 
 // Controle por toque (touch) para celular
-canvas.addEventListener('touchmove', function (e) {
-  e.preventDefault(); // evita scroll da página enquanto toca
+// Mouse
+canvas.addEventListener("mousemove", function (e) {
   const rect = canvas.getBoundingClientRect();
-  let touchX = e.touches[0].clientX - rect.left;
-  if (touchX < 0) touchX = 0;
-  if (touchX > canvas.width - player.width) touchX = canvas.width - player.width;
-  player.x = touchX;
+
+  const scaleX = canvas.width / rect.width;
+  const mouseX = (e.clientX - rect.left) * scaleX;
+
+  player.x = Math.min(Math.max(mouseX - player.width / 2, 0), canvas.width - player.width);
+});
+
+
+// Toque
+canvas.addEventListener('touchmove', function (e) {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const touchX = e.touches[0].clientX - rect.left;
+  player.x = Math.min(Math.max(touchX - player.width / 2, 0), canvas.width - player.width);
 }, { passive: false });
+
+
 
 
 function loadImages(callback) {
   let loaded = 0;
-  const total = 7; // Corrigido para contar TODAS as imagens
+  const total = 7;
 
   function checkLoaded() {
     loaded++;
     if (loaded === total) callback();
   }
 
-  binImg.onload = checkLoaded;
-  trashImg.onload = checkLoaded;
-  organicTrashImg.onload = checkLoaded;
-  backgroundImg.onload = checkLoaded;
-  specialTrashImg.onload = checkLoaded;
-  heartFullImg.onload = checkLoaded;
-  heartEmptyImg.onload = checkLoaded;
+  const images = [binImg, trashImg, organicTrashImg, backgroundImg, specialTrashImg, heartFullImg, heartEmptyImg];
+
+  images.forEach(img => {
+    if (img.complete) {
+      checkLoaded();
+    } else {
+      img.onload = checkLoaded;
+    }
+  });
 }
 
 
@@ -239,7 +315,13 @@ function ajustarCanvas() {
   canvas.height = height;
 }
 
-window.addEventListener('resize', ajustarCanvas);
+window.addEventListener("load", () => {
+  ajustarCanvas();
+  ajustarTamanhos();  // ✅ importante
+  loadImages(startGame);
+});
+
+
 
 
 
@@ -252,9 +334,6 @@ function togglePause() {
 }
 
 
-document.getElementById('rightButton').addEventListener('touchstart', () => {
-  if (player.x + player.width < canvas.width) player.x += 20;
-});
 
 
 let moveInterval = null;
@@ -277,9 +356,46 @@ function stopMoving() {
   }
 }
 
-// Setas móveis
-document.getElementById('leftButton').addEventListener('touchstart', () => startMoving('left'));
-document.getElementById('rightButton').addEventListener('touchstart', () => startMoving('right'));
 
-document.getElementById('leftButton').addEventListener('touchend', stopMoving);
-document.getElementById('rightButton').addEventListener('touchend', stopMoving);
+function toggleFullScreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  }
+}
+
+function handleTouch(e) {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const touchX = e.touches[0].clientX - rect.left;
+  const clampedX = Math.min(Math.max(touchX - player.width / 2, 0), canvas.width - player.width);
+  player.x = clampedX;
+}
+
+canvas.addEventListener('touchstart', handleTouch, { passive: false });
+canvas.addEventListener('touchmove', handleTouch, { passive: false });
+
+
+
+function isMobile() {
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+
+function ativarTelaCheiaMobile() {
+  if (
+    isMobile() &&
+    !document.fullscreenElement &&
+    document.documentElement.requestFullscreen
+  ) {
+    document.documentElement.requestFullscreen();
+  }
+  canvas.removeEventListener('touchstart', ativarTelaCheiaMobile);
+  canvas.removeEventListener('click', ativarTelaCheiaMobile);
+}
+
+// Apenas no mobile: ativa fullscreen no primeiro toque ou clique
+canvas.addEventListener('touchstart', ativarTelaCheiaMobile);
+canvas.addEventListener('click', ativarTelaCheiaMobile);
