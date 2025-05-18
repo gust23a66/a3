@@ -1,698 +1,292 @@
-document.addEventListener('DOMContentLoaded', () => {
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const acertoSom = new Audio('acerto.mp3');
+const erroSom = new Audio('erro.mp3');
 
-    const startButton = document.getElementById("startButton");
-    const rankingButton = document.getElementById("rankingButton");
-    const achievementsButton = document.getElementById("achievementsButton");
-    const musicToggleButton = document.getElementById("musicToggleButton");
-    const backToLoginButton = document.getElementById("backToLogin");
-    const backToLoginFromAchievementsButton = document.getElementById("backToLoginFromAchievements");
-    const restartButton = document.getElementById("restartButton");
-    const menuButton = document.getElementById("menuButton");
-    const exitButton = document.getElementById("exitButton");
-    const darkModeToggleButton = document.getElementById("darkModeToggleButton");
-    const winScreen = document.getElementById("winScreen");
-    const temas = ["lixo", "energia", "alimentacao", "agua"];
+// Jogador e variáveis do jogo
+let player = { x: 170, width: 60, height: 60 };
+let trash = [];
+let score = 0;
+let lives = 3;
+let gameInterval;
+let trashInterval;
+let gameOver = false;
 
 
-    const loginScreen = document.getElementById("loginScreen");
-    const gameScreen = document.getElementById("gameScreen");
-    const rankingScreen = document.getElementById("rankingScreen");
-    const achievementsScreen = document.getElementById("achievementsScreen");
-    const feedbackMessage = document.getElementById("feedbackMessage");
-    const gameOverMessage = document.getElementById("gameOverMessage");
-    const timeLeftDisplay = document.getElementById("timeLeft");
-    const errorCountDisplay = document.getElementById("errorCount");
-    const restartButtonWin = document.getElementById("restartButtonWin");
-    const menuButtonWin = document.getElementById("menuButtonWin");
-    const difficultyScreen = document.getElementById("difficultyScreen");
-    const ALL_ACHIEVEMENTS = [
-    "Primeira Vitória",
-    "Perfeição Verde",
-    "Quase Lá!",
-    "Persistente",
-    "Viciado em Sustentabilidade",
-    "Rápido no Gatilho",
-    "Relâmpago Verde",
-    "Sem Pressa",
-    "Rei da Reciclagem",
-    "Herói da Energia",
-    "Mestre da Alimentação",
-    "Desafio Aceito",
-    "Veterano Verde",
-    "Aprendiz Verde",
-    "Primeiro Erro",
-    "Sem Segunda Chance",
-    "Começo Promissor",
-    "Primeira Resposta Correta ✅",
-    "Respondeu 5 Perguntas Corretamente 🎓",
-    "Acertou 3 seguidas 🔥",
-    "Pontuação 100 🔥",
-    "Partida Perfeita 🎯",
-    "Jogou 5 Partidas 🎮",
-    "Zero Erros 🌟",
-    "Tempo Sobrando ⏳",
-    "Resiliente 💪",
-    "Acabou o tempo ⏰",
-    "Resposta Rápida ⚡"
-];
+// Imagens
+const binImg = new Image();
+binImg.src = 'bin.png';
+
+const trashImg = new Image();
+trashImg.src = 'trash.png';
+
+const organicTrashImg = new Image();
+organicTrashImg.src = 'organic_trash.png';
 
 
 
-    restartButtonWin.addEventListener("click", () => {
-        winScreen.style.display = "none";
-        startGame();
-    });
-    
-    menuButtonWin.addEventListener("click", showLoginScreen);
-    
-   let musicPlaying = true;
+const backgroundImg = new Image();
+backgroundImg.src = 'fundo.png'; // Substitua pelo nome real da sua imagem de fundo
 
-const audio = new Audio('musica_fundo.mp3');
-audio.loop = true;
-audio.addEventListener('canplaythrough', () => { 
-    if (musicPlaying) audio.play();
-});
+const specialTrashImg = new Image();
+specialTrashImg.src = 'special_trash.png'; // Substitua pelo nome do seu arquivo
 
-audio.loop = true;
-const acertoAudio = new Audio('acerto.mp3');
-const erroAudio = new Audio('erro.mp3');
+// Início do jogo
+function startGame() {
+  document.getElementById('gameOverScreen').style.display = 'none';
+  score = 0;
+  lives = 3;
+  trash = [];
+  gameOver = false;
+  document.getElementById('score').innerText = score;
 
-   let gamesPlayed = parseInt(localStorage.getItem("gamesPlayed") || "0");
-   let correctAnswersCount = 0;
-   let correctStreak = 0; 
-   let shuffledThemes = [];
-   let currentThemeIndex = 0;
-   let startTime = 0;
-   let questionStartTime = 0;
-   let gameStartTime = 0;
-   let errorsMade = 0;
-   let correctByTheme = {
-  "Lixo": 0,
-  "Energia": 0,
-  "Água": 0,
-  "Alimentação": 0
+  if (gameInterval) clearInterval(gameInterval);
+  if (trashInterval) clearInterval(trashInterval);
+
+  gameInterval = setInterval(updateGame, 20);
+  trashInterval = setInterval(spawnTrash, 1000);
+
+  isPaused = false;
+document.getElementById('pauseMenu').style.display = 'none';
+document.getElementById('pauseButton').textContent = '⏸';
+
+drawHearts(); // mostra os corações no início
+
+}
+
+// Desenhar corações (vidas)
+const heartFullImg = new Image();
+heartFullImg.src = 'heart_full.png';
+
+const heartEmptyImg = new Image();
+heartEmptyImg.src = 'heart_empty.png';
+
+function drawHearts() {
+  const container = document.getElementById('livesContainer');
+  container.innerHTML = '';
+  const totalLives = 3;
+  for (let i = 0; i < totalLives; i++) {
+    const img = document.createElement('img');
+    img.src = i < lives ? heartFullImg.src : heartEmptyImg.src;
+    container.appendChild(img);
+  }
+}
+
+window.onload = function () {
+  ajustarCanvas();
+  startGame();
 };
 
 
+// Atualização do jogo
+function updateGame() {
+  if (gameOver || isPaused) return; // Adicione "isPaused" aqui
 
-  
-difficultyScreen.addEventListener("click", (e) => {
-    if (e.target.classList.contains("difficultyBtn")) {
-        const nivel = e.target.getAttribute("data-dificuldade");
-        escolherDificuldade(nivel);
+
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Fundo
+  ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+
+  // Jogador
+  ctx.drawImage(binImg, player.x, canvas.height - player.height, player.width, player.height);
+
+  // Lixo
+  for (let i = 0; i < trash.length; i++) {
+    let t = trash[i];
+    t.y += 4;
+
+    const img = 
+      t.type === 'organic' ? organicTrashImg :
+      t.type === 'special' ? specialTrashImg :
+      trashImg;
+
+   let drawSize = t.size;
+
+if (t.type === 'special') {
+  drawSize = t.size * 1.5; // aumenta 50% o tamanho da garrafa especial
+}
+
+ctx.drawImage(img, t.x, t.y, drawSize, drawSize);
+
+
+    // Colisão com a lixeira
+    if (
+      t.y + t.size >= canvas.height - player.height &&
+      t.x < player.x + player.width &&
+      t.x + t.size > player.x
+    ) {
+      if (t.type === 'recycle') {
+        score++;
+        acertoSom.play();
+      } else if (t.type === 'organic') {
+        erroSom.play();
+        lives--;
+        if (lives <= 0) endGame();
+      } else if (t.type === 'special') {
+        score += 10;
+        acertoSom.play(); // ou um som especial
+      }
+
+      trash.splice(i, 1);
+      i--;
+      document.getElementById('score').innerText = score;
+      drawHearts();
     }
+
+    // Se cair no chão (sem penalidade)
+    else if (t.y > canvas.height) {
+      trash.splice(i, 1);
+      i--;
+    }
+  }
+}
+
+  function voltarParaMenu() {
+    window.location.href = "../index.html"; // volta para a raiz
+  }
+
+
+// Gerar lixo
+function spawnTrash() {
+  if (isPaused || gameOver) return; // ✅ IMPORTANTE
+
+  let size = 30;
+  let x = Math.random() * (canvas.width - size);
+  let random = Math.random();
+  let type;
+
+  if (random < 0.1) {
+    type = 'special'; // 10%
+  } else if (random < 0.3) {
+    type = 'organic'; // 20%
+  } else {
+    type = 'recycle'; // 70%
+  }
+
+  trash.push({ x, y: 0, size, type });
+}
+
+
+// Fim de jogo
+function endGame() {
+  clearInterval(gameInterval);
+  clearInterval(trashInterval);
+  gameOver = true;
+  document.getElementById('finalScore').innerText = `Pontuação final: ${score}`;
+  document.getElementById('gameOverScreen').style.display = 'flex';
+  document.body.classList.add('game-over');
+}
+
+// Reiniciar
+function restartGame() {
+  document.body.classList.remove('game-over');
+  startGame();
+}
+
+// Controle por teclado (setas)
+document.addEventListener('keydown', function (e) {
+  const speed = 20;
+  if (e.key === 'ArrowLeft' && player.x > 0) {
+    player.x -= speed;
+  } else if (e.key === 'ArrowRight' && player.x + player.width < canvas.width) {
+    player.x += speed;
+  }
+});
+
+// Controle por mouse (arrastar)
+canvas.addEventListener('mousemove', function (e) {
+  const rect = canvas.getBoundingClientRect();
+  let mouseX = e.clientX - rect.left;
+  if (mouseX < 0) mouseX = 0;
+  if (mouseX > canvas.width - player.width) mouseX = canvas.width - player.width;
+  player.x = mouseX;
+});
+
+// Controle por toque (touch) para celular
+canvas.addEventListener('touchmove', function (e) {
+  e.preventDefault(); // evita scroll da página enquanto toca
+  const rect = canvas.getBoundingClientRect();
+  let touchX = e.touches[0].clientX - rect.left;
+  if (touchX < 0) touchX = 0;
+  if (touchX > canvas.width - player.width) touchX = canvas.width - player.width;
+  player.x = touchX;
+}, { passive: false });
+
+
+function loadImages(callback) {
+  let loaded = 0;
+  const total = 7; // Corrigido para contar TODAS as imagens
+
+  function checkLoaded() {
+    loaded++;
+    if (loaded === total) callback();
+  }
+
+  binImg.onload = checkLoaded;
+  trashImg.onload = checkLoaded;
+  organicTrashImg.onload = checkLoaded;
+  backgroundImg.onload = checkLoaded;
+  specialTrashImg.onload = checkLoaded;
+  heartFullImg.onload = checkLoaded;
+  heartEmptyImg.onload = checkLoaded;
+}
+
+
+
+// Ajustar canvas para dispositivos móveis
+function ajustarCanvas() {
+  const maxWidth = 500;
+  const screenWidth = window.innerWidth;
+  const width = Math.min(screenWidth - 20, maxWidth); // margem lateral
+  const height = width * 1.25; // proporção 4:5
+
+  canvas.width = width;
+  canvas.height = height;
+}
+
+window.addEventListener('resize', ajustarCanvas);
+
+
+
+let isPaused = false;
+
+function togglePause() {
+  isPaused = !isPaused;
+  document.getElementById('pauseMenu').style.display = isPaused ? 'flex' : 'none';
+  document.getElementById('pauseButton').textContent = isPaused ? '▶' : '⏸';
+}
+
+
+document.getElementById('rightButton').addEventListener('touchstart', () => {
+  if (player.x + player.width < canvas.width) player.x += 20;
 });
 
 
-  
-  const challenges = {
-        "Água": [
-    {
-        "question": "Qual dessas ações ajuda a economizar água?",
-        "options": [
-            "Tomar banhos longos",
-            "Escovar os dentes com a torneira aberta",
-            "Reutilizar a água da chuva",
-            "Lavar o carro todo dia"
-        ],
-        "answer": "Reutilizar a água da chuva"
-    },
-   ],
-       
- 
+let moveInterval = null;
 
-        "Energia": [
-    {
-        "question": "Qual lâmpada consome menos energia?",
-        "options": ["Incandescente", "Halógena", "LED", "Fluorescente"],
-        "answer": "LED"
-    },
-    ],
-    
-    "Lixo": [
-    {
-        "question": "Qual cor da lixeira é destinada ao descarte de papel?",
-        "options": ["Azul", "Verde", "Amarela", "Preta"],
-        "answer": "Azul"
-    },
-   ],
-
-       "Alimentação": [
-    {
-        "question": "Uma alimentação sustentável inclui:",
-        "options": ["Alimentos ultraprocessados", "Produtos locais e sazonais", "Refrigerantes", "Fast food"],
-        "answer": "Produtos locais e sazonais"
-    },
-    
-]
-
+function startMoving(direction) {
+  stopMoving(); // evita múltiplos intervalos
+  moveInterval = setInterval(() => {
+    if (direction === 'left' && player.x > 0) {
+      player.x -= 10;
+    } else if (direction === 'right' && player.x + player.width < canvas.width) {
+      player.x += 10;
     }
-
-
-    let username = "";
-    let currentTheme = "";
-    let currentQuestion = 0;
-    let score = 0;
-    let currentSessionAchievements = [];
-    let errorCount = 0;
-    let timeLeft = 30;
-    let timerInterval;
-    let shuffledQuestions = [];
-    let currentDifficulty = "dificil"; 
-    let perdeuSeguidas = parseInt(localStorage.getItem("perdeuSeguidas") || "0");
-
-
-  
-    function toggleMusic() {
-        if (musicPlaying) {
-            audio.pause();
-            musicToggleButton.textContent = "🔇 Ligar Música";
-        } else {
-            audio.play();
-            musicToggleButton.textContent = "🔈 Desligar Música";
-        }
-        musicPlaying = !musicPlaying;
-    }
-
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]]; 
-        }
-        return array;
-    }
-    
-
-
-    function startGame() {
-        username = document.getElementById("username").value.trim();
-        if (!username) {
-            feedbackMessage.textContent = "⚠️ Por favor, digite seu nome!";
-            feedbackMessage.style.display = "block";
-            setTimeout(() => {
-                feedbackMessage.style.display = "none";
-            }, 2000);
-            return;
-        }
-    
-           loginScreen.style.display = "none";
-    difficultyScreen.style.display = "block";
-    
-        if (musicPlaying) audio.play();
-    
-       
-    }
-    
-
-   function resetGame() {
-    score = 0;
-    errorCount = 0;
-    currentQuestion = 0;
-    correctAnswersCount = 0;
-    correctStreak = 0;
-    correctByTheme = {
-        "Água": 0,
-        "Energia": 0,
-        "Lixo": 0,
-        "Alimentação": 0
-    };
-
-    timeLeft = getInitialTimeByDifficulty();
-    timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
-    errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
-
- 
-   shuffledQuestions = shuffleArray(
-    Object.entries(challenges).flatMap(([tema, perguntas]) =>
-        perguntas.map(pergunta => ({ ...pergunta, tema }))
-    )
-);
-currentQuestion = 0;
-
-
-    loadQuestion();
-    startTimer();
+  }, 16); // 60 FPS
 }
 
-    
-    
-
-    function startTimer() {
-    clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            unlockAchievement("Acabou o tempo ⏰");  
-            showGameOver();
-        }
-    }, 1000);
+function stopMoving() {
+  if (moveInterval) {
+    clearInterval(moveInterval);
+    moveInterval = null;
+  }
 }
 
-    function loadQuestion() {
-        questionStartTime = Date.now(); 
-    
-        const question = shuffledQuestions[currentQuestion];
-    
-       document.getElementById("themeTitle").textContent = `Tema: ${question.tema}`;
-
-        document.getElementById("questionText").textContent = question.question;
-    
-if (!question.options || question.options.length === 0) {
-    feedbackMessage.textContent = "⚠️ Pergunta inválida. Verifique os dados.";
-    return;
-}
-
-        const optionsContainer = document.getElementById("options");
-        optionsContainer.innerHTML = '';
-    
-        const shuffledOptions = shuffleArray([...question.options]);
-    
-        shuffledOptions.forEach(option => {
-            const button = document.createElement("button");
-            button.textContent = option;
-            button.onclick = () => checkAnswer(option);
-            optionsContainer.appendChild(button);
-        });
-    }
-    
-   function checkAnswer(selected) {
-    const current = shuffledQuestions[currentQuestion];
-   
-
-
-    const correctAnswer = current.answer;
-
-    const timeTaken = (Date.now() - questionStartTime) / 1000;
-    let bonus = 0;
-
-    if (timeTaken <= 3) {
-        bonus = 5;
-        if (timeTaken <= 2) {
-            unlockAchievement("Resposta Rápida ⚡");  
-        }
-    } else if (timeTaken <= 6) {
-        bonus = 3;
-    } else if (timeTaken <= 10) {
-        bonus = 1;
-    }
-
-    if (selected === correctAnswer) {
-        correctAnswersCount++;
-        feedbackMessage.textContent = "✅ Você acertou!";
-        score += 10 + bonus;
-        if (correctAnswersCount === 5) {
-    unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
-}
-        correctStreak++;
-
-        timeLeft = Math.min(timeLeft + 5, getInitialTimeByDifficulty());
-
-        timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
-
-        acertoAudio.play();
-        document.getElementById("scoreValue").textContent = score;
-
-      const tema = current.tema;
-
-correctByTheme[tema] = (correctByTheme[tema] || 0) + 1;
-
-if (correctByTheme[tema] === 5) {
-    unlockAchievement(`Mestre da ${tema}`);
-}
-
-const venceu = Object.values(correctByTheme).every(count => count >= 5);
-if (venceu) {
-    clearInterval(timerInterval);
-    showWinScreen();
-    return;
-}
-
-
-        if (correctStreak === 3) {
-            unlockAchievement("Acertou 3 seguidas 🔥");
-        }
-        if (score === 10) {
-            unlockAchievement("Primeira Resposta Correta ✅");
-        }
-        if (score >= 100) {
-            unlockAchievement("Pontuação 100 🔥");
-        }
-
-        nextQuestion();
-    } else {
-        feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
-        errorCount++;
-        correctStreak = 0;
-        erroAudio.play();
-
-        errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
-
-        if (errorCount >= 3) {
-            clearInterval(timerInterval);
-            setTimeout(showGameOver, 1000);
-        } else {
-            nextQuestion();
-        }
-    }
-
-    feedbackMessage.style.display = "block";
-    setTimeout(() => (feedbackMessage.style.display = "none"), 2000);
-}
-    
-    
-    function nextQuestion() {
-        currentQuestion++;
-    
-        
-        if (currentQuestion >= shuffledQuestions.length) {
-            currentThemeIndex++;
-            if (currentThemeIndex >= shuffledThemes.length) {
-                clearInterval(timerInterval); 
-                showWinScreen(); 
-                return;
-            }
-            currentTheme = shuffledThemes[currentThemeIndex];
-            shuffledQuestions = shuffleArray([...challenges[currentTheme]]);
-            currentQuestion = 0;
-        }
-    
-        loadQuestion(); 
-    }
-    
-    
-    function showWinScreen() {
-        unlockAchievement("Primeira Vitória");
-
-if (errorCount === 0 && timeLeft > 15) {
-    unlockAchievement("Perfeição Verde");
-}
-    updateRanking();
-    loginScreen.style.display = "none";
-    gameScreen.style.display = "none";
-    rankingScreen.style.display = "none";
-    achievementsScreen.style.display = "none";
-    gameOverMessage.style.display = "none";
-
-    document.getElementById("finalScoreWin").textContent = `Pontuação Final: ${score}`;
-    
-   
-    const sessionAchievementsDiv = document.getElementById("sessionAchievements");
-    if (currentSessionAchievements.length > 0) {
-        sessionAchievementsDiv.innerHTML = "<h3>🏆 Conquistas desbloqueadas:</h3>" +
-            "<ul>" + currentSessionAchievements.map(a => `<li>🏅 ${a}</li>`).join('') + "</ul>";
-    } else {
-        sessionAchievementsDiv.innerHTML = "<p>Nenhuma conquista desbloqueada nesta partida.</p>";
-    }
-
-    winScreen.style.display = "block";
-
-    setTimeout(() => {
-        winScreen.classList.add("show");
-    }, 50);
-
-
-    currentSessionAchievements = [];
-    gamesPlayed++;
-    localStorage.setItem("gamesPlayed", gamesPlayed);
-
-if (gamesPlayed === 1) {
-    unlockAchievement("Aprendiz Verde");
-}
-if (gamesPlayed === 10) {
-    unlockAchievement("Veterano Verde");
-}
-if (gamesPlayed === 20) {
-    unlockAchievement("Viciado em Sustentabilidade");
-}
-
-perdeuSeguidas = 0;
-localStorage.setItem("perdeuSeguidas", perdeuSeguidas);
-
-
-}
-
-    
-  function escolherDificuldade(nivel) {
-    if (nivel === "dificil") {
-    unlockAchievement("Desafio Aceito");
-}
-    currentDifficulty = nivel;
-    switch (nivel) {
-        case "facil":
-            timeLeft = 100;
-            break;
-        case "medio":
-            timeLeft = 60;
-            break;
-        case "dificil":
-            timeLeft = 30;
-            break;
-        default:
-            timeLeft = 30;
-    }
-
-    difficultyScreen.style.display = "none";
-    gameScreen.style.display = "block";
-
-    resetGame();
-}
-
-function getInitialTimeByDifficulty() {
-    switch(currentDifficulty) {
-        case "facil": return 100;
-        case "medio": return 60;
-        case "dificil": return 30;
-        default: return 30;
-    }
-}
-
-       function updateRanking() {
-    let players = JSON.parse(localStorage.getItem("ranking")) || [];
-
-   const existingPlayerIndex = players.findIndex(player => player.name.toLowerCase() === username.toLowerCase());
-
-    if (existingPlayerIndex !== -1) {
-        if (score > players[existingPlayerIndex].score) {
-            players[existingPlayerIndex].score = score;
-        }
-    } else {
-        players.push({ name: username, score: score });
-    }
-
-    players.sort((a, b) => b.score - a.score);
-
-    localStorage.setItem("ranking", JSON.stringify(players));
-}
- 
-    function showGameOver() {
-        if (score >= 80 && errorCount >= 3) {
-    unlockAchievement("Quase Lá!");
-}
-
-    updateRanking();
-
-    if (errorCount === 0) {
-        unlockAchievement("Partida Perfeita 🎯");
-        gamesPlayed++;
-        localStorage.setItem("gamesPlayed", gamesPlayed);
-
-        if (gamesPlayed === 5) {
-            unlockAchievement("Jogou 5 Partidas 🎮");
-        }
-        unlockAchievement("Zero Erros 🌟");
-
-        if (timeLeft > 15) {
-            unlockAchievement("Tempo Sobrando ⏳");
-        }
-    }
-
-   
-    if (errorCount === 2) {
-        unlockAchievement("Resiliente 💪");
-    }
-
-    const gameOverMessage = document.getElementById("gameOverMessage");
-    const finalScore = document.getElementById("finalScore");
-
-    document.getElementById("gameScreen").style.display = "none";
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("rankingScreen").style.display = "none";
-    document.getElementById("achievementsScreen").style.display = "none";
-
-    finalScore.textContent = `Pontuação Final: ${score}`;
-
-    gameOverMessage.style.display = "block";
-    setTimeout(() => {
-        gameOverMessage.classList.add("show");
-    }, 50);
-
-gamesPlayed++;
-localStorage.setItem("gamesPlayed", gamesPlayed);
-
-if (gamesPlayed === 1) {
-    unlockAchievement("Aprendiz Verde");
-}
-if (gamesPlayed === 10) {
-    unlockAchievement("Veterano Verde");
-}
-if (gamesPlayed === 20) {
-    unlockAchievement("Viciado em Sustentabilidade");
-}
-
-perdeuSeguidas++;
-localStorage.setItem("perdeuSeguidas", perdeuSeguidas);
-
-if (perdeuSeguidas === 3) {
-    unlockAchievement("Persistente");
-}
-
-
-}
-    
-    
-
-    function getRandomTheme() {
-        const themes = Object.keys(challenges);
-        return themes[Math.floor(Math.random() * themes.length)];
-    }
-
-    function showLoginScreen() {
-        loginScreen.style.display = "block";
-        gameScreen.style.display = "none";
-        rankingScreen.style.display = "none";
-        achievementsScreen.style.display = "none";
-        gameOverMessage.style.display = "none";
-        document.getElementById("winScreen").style.display = "none"; 
-    }
-    
-    function toggleDarkMode() {
-        
-        document.body.classList.toggle('dark-mode');
-        gameScreen.classList.toggle('dark-mode');
-        loginScreen.classList.toggle('dark-mode');
-        rankingScreen.classList.toggle('dark-mode');
-        achievementsScreen.classList.toggle('dark-mode');
-        gameOverMessage.classList.toggle('dark-mode');
-        
-     
-        if (document.body.classList.contains('dark-mode')) {
-            darkModeToggleButton.textContent = "☀️ Modo Claro";
-        } else {
-            darkModeToggleButton.textContent = "🌙 Modo Black";
-        }
-    }
-    
-    
-
-    function showRanking() {
-        loginScreen.style.display = "none";
-        gameScreen.style.display = "none";
-        achievementsScreen.style.display = "none";
-        gameOverMessage.style.display = "none";
-        rankingScreen.style.display = "block";
-    
-        
-        const rankingList = document.getElementById("rankingList");
-        const players = JSON.parse(localStorage.getItem("ranking")) || [];
-    
-        players.sort((a, b) => b.score - a.score);
-    
-      
-        rankingList.innerHTML = players.map(player => `<p>${player.name}: ${player.score} pontos</p>`).join('');
-    }
-    
-    function verificarConquistasFinais() {
-    if (errorCount === 0) {
-        unlockAchievement("Partida Perfeita 🎯");
-        unlockAchievement("Zero Erros 🌟");
-
-        if (timeLeft > 15) {
-            unlockAchievement("Tempo Sobrando ⏳");
-        }
-    }
-
-    if (score >= 80 && errorCount >= 3) {
-        unlockAchievement("Quase Lá!");
-    }
-
-    if (errorCount === 2) {
-        unlockAchievement("Resiliente 💪");
-    }
-
-    if (gamesPlayed === 1) {
-        unlockAchievement("Aprendiz Verde");
-    } else if (gamesPlayed === 10) {
-        unlockAchievement("Veterano Verde");
-    } else if (gamesPlayed === 20) {
-        unlockAchievement("Viciado em Sustentabilidade");
-    }
-
-    if (perdeuSeguidas === 3) {
-        unlockAchievement("Persistente");
-    }
-}
-
-
-    function showAchievements() {
-    loginScreen.style.display = "none";
-    gameScreen.style.display = "none";
-    rankingScreen.style.display = "none";
-    gameOverMessage.style.display = "none";
-    achievementsScreen.style.display = "block";
-
-    const achievementsList = document.getElementById("achievementsList");
-    achievementsList.innerHTML = "";
-
-    const unlocked = JSON.parse(localStorage.getItem("achievements")) || [];
-
-    ALL_ACHIEVEMENTS.forEach(achievement => {
-        const p = document.createElement("p");
-        p.textContent = unlocked.includes(achievement)
-            ? `🏅 ${achievement}`
-            : `🔒 ${achievement}`;
-        achievementsList.appendChild(p);
-    });
-}
-
-    
-function unlockAchievement(achievementName) {
-    let achievements = JSON.parse(localStorage.getItem("achievements")) || [];
-
-    if (!achievements.includes(achievementName)) {
-        achievements.push(achievementName);
-        localStorage.setItem("achievements", JSON.stringify(achievements));
-        
-       
-        currentSessionAchievements.push(achievementName);
-    }
-}
- 
-
-    function exitGame() {
-        window.close();
-    }
-
-  
-    startButton.addEventListener("click", startGame);
-    rankingButton.addEventListener("click", showRanking);
-    achievementsButton.addEventListener("click", showAchievements);
-    musicToggleButton.addEventListener("click", toggleMusic);
-    darkModeToggleButton.addEventListener("click", toggleDarkMode);
-    backToLoginButton.addEventListener("click", showLoginScreen);
-    backToLoginFromAchievementsButton.addEventListener("click", showLoginScreen);
-    restartButton.addEventListener("click", () => {
-        gameOverMessage.style.display = "none";
-        gameScreen.style.display = "block";
-       resetGame();
-    });
-    menuButton.addEventListener("click", showLoginScreen);
-    exitButton.addEventListener("click", exitGame);
-});
-
-
-function abrirModoColeta() {
-  window.location.href = "modonovo/index.html";
-}
-
+// Setas móveis
+document.getElementById('leftButton').addEventListener('touchstart', () => startMoving('left'));
+document.getElementById('rightButton').addEventListener('touchstart', () => startMoving('right'));
+
+document.getElementById('leftButton').addEventListener('touchend', stopMoving);
+document.getElementById('rightButton').addEventListener('touchend', stopMoving);
