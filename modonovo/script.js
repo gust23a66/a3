@@ -23,8 +23,7 @@ trashImg.src = 'trash.png';
 const organicTrashImg = new Image();
 organicTrashImg.src = 'organic_trash.png';
 
-const heartImg = new Image();
-heartImg.src = 'heart.png';
+
 
 const backgroundImg = new Image();
 backgroundImg.src = 'fundo.png'; // Substitua pelo nome real da sua imagem de fundo
@@ -73,6 +72,10 @@ function drawHearts() {
   }
 }
 
+window.onload = function () {
+  ajustarCanvas();
+  startGame();
+};
 
 // Atualização do jogo
 function updateGame() {
@@ -143,15 +146,17 @@ function updateGame() {
 
 // Gerar lixo
 function spawnTrash() {
+  if (isPaused || gameOver) return; // ✅ IMPORTANTE
+
   let size = 30;
   let x = Math.random() * (canvas.width - size);
   let random = Math.random();
   let type;
 
   if (random < 0.1) {
-    type = 'special'; // 10% de chance
+    type = 'special'; // 10%
   } else if (random < 0.3) {
-    type = 'organic'; // 20% (de 0.1 até 0.3)
+    type = 'organic'; // 20%
   } else {
     type = 'recycle'; // 70%
   }
@@ -205,12 +210,10 @@ canvas.addEventListener('touchmove', function (e) {
   player.x = touchX;
 }, { passive: false });
 
-window.onload = function () {
-  loadImages(startGame);
-};
+
 function loadImages(callback) {
   let loaded = 0;
-  const total = 5; // Número total de imagens
+  const total = 7; // Corrigido para contar TODAS as imagens
 
   function checkLoaded() {
     loaded++;
@@ -222,11 +225,10 @@ function loadImages(callback) {
   organicTrashImg.onload = checkLoaded;
   backgroundImg.onload = checkLoaded;
   specialTrashImg.onload = checkLoaded;
-
-  // Carregue os corações separadamente
   heartFullImg.onload = checkLoaded;
   heartEmptyImg.onload = checkLoaded;
 }
+
 
 
 // Ajustar canvas para dispositivos móveis
@@ -241,10 +243,7 @@ function ajustarCanvas() {
 }
 
 window.addEventListener('resize', ajustarCanvas);
-window.onload = function () {
-  ajustarCanvas();
-  startGame();
-};
+
 
 
 let isPaused = false;
