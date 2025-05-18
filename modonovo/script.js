@@ -254,5 +254,12 @@ function togglePause() {
   document.getElementById('pauseButton').textContent = isPaused ? '▶' : '⏸';
 }
 
+document.getElementById('leftButton').addEventListener('touchstart', () => {
+  if (player.x > 0) player.x -= 20;
+});
+
+document.getElementById('rightButton').addEventListener('touchstart', () => {
+  if (player.x + player.width < canvas.width) player.x += 20;
+});
 
 
