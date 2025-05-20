@@ -423,10 +423,14 @@ function toggleFullScreen() {
 function handleTouch(e) {
   e.preventDefault();
   const rect = canvas.getBoundingClientRect();
-  const touchX = e.touches[0].clientX - rect.left;
+
+  const scaleX = canvas.width / rect.width;
+  const touchX = (e.touches[0].clientX - rect.left) * scaleX;
+
   const clampedX = Math.min(Math.max(touchX - player.width / 2, 0), canvas.width - player.width);
   player.x = clampedX;
 }
+
 
 canvas.addEventListener('touchstart', handleTouch, { passive: false });
 canvas.addEventListener('touchmove', handleTouch, { passive: false });
@@ -452,3 +456,4 @@ function ativarTelaCheiaMobile() {
 // Apenas no mobile: ativa fullscreen no primeiro toque ou clique
 canvas.addEventListener('touchstart', ativarTelaCheiaMobile);
 canvas.addEventListener('click', ativarTelaCheiaMobile);
+
