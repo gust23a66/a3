@@ -64,7 +64,7 @@ heartItemImg.src = 'heart_item.png';
 // Início do jogo
 function startGame() {
  
-  fallSpeed = 5;
+  fallSpeed = 4;
 elapsedTime = 0;
   document.getElementById('gameOverScreen').style.display = 'none';
   score = 0;
@@ -147,7 +147,7 @@ function ajustarTamanhos() {
 function updateGame() {
   if (gameOver || isPaused) return;
 
-if (score >= lastSpeedIncreaseScore + 5 && fallSpeed < 20) {
+if (score >= lastSpeedIncreaseScore + 10 && fallSpeed < 20) {
   fallSpeed += 0.5;
   lastSpeedIncreaseScore = score;
 }
