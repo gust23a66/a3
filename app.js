@@ -794,7 +794,13 @@ if (!question.options || question.options.length === 0) {
     if (selected === correctAnswer) {
         correctAnswersCount++;
         feedbackMessage.textContent = "✅ Você acertou!";
-        score += 10 + bonus;
+        let basePoints = 10;
+if (selectedDifficulty === "médio") {
+    basePoints = 15;
+} else if (selectedDifficulty === "difícil") {
+    basePoints = 20;
+}
+score += basePoints + bonus;
         if (correctAnswersCount === 5) {
     unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
 }
