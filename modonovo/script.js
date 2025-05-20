@@ -1,8 +1,10 @@
 const isPC = !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
 const acertoSom = new Audio('acerto.mp3');
 const erroSom = new Audio('erro.mp3');
+const ctx = canvas.getContext('2d');
+ctx.imageSmoothingEnabled = true;
+ctx.imageSmoothingQuality = 'high';
 
 // Jogador e variáveis do jogo
 let baseWidth = 60;
@@ -25,6 +27,7 @@ let trashInterval;
 let gameOver = false;
 let fallSpeed = 4;
 let elapsedTime = 0;
+let lastHeartScore = 0; // para controlar o próximo coração
 
 
 // Imagens
@@ -37,8 +40,17 @@ trashImg.src = 'trash.png';
 const organicTrashImg = new Image();
 organicTrashImg.src = 'organic_trash.png';
 
+const metalTrashImg = new Image();
+metalTrashImg.src = 'metal_trash.png';
 
+const glassTrashImg = new Image();
+glassTrashImg.src = 'glass_trash.png';
 
+const plasticTrashImg = new Image();
+plasticTrashImg.src = 'plastic_trash.png';
+
+const bananaTrashImg = new Image();
+bananaTrashImg.src = 'banana.png';
 
 const backgroundImg = new Image();
 backgroundImg.src = 'fundo.png'; // Substitua pelo nome real da sua imagem de fundo
@@ -46,10 +58,13 @@ backgroundImg.src = 'fundo.png'; // Substitua pelo nome real da sua imagem de fu
 const specialTrashImg = new Image();
 specialTrashImg.src = 'special_trash.png'; // Substitua pelo nome do seu arquivo
 
+const heartItemImg = new Image();
+heartItemImg.src = 'heart_item.png';
+
 // Início do jogo
 function startGame() {
  
-  fallSpeed = 4;
+  fallSpeed = 5;
 elapsedTime = 0;
   document.getElementById('gameOverScreen').style.display = 'none';
   score = 0;
@@ -96,6 +111,8 @@ function ajustarCanvas() {
 
   canvas.width = width;
   canvas.height = height;
+
+  
 }
 
 // Sempre ajustar quando a tela mudar
@@ -112,23 +129,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 function ajustarTamanhos() {
-  player.x = (canvas.width - player.width) / 2;
-
   if (isMobile()) {
-    player.width = 60;
-    player.height = 50;
+    player.width = canvas.width * 0.15;
+    player.height = canvas.height * 0.10;
   } else {
-    player.width = 40;    // ajuste como quiser
-    player.height = 80;
+    player.width = canvas.width * 0.08;
+    player.height = canvas.height * 0.14;
   }
+
+  // Centraliza após ajustar
+  player.x = (canvas.width - player.width) / 2;
 }
+
 
 
 
 function updateGame() {
   if (gameOver || isPaused) return;
 
-if (score >= lastSpeedIncreaseScore + 10 && fallSpeed < 15) {
+if (score >= lastSpeedIncreaseScore + 5 && fallSpeed < 20) {
   fallSpeed += 0.5;
   lastSpeedIncreaseScore = score;
 }
@@ -143,53 +162,77 @@ if (score >= lastSpeedIncreaseScore + 10 && fallSpeed < 15) {
   ctx.drawImage(binImg, player.x, canvas.height - player.height, player.width, player.height);
 
   // Lixo
-  for (let i = 0; i < trash.length; i++) {
-    let t = trash[i];
-    t.y += fallSpeed;
+ for (let i = 0; i < trash.length; i++) {
+  let t = trash[i];
+  t.y += fallSpeed;
 
-    const img = 
-      t.type === 'organic' ? organicTrashImg :
-      t.type === 'special' ? specialTrashImg :
-      trashImg;
-
-    let drawSize = t.size;
-    if (t.type === 'special') {
-      drawSize *= 1.5;
-    }
-
-    ctx.drawImage(img, t.x, t.y, t.width, t.height);
+ const img =
+  t.type === 'banana' ? bananaTrashImg :
+  t.type === 'organic' ? organicTrashImg :
+  t.type === 'special' ? specialTrashImg :
+  t.type === 'metal' ? metalTrashImg :
+  t.type === 'glass' ? glassTrashImg :
+  t.type === 'plastic' ? plasticTrashImg :
+   t.type === 'heart' ? heartItemImg :
+  trashImg;
 
 
-    // Colisão
-    if (
-  t.y + t.height >= canvas.height - player.height &&
-  t.x < player.x + player.width &&
-  t.x + t.width > player.x
-) {
-      if (t.type === 'recycle') {
-        score++;
-        acertoSom.play();
-      } else if (t.type === 'organic') {
-        erroSom.play();
-        lives--;
-        if (lives <= 0) endGame();
-      } else if (t.type === 'special') {
-        score += 10;
-        acertoSom.play();
-      }
+  ctx.drawImage(img, t.x, t.y, t.width, t.height);
 
-      trash.splice(i, 1);
-      i--;
-      document.getElementById('score').innerText = score;
+  const lixoBateuNoChao = t.y + t.height >= canvas.height;
+  const colidiuComLixeira =
+    t.x < player.x + player.width &&
+    t.x + t.width > player.x &&
+    t.y + t.height >= canvas.height - player.height;
+
+if (colidiuComLixeira) {
+  const tipo = t.type;
+  trash.splice(i, 1);
+  i--;
+
+  if (tipo === 'organic' || tipo === 'banana') {
+    erroSom.currentTime = 0;
+    erroSom.play();
+    lives--;
+    if (lives <= 0) endGame();
+  } else if (tipo === 'heart') {
+    // ❤️ Coleta o coração — ganha 1 vida até no máx 3
+    if (lives < 3) {
+      lives++;
       drawHearts();
-    } else if (t.y > canvas.height) {
-      trash.splice(i, 1);
-      i--;
+    }
+    acertoSom.currentTime = 0;
+    acertoSom.play();
+  } else {
+    acertoSom.currentTime = 0;
+    acertoSom.play();
+
+    switch (tipo) {
+      case 'recycle': score += 1; break;
+      case 'metal': score += 2; break;
+      case 'plastic': score += 3; break;
+      case 'glass': score += 4; break;
+      case 'special': score += 10; break;
     }
   }
 
+  document.getElementById('score').innerText = score;
+  drawHearts();
+}
+else if (lixoBateuNoChao) {
+  // Remove qualquer lixo que caiu no chão, sem penalizar
+  trash.splice(i, 1);
+  i--;
+}
 
 }
+}
+
+
+  
+
+
+
 
   function voltarParaMenu() {
     window.location.href = "../index.html"; // volta para a raiz
@@ -197,48 +240,75 @@ if (score >= lastSpeedIncreaseScore + 10 && fallSpeed < 15) {
 
 
 // Gerar lixo
+// Gerar lixo
 function spawnTrash() {
   if (isPaused || gameOver) return;
 
-let baseWidth, baseHeight;
+  let baseWidth, baseHeight;
 
-if (isMobile()) {
-  baseWidth = 25;
-  baseHeight = 25;
-} else {
-  baseWidth = 15;  // 👈 Aqui você define a largura no PC
-  baseHeight = 40; // 👈 Aqui a altura no PC
-}
-
-let x = Math.random() * (canvas.width - baseWidth);
-
-  let random = Math.random();
-  let type;
-
-  if (random < 0.1) {
-    type = 'special';
-  
-  } else if (random < 0.3) {
-    type = 'organic';
+  if (isMobile()) {
+    baseWidth = canvas.width * 0.07;   // antes 0.08 → menor
+    baseHeight = canvas.height * 0.05;
   } else {
-    type = 'recycle';
+    baseWidth = canvas.width * 0.04;   // antes 0.05 → menor
+    baseHeight = canvas.height * 0.06;
   }
 
-trash.push({ x, y: 0, width: baseWidth, height: baseHeight, type });
+  let x = Math.random() * (canvas.width - baseWidth);
 
+  // Sorteio do tipo
+ // Sorteio do tipo
+const random = Math.random();
+let type;
+
+if (random < 0.05) {
+  type = 'banana'; // 🍌 novo tipo
+} else if (random < 0.15) {
+  type = 'organic'; // outros orgânicos
+} else if (random < 0.35) {
+  type = 'metal';
+} else if (random < 0.55) {
+  type = 'plastic';
+} else if (random < 0.75) {
+  type = 'glass';
+} else if (random < 0.9) {
+  type = 'recycle';
+} else {
+  type = 'special';
+}
+
+  trash.push({ x, y: 0, width: baseWidth, height: baseHeight, type });
+
+// Se pontuação chegou a múltiplos de 250 e não já gerou nesse intervalo
+if (score >= lastHeartScore + 100) {
+  spawnHeartItem(); // gera o coração
+  lastHeartScore = score;
+}
 
 }
 
 
-// Fim de jogo
+function spawnHeartItem() {
+  let baseWidth = canvas.width * 0.05;
+  let baseHeight = canvas.height * 0.05;
+  let x = Math.random() * (canvas.width - baseWidth);
+
+  trash.push({ x, y: 0, width: baseWidth, height: baseHeight, type: 'heart' });
+}
+
+
 function endGame() {
   clearInterval(gameInterval);
   clearInterval(trashInterval);
   gameOver = true;
-  document.getElementById('finalScore').innerText = `Pontuação final: ${score}`;
-  document.getElementById('gameOverScreen').style.display = 'flex';
-  document.body.classList.add('game-over');
+
+  setTimeout(() => {
+    document.getElementById('finalScore').innerText = `Pontuação final: ${score}`;
+    document.getElementById('gameOverScreen').style.display = 'flex';
+    document.body.classList.add('game-over');
+  }, 300); // pequeno atraso
 }
+
 
 // Reiniciar
 function restartGame() {
@@ -271,14 +341,6 @@ canvas.addEventListener("mousemove", function (e) {
 });
 
 
-// Toque
-canvas.addEventListener('touchmove', function (e) {
-  e.preventDefault();
-  const rect = canvas.getBoundingClientRect();
-  const touchX = e.touches[0].clientX - rect.left;
-  player.x = Math.min(Math.max(touchX - player.width / 2, 0), canvas.width - player.width);
-}, { passive: false });
-
 
 
 
@@ -291,7 +353,9 @@ function loadImages(callback) {
     if (loaded === total) callback();
   }
 
-  const images = [binImg, trashImg, organicTrashImg, backgroundImg, specialTrashImg, heartFullImg, heartEmptyImg];
+ const images = [
+  binImg, trashImg, organicTrashImg, backgroundImg, specialTrashImg, heartFullImg, heartEmptyImg, bananaTrashImg , heartItemImg
+];
 
   images.forEach(img => {
     if (img.complete) {
@@ -303,17 +367,6 @@ function loadImages(callback) {
 }
 
 
-
-// Ajustar canvas para dispositivos móveis
-function ajustarCanvas() {
-  const maxWidth = 500;
-  const screenWidth = window.innerWidth;
-  const width = Math.min(screenWidth - 20, maxWidth); // margem lateral
-  const height = width * 1.25; // proporção 4:5
-
-  canvas.width = width;
-  canvas.height = height;
-}
 
 window.addEventListener("load", () => {
   ajustarCanvas();
