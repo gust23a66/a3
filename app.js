@@ -807,21 +807,6 @@ if (!question.options || question.options.length === 0) {
         acertoAudio.play();
         document.getElementById("scoreValue").textContent = score;
 
-      const tema = current.tema;
-
-correctByTheme[tema] = (correctByTheme[tema] || 0) + 1;
-
-if (correctByTheme[tema] === 5) {
-    unlockAchievement(`Mestre da ${tema}`);
-}
-
-const venceu = Object.values(correctByTheme).every(count => count >= 5);
-if (venceu) {
-    clearInterval(timerInterval);
-    showWinScreen();
-    return;
-}
-
 
         if (correctStreak === 3) {
             unlockAchievement("Acertou 3 seguidas 🔥");
@@ -832,7 +817,11 @@ if (venceu) {
         if (score >= 100) {
             unlockAchievement("Pontuação 100 🔥");
         }
-
+if (correctAnswersCount >= 20) {
+        clearInterval(timerInterval);
+        showWinScreen();
+        return;
+    }
         nextQuestion();
     } else {
         feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
