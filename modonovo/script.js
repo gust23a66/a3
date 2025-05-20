@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function ajustarTamanhos() {
   if (isMobile()) {
-    player.width = canvas.width * 0.15;
+    player.width = canvas.width * 0.17;
     player.height = canvas.height * 0.10;
   } else {
     player.width = canvas.width * 0.08;
@@ -247,7 +247,7 @@ function spawnTrash() {
   let baseWidth, baseHeight;
 
   if (isMobile()) {
-    baseWidth = canvas.width * 0.07;   // antes 0.08 → menor
+    baseWidth = canvas.width * 0.08;   // antes 0.08 → menor
     baseHeight = canvas.height * 0.05;
   } else {
     baseWidth = canvas.width * 0.04;   // antes 0.05 → menor
