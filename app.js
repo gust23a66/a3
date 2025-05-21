@@ -794,13 +794,7 @@ if (!question.options || question.options.length === 0) {
     if (selected === correctAnswer) {
         correctAnswersCount++;
         feedbackMessage.textContent = "✅ Você acertou!";
-        let basePoints = 10;
-if (selectedDifficulty === "médio") {
-    basePoints = 15;
-} else if (selectedDifficulty === "difícil") {
-    basePoints = 20;
-}
-score += basePoints + bonus;
+        score += 10 + bonus;
         if (correctAnswersCount === 5) {
     unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
 }
@@ -813,6 +807,21 @@ score += basePoints + bonus;
         acertoAudio.play();
         document.getElementById("scoreValue").textContent = score;
 
+      const tema = current.tema;
+
+correctByTheme[tema] = (correctByTheme[tema] || 0) + 1;
+
+if (correctByTheme[tema] === 5) {
+    unlockAchievement(`Mestre da ${tema}`);
+}
+
+const venceu = Object.values(correctByTheme).every(count => count >= 5);
+if (venceu) {
+    clearInterval(timerInterval);
+    showWinScreen();
+    return;
+}
+
 
         if (correctStreak === 3) {
             unlockAchievement("Acertou 3 seguidas 🔥");
@@ -823,11 +832,7 @@ score += basePoints + bonus;
         if (score >= 100) {
             unlockAchievement("Pontuação 100 🔥");
         }
-if (correctAnswersCount >= 20) {
-        clearInterval(timerInterval);
-        showWinScreen();
-        return;
-    }
+
         nextQuestion();
     } else {
         feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
