@@ -130,8 +130,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function ajustarTamanhos() {
   if (isMobile()) {
-    player.width = canvas.width * 0.17;
-    player.height = canvas.height * 0.10;
+    player.width = canvas.width * 0.18;
+    player.height = canvas.height * 0.11;
   } else {
     player.width = canvas.width * 0.08;
     player.height = canvas.height * 0.14;
@@ -247,8 +247,8 @@ function spawnTrash() {
   let baseWidth, baseHeight;
 
   if (isMobile()) {
-    baseWidth = canvas.width * 0.08;   // antes 0.08 → menor
-    baseHeight = canvas.height * 0.05;
+    baseWidth = canvas.width * 0.09;   // antes 0.08 → menor
+    baseHeight = canvas.height * 0.06;
   } else {
     baseWidth = canvas.width * 0.04;   // antes 0.05 → menor
     baseHeight = canvas.height * 0.06;
@@ -456,4 +456,3 @@ function ativarTelaCheiaMobile() {
 // Apenas no mobile: ativa fullscreen no primeiro toque ou clique
 canvas.addEventListener('touchstart', ativarTelaCheiaMobile);
 canvas.addEventListener('click', ativarTelaCheiaMobile);
-
