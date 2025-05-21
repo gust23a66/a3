@@ -106,7 +106,7 @@ difficultyScreen.addEventListener("click", (e) => {
 
   
  
-    const challenges = {
+  const challenges = {
         "Água": [
     {
         "question": "Qual dessas ações ajuda a economizar água?",
@@ -636,10 +636,7 @@ difficultyScreen.addEventListener("click", (e) => {
         "options": ["Poluir mais", "Economizar e reduzir o lixo", "Gastar mais gás", "Comprar mais alimentos"],
         "answer": "Economizar e reduzir o lixo"
     }
-]
-
-
-    }
+]}
 
 
     let username = "";
@@ -791,49 +788,49 @@ if (!question.options || question.options.length === 0) {
         bonus = 1;
     }
 
-    if (selected === correctAnswer) {
-        correctAnswersCount++;
-        feedbackMessage.textContent = "✅ Você acertou!";
-        score += 10 + bonus;
-        if (correctAnswersCount === 5) {
-    unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
-}
-        correctStreak++;
-
-        timeLeft = Math.min(timeLeft + 5, getInitialTimeByDifficulty());
-
-        timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
-
-        acertoAudio.play();
-        document.getElementById("scoreValue").textContent = score;
-
-      const tema = current.tema;
-
-correctByTheme[tema] = (correctByTheme[tema] || 0) + 1;
-
-if (correctByTheme[tema] === 5) {
-    unlockAchievement(`Mestre da ${tema}`);
+   if (selected === correctAnswer) {
+    correctAnswersCount++;
+    feedbackMessage.textContent = "✅ Você acertou!";
+    let basePoints = 10;
+if (currentDifficulty === "medio") {
+    basePoints = 15;
+} else if (currentDifficulty === "dificil") {
+    basePoints = 20;
 }
 
-const venceu = Object.values(correctByTheme).every(count => count >= 5);
-if (venceu) {
-    clearInterval(timerInterval);
-    showWinScreen();
-    return;
-}
+score += basePoints + bonus;
 
+    if (correctAnswersCount === 5) {
+        unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
+    }
 
-        if (correctStreak === 3) {
-            unlockAchievement("Acertou 3 seguidas 🔥");
-        }
-        if (score === 10) {
-            unlockAchievement("Primeira Resposta Correta ✅");
-        }
-        if (score >= 100) {
-            unlockAchievement("Pontuação 100 🔥");
-        }
+    correctStreak++;
 
-        nextQuestion();
+    timeLeft = Math.min(timeLeft + 5, getInitialTimeByDifficulty());
+    timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
+
+    acertoAudio.play();
+    document.getElementById("scoreValue").textContent = score;
+
+    if (correctStreak === 3) {
+        unlockAchievement("Acertou 3 seguidas 🔥");
+    }
+    if (score === 10) {
+        unlockAchievement("Primeira Resposta Correta ✅");
+    }
+    if (score >= 100) {
+        unlockAchievement("Pontuação 100 🔥");
+    }
+
+    // NOVA CONDIÇÃO DE VITÓRIA:
+    if (correctAnswersCount >= 20) {
+        clearInterval(timerInterval);
+        showWinScreen();
+        return;
+    }
+
+    nextQuestion();
+
     } else {
         feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
         errorCount++;
@@ -858,21 +855,22 @@ if (venceu) {
     function nextQuestion() {
         currentQuestion++;
     
-        
-        if (currentQuestion >= shuffledQuestions.length) {
-            currentThemeIndex++;
-            if (currentThemeIndex >= shuffledThemes.length) {
-                clearInterval(timerInterval); 
-                showWinScreen(); 
-                return;
-            }
-            currentTheme = shuffledThemes[currentThemeIndex];
-            shuffledQuestions = shuffleArray([...challenges[currentTheme]]);
-            currentQuestion = 0;
-        }
-    
-        loadQuestion(); 
+      if (currentQuestion >= shuffledQuestions.length) {
+    currentThemeIndex++;
+    if (currentThemeIndex >= shuffledThemes.length) {
+        // Reembaralha os temas quando acabar todos
+        shuffledThemes = shuffleArray(Object.keys(challenges));
+        currentThemeIndex = 0;
     }
+
+    currentTheme = shuffledThemes[currentThemeIndex];
+    shuffledQuestions = shuffleArray([...challenges[currentTheme]]);
+    currentQuestion = 0;
+}
+
+// Sempre carrega a próxima pergunta
+loadQuestion();
+}
     
     
     function showWinScreen() {
