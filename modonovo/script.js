@@ -6,7 +6,6 @@ const ctx = canvas.getContext('2d');
 ctx.imageSmoothingEnabled = true;
 ctx.imageSmoothingQuality = 'high';
 
-// Jogador e variáveis do jogo
 let baseWidth = 60;
 let baseHeight = 60;
 
@@ -27,10 +26,10 @@ let trashInterval;
 let gameOver = false;
 let fallSpeed = 4;
 let elapsedTime = 0;
-let lastHeartScore = 0; // para controlar o próximo coração
+let lastHeartScore = 0; 
 
 
-// Imagens
+
 const binImg = new Image();
 binImg.src = 'bin.png';
 
@@ -53,15 +52,15 @@ const bananaTrashImg = new Image();
 bananaTrashImg.src = 'banana.png';
 
 const backgroundImg = new Image();
-backgroundImg.src = 'fundo.png'; // Substitua pelo nome real da sua imagem de fundo
+backgroundImg.src = 'fundo.png'; 
 
 const specialTrashImg = new Image();
-specialTrashImg.src = 'special_trash.png'; // Substitua pelo nome do seu arquivo
+specialTrashImg.src = 'special_trash.png'; 
 
 const heartItemImg = new Image();
 heartItemImg.src = 'heart_item.png';
 
-// Início do jogo
+
 function startGame() {
  
   fallSpeed = 4;
@@ -83,11 +82,11 @@ elapsedTime = 0;
 document.getElementById('pauseMenu').style.display = 'none';
 document.getElementById('pauseButton').textContent = '⏸';
 
-drawHearts(); // mostra os corações no início
+drawHearts(); 
 
 }
 
-// Desenhar corações (vidas)
+
 const heartFullImg = new Image();
 heartFullImg.src = 'heart_full.png';
 
@@ -115,33 +114,31 @@ function ajustarCanvas() {
   
 }
 
-// Sempre ajustar quando a tela mudar
+
 window.addEventListener("resize", () => {
   ajustarCanvas();
-  ajustarTamanhos(); // adiciona isso!
+  ajustarTamanhos(); 
 });
 
 document.addEventListener("DOMContentLoaded", () => {
   ajustarCanvas();
-  ajustarTamanhos(); // ✅ agora sim é executado
+  ajustarTamanhos(); 
   loadImages(startGame);
 });
 
 
 function ajustarTamanhos() {
   if (isMobile()) {
-    player.width = canvas.width * 0.18;
-    player.height = canvas.height * 0.11;
+    player.width = canvas.width * 0.20;
+    player.height = canvas.height * 0.13;
   } else {
     player.width = canvas.width * 0.08;
     player.height = canvas.height * 0.14;
   }
 
-  // Centraliza após ajustar
+
   player.x = (canvas.width - player.width) / 2;
 }
-
-
 
 
 function updateGame() {
@@ -155,13 +152,13 @@ if (score >= lastSpeedIncreaseScore + 10 && fallSpeed < 20) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Fundo
+  
   ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
 
-  // Jogador
+ 
   ctx.drawImage(binImg, player.x, canvas.height - player.height, player.width, player.height);
 
-  // Lixo
+
  for (let i = 0; i < trash.length; i++) {
   let t = trash[i];
   t.y += fallSpeed;
@@ -196,7 +193,7 @@ if (colidiuComLixeira) {
     lives--;
     if (lives <= 0) endGame();
   } else if (tipo === 'heart') {
-    // ❤️ Coleta o coração — ganha 1 vida até no máx 3
+  
     if (lives < 3) {
       lives++;
       drawHearts();
@@ -220,7 +217,7 @@ if (colidiuComLixeira) {
   drawHearts();
 }
 else if (lixoBateuNoChao) {
-  // Remove qualquer lixo que caiu no chão, sem penalizar
+
   trash.splice(i, 1);
   i--;
 }
@@ -235,36 +232,33 @@ else if (lixoBateuNoChao) {
 
 
   function voltarParaMenu() {
-    window.location.href = "../index.html"; // volta para a raiz
+    window.location.href = "../index.html"; 
   }
 
 
-// Gerar lixo
-// Gerar lixo
+
 function spawnTrash() {
   if (isPaused || gameOver) return;
 
   let baseWidth, baseHeight;
 
   if (isMobile()) {
-    baseWidth = canvas.width * 0.09;   // antes 0.08 → menor
+    baseWidth = canvas.width * 0.09;   
     baseHeight = canvas.height * 0.06;
   } else {
-    baseWidth = canvas.width * 0.04;   // antes 0.05 → menor
+    baseWidth = canvas.width * 0.04;   
     baseHeight = canvas.height * 0.06;
   }
 
   let x = Math.random() * (canvas.width - baseWidth);
 
-  // Sorteio do tipo
- // Sorteio do tipo
 const random = Math.random();
 let type;
 
 if (random < 0.05) {
-  type = 'banana'; // 🍌 novo tipo
+  type = 'banana'; 
 } else if (random < 0.15) {
-  type = 'organic'; // outros orgânicos
+  type = 'organic'; 
 } else if (random < 0.35) {
   type = 'metal';
 } else if (random < 0.55) {
@@ -279,9 +273,9 @@ if (random < 0.05) {
 
   trash.push({ x, y: 0, width: baseWidth, height: baseHeight, type });
 
-// Se pontuação chegou a múltiplos de 250 e não já gerou nesse intervalo
+
 if (score >= lastHeartScore + 100) {
-  spawnHeartItem(); // gera o coração
+  spawnHeartItem(); 
   lastHeartScore = score;
 }
 
@@ -306,17 +300,17 @@ function endGame() {
     document.getElementById('finalScore').innerText = `Pontuação final: ${score}`;
     document.getElementById('gameOverScreen').style.display = 'flex';
     document.body.classList.add('game-over');
-  }, 300); // pequeno atraso
+  }, 300); 
 }
 
 
-// Reiniciar
+
 function restartGame() {
   document.body.classList.remove('game-over');
   startGame();
 }
 
-// Controle por teclado (setas)
+
 document.addEventListener('keydown', function (e) {
   const speed = 20;
   if (e.key === 'ArrowLeft' && player.x > 0) {
@@ -329,8 +323,7 @@ document.addEventListener('keydown', function (e) {
 
 
 
-// Controle por toque (touch) para celular
-// Mouse
+
 canvas.addEventListener("mousemove", function (e) {
   const rect = canvas.getBoundingClientRect();
 
@@ -370,7 +363,7 @@ function loadImages(callback) {
 
 window.addEventListener("load", () => {
   ajustarCanvas();
-  ajustarTamanhos();  // ✅ importante
+  ajustarTamanhos(); 
   loadImages(startGame);
 });
 
@@ -392,14 +385,14 @@ function togglePause() {
 let moveInterval = null;
 
 function startMoving(direction) {
-  stopMoving(); // evita múltiplos intervalos
+  stopMoving(); 
   moveInterval = setInterval(() => {
     if (direction === 'left' && player.x > 0) {
       player.x -= 10;
     } else if (direction === 'right' && player.x + player.width < canvas.width) {
       player.x += 10;
     }
-  }, 16); // 60 FPS
+  }, 16); 
 }
 
 function stopMoving() {
@@ -453,6 +446,5 @@ function ativarTelaCheiaMobile() {
   canvas.removeEventListener('click', ativarTelaCheiaMobile);
 }
 
-// Apenas no mobile: ativa fullscreen no primeiro toque ou clique
 canvas.addEventListener('touchstart', ativarTelaCheiaMobile);
 canvas.addEventListener('click', ativarTelaCheiaMobile);
