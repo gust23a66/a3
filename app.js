@@ -5,7 +5,7 @@ let isPaused = false;
 let coletaState = {};
 let canvas, ctx, isPC, player, score, lives, gameOver, fallSpeed, lastSpeedIncreaseScore, trash, gameInterval, trashInterval;
 
-// Imagens
+
 const binImg = new Image(); binImg.src = 'bin.png';
 const papelaoImg = new Image(); papelaoImg.src = 'papelao.png';
 const jornalImg = new Image(); jornalImg.src = 'jornal.png';
@@ -23,7 +23,7 @@ const heartFullImg = new Image(); heartFullImg.src = 'heart_full.png';
 const heartEmptyImg = new Image(); heartEmptyImg.src = 'heart_empty.png';
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Quiz Elements
+  
 
     const startButton = document.getElementById("startButton");
     const rankingButton = document.getElementById("rankingButton");
@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuButtonWin = document.getElementById("menuButtonWin");
     const difficultyScreen = document.getElementById("difficultyScreen");
 
-    // Achievements
     const ALL_ACHIEVEMENTS = [
         "Primeira Vitória",
         "Perfeição Verde",
@@ -96,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
    
 
-    // Game variables
     let gamesPlayed = parseInt(localStorage.getItem("gamesPlayed") || "0");
     let correctAnswersCount = 0;
     let correctStreak = 0;
@@ -117,8 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Quiz Data ---
-    // (Cortei por tamanho, mas mantenha seu bloco challenges completo aqui!)
+  
     const challenges = {
         "Água": [
     {
@@ -651,7 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 ]
 
-    }; // Use o seu bloco challenges completo!
+    }; 
 
     let username = "";
     let currentTheme = "";
@@ -986,7 +983,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.close();
     }
 
-    // Event Listeners
     startButton.addEventListener("click", startGame);
     rankingButton.addEventListener("click", showRanking);
     achievementsButton.addEventListener("click", showAchievements);
@@ -998,21 +994,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         gameOverMessage.style.display = "none";
         gameScreen.style.display = "block";
-         audio.play(); // Agora o navegador permite!
+         audio.play(); 
         resetGame();
     });
     menuButton.addEventListener("click", showLoginScreen);
     exitButton.addEventListener("click", exitGame);
 });
 
-// ===================================
-// MODO NOVO ("MODO COLETA") INTEGRADO
-// ===================================
+
 
 function showModoNovo() {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('modonovoScreen').style.display = 'flex';
-    startColetaGame(); // ESSA LINHA É OBRIGATÓRIA!
+    startColetaGame(); 
 }
 
 
@@ -1040,11 +1034,11 @@ function hideModoNovo() {
     if (!document.fullscreenElement) {
         if (elem.requestFullscreen) {
             elem.requestFullscreen();
-        } else if (elem.mozRequestFullScreen) { // Firefox
+        } else if (elem.mozRequestFullScreen) { 
             elem.mozRequestFullScreen();
-        } else if (elem.webkitRequestFullscreen) { // Chrome, Safari e Opera
+        } else if (elem.webkitRequestFullscreen) { 
             elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) { // IE/Edge
+        } else if (elem.msRequestFullscreen) { 
             elem.msRequestFullscreen();
         }
     } else {
@@ -1073,7 +1067,7 @@ window.addEventListener("resize", () => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ...outros listeners...
+  
     window.addEventListener("resize", () => {
         ajustarCanvas();
         ajustarTamanhos();
@@ -1086,7 +1080,7 @@ document.addEventListener('DOMContentLoaded', () => {
             player.x += speed;
         }
     });
-    // Os listeners de mouse/touch só funcionam depois do canvas existir:
+   
     document.getElementById('gameCanvas').addEventListener("mousemove", function (e) {
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
@@ -1195,18 +1189,18 @@ canvas.height = canvas.offsetHeight;
         t.type === 'jornal' ? jornalImg :
         trashImg;
 
-    // Corrigir proporção do coração
+    
     let drawWidth = t.width;
     let drawHeight = t.height;
     if (t.type === 'heart') {
-        // Mantém quadrado, usa o menor dos dois
+        
         const size = Math.min(t.width, t.height);
         drawWidth = size;
         drawHeight = size;
     }
 
     ctx.drawImage(img, t.x, t.y, drawWidth, drawHeight);
-    // ...restante do código...
+   
 
             const lixoBateuNoChao = t.y + t.height >= canvas.height;
             const colidiuComLixeira =
@@ -1266,8 +1260,8 @@ canvas.height = canvas.offsetHeight;
     let type;
     if (random < 0.05) type = 'banana';
     else if (random < 0.10) type = 'egg_shell';
-    else if (random < 0.18) type = 'papelao';      // novo tipo
-    else if (random < 0.26) type = 'jornal';       // novo tipo
+    else if (random < 0.18) type = 'papelao';      
+    else if (random < 0.26) type = 'jornal';       
     else if (random < 0.36) type = 'organic';
     else if (random < 0.52) type = 'metal';
     else if (random < 0.68) type = 'plastic';
@@ -1360,18 +1354,18 @@ ctx = canvas.getContext('2d');
     }
 }
 
-// ===============================
-// CONTROLES DO MODO COLETA
-// ===============================
+
+
+
 function togglePause() {
     isPaused = !isPaused;
     const pauseMenu = document.getElementById('pauseMenu');
      if (isPaused) {
         pauseMenu.classList.add('show');
-        document.getElementById('pauseIcon').src = 'play.png'; // mostra ícone de play
+        document.getElementById('pauseIcon').src = 'play.png'; 
     } else {
         pauseMenu.classList.remove('show');
-        document.getElementById('pauseIcon').src = 'pause.png'; // mostra ícone de pause
+        document.getElementById('pauseIcon').src = 'pause.png'; 
     }
 }
 function restartGame() {
@@ -1383,11 +1377,11 @@ function toggleFullScreen() {
     if (!document.fullscreenElement) {
         if (elem.requestFullscreen) {
             elem.requestFullscreen();
-        } else if (elem.mozRequestFullScreen) { // Firefox
+        } else if (elem.mozRequestFullScreen) { 
             elem.mozRequestFullScreen();
-        } else if (elem.webkitRequestFullscreen) { // Chrome, Safari e Opera
+        } else if (elem.webkitRequestFullscreen) { 
             elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) { // IE/Edge
+        } else if (elem.msRequestFullscreen) { 
             elem.msRequestFullscreen();
         }
     } else {
@@ -1397,7 +1391,7 @@ function toggleFullScreen() {
     }
 }
 
-// Ajuste de canvas ao redimensionar janela
+
 window.addEventListener("resize", () => {
     if (canvas) {
         ajustarCanvas();
