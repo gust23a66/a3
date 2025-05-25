@@ -479,6 +479,10 @@ button:hover {
     padding: 8px 14px;
   }
 
+  
+}
+
+
 body.dark-mode #modonovoScreen #pauseMenu,
 body.dark-mode #modonovoScreen #gameOverScreen {
   background-color: #222 !important;
@@ -495,6 +499,3 @@ body.dark-mode #modonovoScreen #pauseMenu button:hover,
 body.dark-mode #modonovoScreen #gameOverScreen button:hover {
   background-color: #444 !important;
 }
-  
-}
-
