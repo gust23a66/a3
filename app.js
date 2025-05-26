@@ -86,9 +86,6 @@ skinsList.innerHTML = "";
   powerupPularPergunta
 };
 
-
-
-
   powerups.forEach(powerup => {
     const card = document.createElement("div");
     card.className = "skin-card";
