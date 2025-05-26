@@ -4,7 +4,11 @@ const erroAudio = new Audio('erro.mp3');
 let isPaused = false;
 let coletaState = {};
 let canvas, ctx, isPC, player, score, lives, gameOver, fallSpeed, lastSpeedIncreaseScore, trash, gameInterval, trashInterval;
-
+let moedas = parseInt(localStorage.getItem("moedas") || "0");
+let powerupPararTempo = parseInt(localStorage.getItem("powerupPararTempo") || "0");
+let powerupPularPergunta = parseInt(localStorage.getItem("powerupPularPergunta") || "0");
+if (isNaN(powerupPararTempo)) powerupPararTempo = 0;
+if (isNaN(powerupPularPergunta)) powerupPularPergunta = 0;
 
 const binImg = new Image(); binImg.src = 'bin.png';
 const papelaoImg = new Image(); papelaoImg.src = 'papelao.png';
@@ -21,9 +25,151 @@ const specialTrashImg = new Image(); specialTrashImg.src = 'special_trash.png';
 const heartItemImg = new Image(); heartItemImg.src = 'heart_item.png';
 const heartFullImg = new Image(); heartFullImg.src = 'heart_full.png';
 const heartEmptyImg = new Image(); heartEmptyImg.src = 'heart_empty.png';
+
+
+  const skins = [
+  { nome: "Lixeira Padrão", img: "bin.png", preco: 0 },
+  { nome: "Lixeira Aranha", img: "bin_spider.png", preco: 0 },
+  { nome: "Lixeira Batman", img: "bin_batman.png", preco: 0 },
+  { nome: "Lixeira Dourada", img: "bin_gold.png", preco: 0 }
+];
+
+const powerups = [
+  { nome: "Parar Tempo", img: "powerup_time.png", preco: 0, key: "powerupPararTempo" },
+  { nome: "Pular Pergunta", img: "powerup_skip.png", preco: 0, key: "powerupPularPergunta" }
+];
+
+let skinSelecionada = localStorage.getItem("skinSelecionada") || "bin.png";
+
+function atualizarMoedas() {
+    const moedasSpan = document.getElementById("moedasQtd");
+    if (moedasSpan) moedasSpan.textContent = moedas;
+}
+
+function atualizarPowerupsQuiz() {
+  document.getElementById("qtdPararTempo").textContent = powerupPararTempo;
+  document.getElementById("qtdPularPergunta").textContent = powerupPularPergunta;
+}
+
+
+
+function abrirLoja() {
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("shopScreen").style.display = "block";
+  const skinsList = document.getElementById("skinsList");
+  const powerupsList = document.getElementById("powerupsList");
+
+
+skinsList.innerHTML = "";
+  powerupsList.innerHTML = "";
+
+ 
+  
+  skins.forEach(skin => {
+    const card = document.createElement("div");
+    card.className = "skin-card" + (skinSelecionada === skin.img ? " selected" : "");
+    card.innerHTML = `
+      <img src="${skin.img}" alt="${skin.nome}">
+      <div class="skin-name">${skin.nome}</div>
+      <div class="skin-cost">${skin.preco} 🪙</div>
+    `;
+    const btn = document.createElement("button");
+    btn.textContent = skinSelecionada === skin.img ? "Selecionada" : (moedas >= skin.preco ? "Selecionar" : "Bloqueada");
+    btn.disabled = skinSelecionada === skin.img || moedas < skin.preco;
+    btn.onclick = () => comprarSkin(skin);
+    card.appendChild(btn);
+    skinsList.appendChild(card);
+  });
+
+  const powerupQtd = {
+  powerupPararTempo,
+  powerupPularPergunta
+};
+
+
+
+
+  powerups.forEach(powerup => {
+    const card = document.createElement("div");
+    card.className = "skin-card";
+    card.innerHTML = `
+      <img src="${powerup.img}" alt="${powerup.nome}">
+      <div class="skin-name">${powerup.nome}</div>
+      <div class="skin-cost">${powerup.preco} 🪙</div>
+<div class="skin-qtd">Você tem: <span id="qtd_${powerup.key}">${powerupQtd[powerup.key]}</span></div>
+    `;
+    const btn = document.createElement("button");
+    btn.textContent = moedas >= powerup.preco ? "Comprar" : "Bloqueado";
+    btn.disabled = moedas < powerup.preco;
+    btn.onclick = () => comprarPowerup(powerup);
+    card.appendChild(btn);
+    powerupsList.appendChild(card);
+  });
+}
+function fecharLoja() {
+  document.getElementById("shopScreen").style.display = "none";
+  document.getElementById("loginScreen").style.display = "block";
+}
+function comprarSkin(skin) {
+  if (moedas >= skin.preco) {
+    moedas -= skin.preco;
+    localStorage.setItem("moedas", moedas);
+    const moedasSpan = document.getElementById("moedasQtd");
+if (moedasSpan) moedasSpan.textContent = moedas;
+    skinSelecionada = skin.img;
+    localStorage.setItem("skinSelecionada", skinSelecionada);
+    fecharLoja();
+    
+  }
+}
+
+function comprarPowerup(powerup) {
+  if (moedas >= powerup.preco) {
+    moedas -= powerup.preco;
+    localStorage.setItem("moedas", moedas);
+  if (powerup.key === "powerupPararTempo") {
+    powerupPararTempo++;
+    localStorage.setItem("powerupPararTempo", powerupPararTempo);
+} else if (powerup.key === "powerupPularPergunta") {
+    powerupPularPergunta++;
+    localStorage.setItem("powerupPularPergunta", powerupPularPergunta);
+}
+    document.getElementById("moedasQtd").textContent = moedas;
+    abrirLoja();
+    
+  }
+}
+
+
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
     
-  
+document.getElementById("backToLoginFromShop").addEventListener("click", fecharLoja);
+
+
+document.getElementById("btnPararTempo").onclick = function() {
+  if (powerupPararTempo > 0 && timerInterval) {
+    clearInterval(timerInterval);
+    powerupPararTempo--;
+    localStorage.setItem("powerupPararTempo", powerupPararTempo);
+    atualizarPowerupsQuiz();
+   
+    document.getElementById("btnPararTempo").disabled = true; 
+  }
+};
+
+document.getElementById("btnPularPergunta").onclick = function() {
+  if (powerupPularPergunta > 0) {
+    powerupPularPergunta--;
+    localStorage.setItem("powerupPularPergunta", powerupPularPergunta);
+    atualizarPowerupsQuiz();
+    nextQuestion();
+    startTimer(); 
+  }
+};
+
 
     const startButton = document.getElementById("startButton");
     const rankingButton = document.getElementById("rankingButton");
@@ -682,6 +828,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startGame() {
+        atualizarPowerupsQuiz();
+        document.getElementById("shopScreen").style.display = "none";
         username = document.getElementById("username").value.trim();
         if (!username) {
             feedbackMessage.textContent = "⚠️ Por favor, digite seu nome!";
@@ -730,6 +878,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadQuestion() {
+         document.getElementById("btnPararTempo").disabled = false; 
         questionStartTime = Date.now();
         const question = shuffledQuestions[currentQuestion];
         document.getElementById("themeTitle").textContent = `Tema: ${question.tema}`;
@@ -749,7 +898,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+document.getElementById("moedasQtd").textContent = moedas;
+
     function checkAnswer(selected) {
+         const feedbackMessage = document.getElementById("feedbackMessage"); 
         const current = shuffledQuestions[currentQuestion];
         const correctAnswer = current.answer;
         const timeTaken = (Date.now() - questionStartTime) / 1000;
@@ -770,6 +922,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentDifficulty === "medio") basePoints = 15;
             else if (currentDifficulty === "dificil") basePoints = 20;
             score += basePoints + bonus;
+             moedas += 5; 
+            localStorage.setItem("moedas", moedas);
+            document.getElementById("moedasQtd").textContent = moedas;
             if (correctAnswersCount === 5) unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
             correctStreak++;
             timeLeft = Math.min(timeLeft + 5, getInitialTimeByDifficulty());
@@ -785,6 +940,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             nextQuestion();
+            startTimer();
         } else {
             feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
             errorCount++;
@@ -796,6 +952,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(showGameOver, 1000);
             } else {
                 nextQuestion();
+                startTimer();
             }
         }
         feedbackMessage.style.display = "block";
@@ -849,6 +1006,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function escolherDificuldade(nivel) {
+         document.body.classList.add('quiz-active');
+        document.getElementById("shopScreen").style.display = "none";
         if (nivel === "dificil") unlockAchievement("Desafio Aceito");
         currentDifficulty = nivel;
         switch (nivel) {
@@ -918,6 +1077,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showLoginScreen() {
+         document.body.classList.remove('quiz-active'); 
+       document.getElementById("shopScreen").style.display = "none";
         loginScreen.style.display = "block";
         gameScreen.style.display = "none";
         rankingScreen.style.display = "none";
@@ -941,6 +1102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showRanking() {
+       document.getElementById("shopScreen").style.display = "none";
         loginScreen.style.display = "none";
         gameScreen.style.display = "none";
         achievementsScreen.style.display = "none";
@@ -953,6 +1115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showAchievements() {
+       document.getElementById("shopScreen").style.display = "none";
         loginScreen.style.display = "none";
         gameScreen.style.display = "none";
         rankingScreen.style.display = "none";
@@ -1004,6 +1167,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function showModoNovo() {
+    document.getElementById("shopScreen").style.display = "none";
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('modonovoScreen').style.display = 'flex';
     startColetaGame(); 
@@ -1011,6 +1175,7 @@ function showModoNovo() {
 
 
 function hideModoNovo() {
+   document.getElementById("shopScreen").style.display = "none";
     document.getElementById('modonovoScreen').style.display = 'none';
     document.getElementById('loginScreen').style.display = 'block';
 }
@@ -1049,9 +1214,11 @@ function hideModoNovo() {
 }
 
 window.addEventListener("resize", () => {
+    if (canvas) {
         ajustarCanvas();
         ajustarTamanhos();
-    });
+    }
+});
    ;
     document.addEventListener('keydown', function (e) {
         const speed = 20;
@@ -1094,23 +1261,25 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function ajustarCanvas() {
-        const maxWidth = 500;
-        const width = Math.min(window.innerWidth - 20, maxWidth);
-        const height = width * 1.25;
-        canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
+    if (!canvas) {
+        canvas = document.getElementById('gameCanvas');
+        if (!canvas) return;
     }
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+}
 
-    function ajustarTamanhos() {
-        if (isMobile()) {
-            player.width = canvas.width * 0.22;
-            player.height = canvas.height * 0.13;
-        } else {
-            player.width = canvas.width * 0.08;
-            player.height = canvas.height * 0.14;
-        }
-        player.x = (canvas.width - player.width) / 2;
+   function ajustarTamanhos() {
+    if (!player || !canvas) return; 
+    if (isMobile()) {
+        player.width = canvas.width * 0.22;
+        player.height = canvas.height * 0.13;
+    } else {
+        player.width = canvas.width * 0.08;
+        player.height = canvas.height * 0.14;
     }
+    player.x = (canvas.width - player.width) / 2;
+}
 
     function drawHearts() {
         const container = document.getElementById('livesContainer');
@@ -1294,6 +1463,8 @@ canvas.height = canvas.offsetHeight;
 }
 
 function startColetaGame() {
+
+    binImg.src = skinSelecionada;
    
     canvas = document.getElementById('gameCanvas');
 ctx = canvas.getContext('2d');
@@ -1323,7 +1494,8 @@ ctx = canvas.getContext('2d');
     document.getElementById('gameOverScreen').classList.remove('show');
     document.getElementById('pauseMenu').classList.remove('show');
     document.getElementById('score').innerText = score;
-    document.getElementById('pauseButton').textContent = '⏸';
+    const pauseIcon = document.getElementById('pauseIcon');
+if (pauseIcon) pauseIcon.src = 'pause.png';
     drawHearts();
     if (gameInterval) clearInterval(gameInterval);
     if (trashInterval) clearInterval(trashInterval);
@@ -1360,12 +1532,14 @@ ctx = canvas.getContext('2d');
 function togglePause() {
     isPaused = !isPaused;
     const pauseMenu = document.getElementById('pauseMenu');
-     if (isPaused) {
+    if (isPaused) {
         pauseMenu.classList.add('show');
-        document.getElementById('pauseIcon').src = 'play.png'; 
     } else {
         pauseMenu.classList.remove('show');
-        document.getElementById('pauseIcon').src = 'pause.png'; 
+    }
+    const pauseIcon = document.getElementById('pauseIcon');
+    if (pauseIcon) {
+        pauseIcon.src = isPaused ? 'play.png' : 'pause.png';
     }
 }
 function restartGame() {

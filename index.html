@@ -2,16 +2,18 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EcoPlay</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="favicon.png" type="image/png">
 </head>
 <body>
     <div id="gameContainer">
-        <h1>EcoPlay 🌱</h1>
+        
+
 
         <div id="loginScreen">
+            <h1>EcoPlay 🌱</h1>
             <label for="username">Digite seu nome:</label>
             <input type="text" id="username" placeholder="Seu nome...">
             <button id="startButton">Começar</button>
@@ -20,23 +22,57 @@
             <button id="achievementsButton">Ver Conquistas 🏅</button>
             <button id="musicToggleButton">🔈 Ligar/Desligar Música</button>
             <button id="darkModeToggleButton">🌙 Modo Black</button>
+             <button id="shopButton" onclick="abrirLoja()">🛒 Loja de Skins</button>
         </div>
+       
+<div id="shopScreen" style="display:none;">
+  <h2>Loja</h2>
+  <div id="skinsSection">
+    <h3>Skins de Lixeira</h3>
+    <div id="skinsList"></div>
+  </div>
+  <div id="powerupsSection">
+    <h3>Power-ups</h3>
+    <div id="powerupsList"></div>
+  </div>
+  <button id="backToLoginFromShop">Voltar</button>
+</div>
 
-        <!-- Tela de Seleção de Dificuldade -->
+        
         <div id="difficultyScreen" style="display: none;">
+            <h1>EcoPlay 🌱</h1>
             <h2>Escolha a Dificuldade</h2>
             <button class="difficultyBtn" data-dificuldade="facil">Fácil 🌿</button>
             <button class="difficultyBtn" data-dificuldade="medio">Médio 🌳</button>
             <button class="difficultyBtn" data-dificuldade="dificil">Difícil 🔥</button>
         </div>
 
-        <div id="gameScreen" style="display: none;">
-            <h2 id="themeTitle"></h2>
-            <p id="questionText"></p>
-            <div id="options"></div>
-            <p id="timeLeft"></p>
-            <p id="errorCount">Erros: 0/3</p>
-        </div>
+      <div id="gameScreen" style="display: none;">
+        <h1>EcoPlay 🌱</h1>
+      <div id="moedasDisplay" style="font-weight:bold; margin-top: 8px;">
+    🪙 <span id="moedasQtd">0</span> | Pontuação: <span id="scoreValue">0</span> | <span id="errorCount">Erros: 0/3</span>
+</div>
+    <h2 id="themeTitle"></h2>
+    <p id="questionText"></p>
+    <div id="options"></div>
+     <div id="feedbackMessage" class="message" style="display: none;"></div>
+    <div id="powerupsQuiz" style="margin: 8px 0;">
+        <button id="btnPararTempo">
+            <img src="powerup_time.png" alt="Parar Tempo" style="width:20px;vertical-align:middle;">
+            (<span id="qtdPararTempo">0</span>)
+        </button>
+        <button id="btnPularPergunta">
+            <img src="powerup_skip.png" alt="Pular Pergunta" style="width:20px;vertical-align:middle;">
+            (<span id="qtdPularPergunta">0</span>)
+        </button>
+        
+    </div>
+   <div id="statusBar" style="display: flex; justify-content: center; gap: 24px; align-items: center; margin-top: 8px;">
+    <p id="timeLeft" style="margin: 0;"></p>
+    
+</div>
+    
+</div>
 
         <div id="rankingScreen" style="display: none;">
             <h2>🏆 Ranking Local</h2>
@@ -50,13 +86,10 @@
             <button id="backToLoginFromAchievements">Voltar</button>
         </div>
 
-        <div id="scoreDisplay">
-            Pontuação: <span id="scoreValue">0</span>
-        </div>
-
-        <!-- Modo Coleta -->
+       
+       
         <div id="modonovoScreen" style="display:none">
-            <!-- Menu de Pausa -->
+            
            <div id="pauseMenu">
     <h2>⏸ Jogo Pausado</h2>
     <button onclick="togglePause()">▶ Retomar</button>
@@ -64,7 +97,7 @@
      <button onclick="toggleFullScreen()">🔳 Tela Cheia</button>
     <button onclick="hideModoNovo()">⬅ Voltar ao Menu</button>
 </div>
-            <!-- Container do jogo Coleta -->
+            
             <div id="modonovoGameContainer">
                 <div id="topBar">
                     <div id="livesContainer"></div>
@@ -77,7 +110,7 @@
                     <canvas id="gameCanvas"></canvas>
                 </div>
             </div>
-            <!-- Tela de fim de jogo do modo coleta -->
+            
             <div id="gameOverScreen">
                 <h2 id="finalScore"></h2>
                 <button onclick="restartGame()">↻ Reiniciar</button>
@@ -86,9 +119,9 @@
         </div>
     </div>
 
-    <div id="feedbackMessage" class="message" style="display: none;"></div>
+   
 
-    <!-- Game Over do quiz principal -->
+ 
     <div id="gameOverMessage" class="message" style="display: none;">
         <h2 id="finalScoreQuiz"></h2>
         <button id="restartButton">Reiniciar</button>
@@ -105,6 +138,8 @@
         </div>
         <div id="sessionAchievements" class="session-achievements"></div>
     </div>
+
+
 
     <script src="app.js"></script>
 </body>
