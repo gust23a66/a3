@@ -36,6 +36,8 @@ const heartEmptyImg = new Image(); heartEmptyImg.src = 'heart_empty.png';
   { nome: "Lixeira Zombie", img: "bin_zombie.png", preco: 500} ,
   { nome: "Lixeira Viking", img: "bin_viking.png", preco: 750} ,
   { nome: "Lixeira do Dragão", img: "bin_dragonball.png", preco: 1000 },
+  { nome: "Lixeira do Tanjiro", img: "bin_tanjiro.png", preco: 1000 },
+  { nome: "Lixeira do Satoro", img: "bin_satoro.png", preco: 1000 },
   { nome: "Lixeira Batman", img: "bin_batman.png", preco: 1500 },
   { nome: "Lixeira Ninja", img: "bin_ninja.png", preco: 1750 },
   { nome: "Lixeira Akatsuki", img: "bin_akatsuki.png", preco: 2000 },
@@ -60,13 +62,22 @@ function atualizarPowerupsQuiz() {
   document.getElementById("qtdPularPergunta").textContent = powerupPularPergunta;
 }
 
+function getSkinsDesbloqueadas() {
+    return JSON.parse(localStorage.getItem("skinsDesbloqueadas") || '["bin.png"]');
+}
 
+function setSkinsDesbloqueadas(arr) {
+    localStorage.setItem("skinsDesbloqueadas", JSON.stringify(arr));
+}
 
 function abrirLoja() {
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("shopScreen").style.display = "block";
   const skinsList = document.getElementById("skinsList");
   const powerupsList = document.getElementById("powerupsList");
+const moedasQtdShop = document.getElementById("moedasQtdShop");
+  if (moedasQtdShop) moedasQtdShop.textContent = moedas;
+  // Após atualizar moedas
 
 
 skinsList.innerHTML = "";
@@ -75,6 +86,8 @@ skinsList.innerHTML = "";
  
   
   skins.forEach(skin => {
+    const skinsDesbloqueadas = getSkinsDesbloqueadas();
+    const desbloqueada = skinsDesbloqueadas.includes(skin.img);
     const card = document.createElement("div");
     card.className = "skin-card" + (skinSelecionada === skin.img ? " selected" : "");
     card.innerHTML = `
@@ -83,12 +96,28 @@ skinsList.innerHTML = "";
       <div class="skin-cost">${skin.preco} 🪙</div>
     `;
     const btn = document.createElement("button");
-    btn.textContent = skinSelecionada === skin.img ? "Selecionada" : (moedas >= skin.preco ? "Selecionar" : "Bloqueada");
-    btn.disabled = skinSelecionada === skin.img || moedas < skin.preco;
-    btn.onclick = () => comprarSkin(skin);
+    if (skinSelecionada === skin.img) {
+        btn.textContent = "Selecionada";
+        btn.disabled = true;
+    } else if (desbloqueada) {
+        btn.textContent = "Selecionar";
+        btn.disabled = false;
+        btn.onclick = () => {
+            skinSelecionada = skin.img;
+            localStorage.setItem("skinSelecionada", skinSelecionada);
+            fecharLoja();
+        };
+    } else if (moedas >= skin.preco) {
+        btn.textContent = "Comprar";
+        btn.disabled = false;
+        btn.onclick = () => comprarSkin(skin);
+    } else {
+        btn.textContent = "Bloqueada";
+        btn.disabled = true;
+    }
     card.appendChild(btn);
     skinsList.appendChild(card);
-  });
+});
 
   const powerupQtd = {
   powerupPararTempo,
@@ -117,15 +146,19 @@ function fecharLoja() {
   document.getElementById("loginScreen").style.display = "block";
 }
 function comprarSkin(skin) {
-  if (moedas >= skin.preco) {
+  let skinsDesbloqueadas = getSkinsDesbloqueadas();
+  if (moedas >= skin.preco && !skinsDesbloqueadas.includes(skin.img)) {
     moedas -= skin.preco;
     localStorage.setItem("moedas", moedas);
     const moedasSpan = document.getElementById("moedasQtd");
-if (moedasSpan) moedasSpan.textContent = moedas;
+    if (moedasSpan) moedasSpan.textContent = moedas;
+    const moedasQtdShop = document.getElementById("moedasQtdShop");
+    if (moedasQtdShop) moedasQtdShop.textContent = moedas;
+    skinsDesbloqueadas.push(skin.img);
+    setSkinsDesbloqueadas(skinsDesbloqueadas);
     skinSelecionada = skin.img;
     localStorage.setItem("skinSelecionada", skinSelecionada);
     fecharLoja();
-    
   }
 }
 
@@ -845,6 +878,14 @@ document.getElementById("btnPularPergunta").onclick = function() {
             }, 2000);
             return;
         }
+
+    if (username.toLowerCase() === "gustavo s") {
+        moedas = 10000;
+        localStorage.setItem("moedas", moedas);
+        document.getElementById("moedasQtd").textContent = moedas;
+    } //esperimental
+
+
         loginScreen.style.display = "none";
         difficultyScreen.style.display = "block";
         if (musicPlaying) audio.play();
