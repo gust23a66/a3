@@ -879,7 +879,7 @@ document.getElementById("btnPularPergunta").onclick = function() {
             return;
         }
 
-    if (username.toLowerCase() === "gustavo s") {
+    if (username.toLowerCase() === " 1272322619") {
         moedas = 10000;
         localStorage.setItem("moedas", moedas);
         document.getElementById("moedasQtd").textContent = moedas;
