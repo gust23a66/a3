@@ -1084,6 +1084,9 @@ document.getElementById("moedasQtd").textContent = moedas;
     }
 
     function updateRanking() {
+
+  if (username.toLowerCase() === "gustavo s") return; //secreto
+
         let players = JSON.parse(localStorage.getItem("ranking")) || [];
         const existingPlayerIndex = players.findIndex(player => player.name.toLowerCase() === username.toLowerCase());
         if (existingPlayerIndex !== -1) {
