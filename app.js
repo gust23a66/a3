@@ -27,11 +27,20 @@ const heartFullImg = new Image(); heartFullImg.src = 'heart_full.png';
 const heartEmptyImg = new Image(); heartEmptyImg.src = 'heart_empty.png';
 
 
-  const skins = [
+ const skins = [
   { nome: "Lixeira Padrão", img: "bin.png", preco: 0 },
-  { nome: "Lixeira Aranha", img: "bin_spider.png", preco: 0 },
-  { nome: "Lixeira Batman", img: "bin_batman.png", preco: 0 },
-  { nome: "Lixeira Dourada", img: "bin_gold.png", preco: 0 }
+  { nome: "Lixeira Dourada", img: "bin_gold.png", preco: 100 },
+  { nome: "Lixeira Brasil", img: "bin_brasil.png", preco: 200 } ,
+   { nome: "Lixeira Robô", img: "bin_robo.png", preco: 250} ,
+  { nome: "Lixeira Pirata", img: "bin_pirata.png", preco: 300} ,
+  { nome: "Lixeira Zombie", img: "bin_zombie.png", preco: 500} ,
+  { nome: "Lixeira Viking", img: "bin_viking.png", preco: 750} ,
+  { nome: "Lixeira do Dragão", img: "bin_dragonball.png", preco: 1000 },
+  { nome: "Lixeira Batman", img: "bin_batman.png", preco: 1500 },
+  { nome: "Lixeira Ninja", img: "bin_ninja.png", preco: 1750 },
+  { nome: "Lixeira Akatsuki", img: "bin_akatsuki.png", preco: 2000 },
+  { nome: "Lixeira Aranha", img: "bin_spider.png", preco: 2500}
+  
 ];
 
 const powerups = [
@@ -913,29 +922,35 @@ document.getElementById("moedasQtd").textContent = moedas;
         }
 
         if (selected === correctAnswer) {
-            correctAnswersCount++;
-            feedbackMessage.textContent = "✅ Você acertou!";
-            let basePoints = 10;
-            if (currentDifficulty === "medio") basePoints = 15;
-            else if (currentDifficulty === "dificil") basePoints = 20;
-            score += basePoints + bonus;
-             moedas += 5; 
-            localStorage.setItem("moedas", moedas);
-            document.getElementById("moedasQtd").textContent = moedas;
-            if (correctAnswersCount === 5) unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
-            correctStreak++;
-            timeLeft = Math.min(timeLeft + 5, getInitialTimeByDifficulty());
-            timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
-            acertoAudio.play();
-            document.getElementById("scoreValue").textContent = score;
-            if (correctStreak === 3) unlockAchievement("Acertou 3 seguidas 🔥");
-            if (score === 10) unlockAchievement("Primeira Resposta Correta ✅");
-            if (score >= 100) unlockAchievement("Pontuação 100 🔥");
-            if (correctAnswersCount >= 20) {
-                clearInterval(timerInterval);
-                showWinScreen();
-                return;
-            }
+    correctAnswersCount++;
+    feedbackMessage.textContent = "✅ Você acertou!";
+    let basePoints = 10;
+    let moedasGanhas = 2;
+    if (currentDifficulty === "medio") {
+        basePoints = 15;
+        moedasGanhas = 5;
+    } else if (currentDifficulty === "dificil") {
+        basePoints = 20;
+        moedasGanhas = 10;
+    }
+    score += basePoints + bonus;
+    moedas += moedasGanhas;
+    localStorage.setItem("moedas", moedas);
+    document.getElementById("moedasQtd").textContent = moedas;
+    if (correctAnswersCount === 5) unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
+    correctStreak++;
+    timeLeft = Math.min(timeLeft + 5, getInitialTimeByDifficulty());
+    timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
+    acertoAudio.play();
+    document.getElementById("scoreValue").textContent = score;
+    if (correctStreak === 3) unlockAchievement("Acertou 3 seguidas 🔥");
+    if (score === 10) unlockAchievement("Primeira Resposta Correta ✅");
+    if (score >= 100) unlockAchievement("Pontuação 100 🔥");
+    if (correctAnswersCount >= 20) {
+        clearInterval(timerInterval);
+        showWinScreen();
+        return;
+    }
             nextQuestion();
             startTimer();
         } else {
