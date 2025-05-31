@@ -1,6 +1,6 @@
 
-const acertoAudio = new Audio('acerto.mp3');
-const erroAudio = new Audio('erro.mp3');
+const acertoAudio = new Audio('audios/acerto.mp3');
+const erroAudio = new Audio('audios/erro.mp3');
 let isPaused = false;
 let coletaState = {};
 let canvas, ctx, isPC, player, score, lives, gameOver, fallSpeed, lastSpeedIncreaseScore, trash, gameInterval, trashInterval;
@@ -10,47 +10,47 @@ let powerupPularPergunta = parseInt(localStorage.getItem("powerupPularPergunta")
 if (isNaN(powerupPararTempo)) powerupPararTempo = 0;
 if (isNaN(powerupPularPergunta)) powerupPularPergunta = 0;
 
-const binImg = new Image(); binImg.src = 'bin.png';
-const papelaoImg = new Image(); papelaoImg.src = 'papelao.png';
-const jornalImg = new Image(); jornalImg.src = 'jornal.png';
-const trashImg = new Image(); trashImg.src = 'trash.png';
-const organicTrashImg = new Image(); organicTrashImg.src = 'organic_trash.png';
-const metalTrashImg = new Image(); metalTrashImg.src = 'metal_trash.png';
-const glassTrashImg = new Image(); glassTrashImg.src = 'glass_trash.png';
-const plasticTrashImg = new Image(); plasticTrashImg.src = 'plastic_trash.png';
-const bananaTrashImg = new Image(); bananaTrashImg.src = 'banana.png';
-const eggShellImg = new Image(); eggShellImg.src = 'egg_shell.png';
-const backgroundImg = new Image(); backgroundImg.src = 'fundo.png';
-const specialTrashImg = new Image(); specialTrashImg.src = 'special_trash.png';
-const heartItemImg = new Image(); heartItemImg.src = 'heart_item.png';
-const heartFullImg = new Image(); heartFullImg.src = 'heart_full.png';
-const heartEmptyImg = new Image(); heartEmptyImg.src = 'heart_empty.png';
+const binImg = new Image(); binImg.src = 'img/bin.png';
+const papelaoImg = new Image(); papelaoImg.src = 'img/papelao.png';
+const jornalImg = new Image(); jornalImg.src = 'img/jornal.png';
+const trashImg = new Image(); trashImg.src = 'img/trash.png';
+const organicTrashImg = new Image(); organicTrashImg.src = 'img/organic_trash.png';
+const metalTrashImg = new Image(); metalTrashImg.src = 'img/metal_trash.png';
+const glassTrashImg = new Image(); glassTrashImg.src = 'img/glass_trash.png';
+const plasticTrashImg = new Image(); plasticTrashImg.src = 'img/plastic_trash.png';
+const bananaTrashImg = new Image(); bananaTrashImg.src = 'img/banana.png';
+const eggShellImg = new Image(); eggShellImg.src = 'img/egg_shell.png';
+const backgroundImg = new Image(); backgroundImg.src = 'img/fundo.png';
+const specialTrashImg = new Image(); specialTrashImg.src = 'img/special_trash.png';
+const heartItemImg = new Image(); heartItemImg.src = 'img/heart_item.png';
+const heartFullImg = new Image(); heartFullImg.src = 'img/heart_full.png';
+const heartEmptyImg = new Image(); heartEmptyImg.src = 'img/heart_empty.png';
 
 
  const skins = [
-  { nome: "Lixeira Padrão", img: "bin.png", preco: 0 },
-  { nome: "Lixeira Dourada", img: "bin_gold.png", preco: 100 },
-  { nome: "Lixeira Brasil", img: "bin_brasil.png", preco: 200 } ,
-   { nome: "Lixeira Robô", img: "bin_robo.png", preco: 250} ,
-  { nome: "Lixeira Pirata", img: "bin_pirata.png", preco: 300} ,
-  { nome: "Lixeira Zombie", img: "bin_zombie.png", preco: 500} ,
-  { nome: "Lixeira Viking", img: "bin_viking.png", preco: 750} ,
-  { nome: "Lixeira do Dragão", img: "bin_dragonball.png", preco: 1000 },
-  { nome: "Lixeira do Tanjiro", img: "bin_tanjiro.png", preco: 1000 },
-  { nome: "Lixeira do Satoro", img: "bin_satoro.png", preco: 1000 },
-  { nome: "Lixeira Batman", img: "bin_batman.png", preco: 1500 },
-  { nome: "Lixeira Ninja", img: "bin_ninja.png", preco: 1750 },
-  { nome: "Lixeira Akatsuki", img: "bin_akatsuki.png", preco: 2000 },
-  { nome: "Lixeira Aranha", img: "bin_spider.png", preco: 2500}
+  { nome: "Lixeira Padrão", img: "img/bin.png", preco: 0 },
+  { nome: "Lixeira Dourada", img: "img/bin_gold.png", preco: 100 },
+  { nome: "Lixeira Brasil", img: "img/bin_brasil.png", preco: 200 } ,
+   { nome: "Lixeira Robô", img: "img/bin_robo.png", preco: 250} ,
+  { nome: "Lixeira Pirata", img: "img/bin_pirata.png", preco: 300} ,
+  { nome: "Lixeira Zombie", img: "img/bin_zombie.png", preco: 500} ,
+  { nome: "Lixeira Viking", img: "img/bin_viking.png", preco: 750} ,
+  { nome: "Lixeira do Dragão", img: "img/bin_dragonball.png", preco: 1000 },
+  { nome: "Lixeira do Tanjiro", img: "img/bin_tanjiro.png", preco: 1000 },
+  { nome: "Lixeira do Satoro", img: "img/bin_satoro.png", preco: 1000 },
+  { nome: "Lixeira Batman", img: "img/bin_batman.png", preco: 1500 },
+  { nome: "Lixeira Ninja", img: "img/bin_ninja.png", preco: 1750 },
+  { nome: "Lixeira Akatsuki", img: "img/bin_akatsuki.png", preco: 2000 },
+  { nome: "Lixeira Aranha", img: "img/bin_spider.png", preco: 2500}
   
 ];
 
 const powerups = [
-  { nome: "Parar Tempo", img: "powerup_time.png", preco: 0, key: "powerupPararTempo" },
-  { nome: "Pular Pergunta", img: "powerup_skip.png", preco: 0, key: "powerupPularPergunta" }
+  { nome: "Parar Tempo", img: "img/powerup_time.png", preco: 0, key: "powerupPararTempo" },
+  { nome: "Pular Pergunta", img: "img/powerup_skip.png", preco: 0, key: "powerupPularPergunta" }
 ];
 
-let skinSelecionada = localStorage.getItem("skinSelecionada") || "bin.png";
+let skinSelecionada = localStorage.getItem("skinSelecionada") || "img/bin.png";
 
 function atualizarMoedas() {
     const moedasSpan = document.getElementById("moedasQtd");
@@ -63,7 +63,7 @@ function atualizarPowerupsQuiz() {
 }
 
 function getSkinsDesbloqueadas() {
-    return JSON.parse(localStorage.getItem("skinsDesbloqueadas") || '["bin.png"]');
+    return JSON.parse(localStorage.getItem("skinsDesbloqueadas") || '["img/bin.png"]');
 }
 
 function setSkinsDesbloqueadas(arr) {
@@ -77,7 +77,7 @@ function abrirLoja() {
   const powerupsList = document.getElementById("powerupsList");
 const moedasQtdShop = document.getElementById("moedasQtdShop");
   if (moedasQtdShop) moedasQtdShop.textContent = moedas;
-  // Após atualizar moedas
+ 
 
 
 skinsList.innerHTML = "";
@@ -181,8 +181,6 @@ function comprarPowerup(powerup) {
 
 
 
-
-
 document.addEventListener('DOMContentLoaded', () => {
     
 document.getElementById("backToLoginFromShop").addEventListener("click", fecharLoja);
@@ -273,7 +271,7 @@ document.getElementById("btnPularPergunta").onclick = function() {
     menuButtonWin.addEventListener("click", showLoginScreen);
 
     let musicPlaying = true;
-    const audio = new Audio('musica_fundo.mp3');
+    const audio = new Audio('audios/musica_fundo.mp3');
     audio.loop = true;
     audio.addEventListener('canplaythrough', () => {
         if (musicPlaying) audio.play();
@@ -883,7 +881,7 @@ document.getElementById("btnPularPergunta").onclick = function() {
         moedas = 10000;
         localStorage.setItem("moedas", moedas);
         document.getElementById("moedasQtd").textContent = moedas;
-    } //esperimental
+    } 
 
 
         loginScreen.style.display = "none";
@@ -1551,7 +1549,7 @@ ctx = canvas.getContext('2d');
     document.getElementById('pauseMenu').classList.remove('show');
     document.getElementById('score').innerText = score;
     const pauseIcon = document.getElementById('pauseIcon');
-if (pauseIcon) pauseIcon.src = 'pause.png';
+if (pauseIcon) pauseIcon.src = 'img/pause.png';
     drawHearts();
     if (gameInterval) clearInterval(gameInterval);
     if (trashInterval) clearInterval(trashInterval);
@@ -1579,45 +1577,6 @@ if (pauseIcon) pauseIcon.src = 'pause.png';
         canvas.addEventListener('touchstart', ativarTelaCheiaMobile);
         canvas.addEventListener('click', ativarTelaCheiaMobile);
         canvas.listenersAdded = true;
-    }
-}
-
-
-
-
-function togglePause() {
-    isPaused = !isPaused;
-    const pauseMenu = document.getElementById('pauseMenu');
-    if (isPaused) {
-        pauseMenu.classList.add('show');
-    } else {
-        pauseMenu.classList.remove('show');
-    }
-    const pauseIcon = document.getElementById('pauseIcon');
-    if (pauseIcon) {
-        pauseIcon.src = isPaused ? 'play.png' : 'pause.png';
-    }
-}
-function restartGame() {
-    document.body.classList.remove('game-over');
-    startColetaGame();
-}
-function toggleFullScreen() {
-    const elem = document.documentElement;
-    if (!document.fullscreenElement) {
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-        } else if (elem.mozRequestFullScreen) { 
-            elem.mozRequestFullScreen();
-        } else if (elem.webkitRequestFullscreen) { 
-            elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) { 
-            elem.msRequestFullscreen();
-        }
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        }
     }
 }
 
