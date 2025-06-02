@@ -9,7 +9,7 @@ let powerupPararTempo = parseInt(localStorage.getItem("powerupPararTempo") || "0
 let powerupPularPergunta = parseInt(localStorage.getItem("powerupPularPergunta") || "0");
 if (isNaN(powerupPararTempo)) powerupPararTempo = 0;
 if (isNaN(powerupPularPergunta)) powerupPularPergunta = 0;
-
+let multiplierFireIcon;
 const binImg = new Image(); binImg.src = 'img/bin.png';
 const papelaoImg = new Image(); papelaoImg.src = 'img/papelao.png';
 const jornalImg = new Image(); jornalImg.src = 'img/jornal.png';
@@ -25,7 +25,9 @@ const specialTrashImg = new Image(); specialTrashImg.src = 'img/special_trash.pn
 const heartItemImg = new Image(); heartItemImg.src = 'img/heart_item.png';
 const heartFullImg = new Image(); heartFullImg.src = 'img/heart_full.png';
 const heartEmptyImg = new Image(); heartEmptyImg.src = 'img/heart_empty.png';
-
+let isMultiplierSessionActive = false; 
+const CHANCE_FOR_SESSION_MULTIPLIER = 0.25; 
+const SESSION_COIN_MULTIPLIER = 2; 
 
  const skins = [
   { nome: "Lixeira Padrão", img: "img/bin.png", preco: 0 },
@@ -35,10 +37,12 @@ const heartEmptyImg = new Image(); heartEmptyImg.src = 'img/heart_empty.png';
   { nome: "Lixeira Pirata", img: "img/bin_pirata.png", preco: 300} ,
   { nome: "Lixeira Zombie", img: "img/bin_zombie.png", preco: 500} ,
   { nome: "Lixeira Viking", img: "img/bin_viking.png", preco: 750} ,
-  { nome: "Lixeira do Dragão", img: "img/bin_dragonball.png", preco: 1000 },
-  { nome: "Lixeira do Tanjiro", img: "img/bin_tanjiro.png", preco: 1000 },
-  { nome: "Lixeira do Satoro", img: "img/bin_satoro.png", preco: 1000 },
-  { nome: "Lixeira Batman", img: "img/bin_batman.png", preco: 1500 },
+  { nome: "Lixeira do Dragão", img: "img/bin_dragonball.png", preco: 800 },
+  { nome: "Lixeira do Tanjiro", img: "img/bin_tanjiro.png", preco: 850 },
+  { nome: "Lixeira do Satoro", img: "img/bin_satoro.png", preco: 900 },
+  { nome: "Lixeira Batman", img: "img/bin_batman.png", preco: 950 },
+  { nome: "Lixeira Strange", img: "img/bin_strange.png", preco: 1000 },
+  { nome: "Lixeira Omnitrix", img: "img/bin_ben10.png", preco: 1500 },
   { nome: "Lixeira Ninja", img: "img/bin_ninja.png", preco: 1750 },
   { nome: "Lixeira Akatsuki", img: "img/bin_akatsuki.png", preco: 2000 },
   { nome: "Lixeira Aranha", img: "img/bin_spider.png", preco: 2500}
@@ -182,6 +186,7 @@ function comprarPowerup(powerup) {
 
 
 document.addEventListener('DOMContentLoaded', () => {
+     multiplierFireIcon = document.getElementById("multiplierFireIcon");
     
 document.getElementById("backToLoginFromShop").addEventListener("click", fecharLoja);
 
@@ -889,25 +894,49 @@ document.getElementById("btnPularPergunta").onclick = function() {
         if (musicPlaying) audio.play();
     }
 
-    function resetGame() {
-        score = 0;
-        errorCount = 0;
-        currentQuestion = 0;
-        correctAnswersCount = 0;
-        correctStreak = 0;
-        correctByTheme = { "Água": 0, "Energia": 0, "Lixo": 0, "Alimentação": 0 };
-        timeLeft = getInitialTimeByDifficulty();
-        timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
-        errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
-        shuffledQuestions = shuffleArray(
-            Object.entries(challenges).flatMap(([tema, perguntas]) =>
-                perguntas.map(pergunta => ({ ...pergunta, tema }))
-            )
-        );
-        currentQuestion = 0;
-        loadQuestion();
-        startTimer();
+   function resetGame() {
+    score = 0;
+    errorCount = 0;
+    currentQuestion = 0;
+    correctAnswersCount = 0;
+    correctStreak = 0;
+    correctByTheme = { "Água": 0, "Energia": 0, "Lixo": 0, "Alimentação": 0 }; 
+    timeLeft = getInitialTimeByDifficulty(); 
+    
+    const timeLeftDisplayEl = document.getElementById("timeLeft"); 
+    if (timeLeftDisplayEl) timeLeftDisplayEl.textContent = `⏳ Tempo restante: ${timeLeft}s`;
+    
+    const errorCountDisplayEl = document.getElementById("errorCount");
+    if (errorCountDisplayEl) errorCountDisplayEl.textContent = `Erros: ${errorCount}/3`;
+
+   
+    isMultiplierSessionActive = (Math.random() < CHANCE_FOR_SESSION_MULTIPLIER);
+
+    
+    if (multiplierFireIcon) { 
+        if (isMultiplierSessionActive) {
+            multiplierFireIcon.style.display = 'inline-block'; 
+          
+          
+        } else {
+            multiplierFireIcon.style.display = 'none'; 
+        }
     }
+
+    
+    shuffledThemes = shuffleArray(Object.keys(challenges)); 
+    currentThemeIndex = 0; 
+   
+    shuffledQuestions = shuffleArray(
+        Object.entries(challenges).flatMap(([tema, perguntas]) =>
+            perguntas.map(pergunta => ({ ...pergunta, tema }))
+        )
+    );
+    currentQuestion = 0; 
+
+    loadQuestion();
+    startTimer(); 
+}
 
     function startTimer() {
         clearInterval(timerInterval);
@@ -923,6 +952,8 @@ document.getElementById("btnPularPergunta").onclick = function() {
     }
 
     function loadQuestion() {
+        
+
          document.getElementById("btnPararTempo").disabled = false; 
         questionStartTime = Date.now();
         const question = shuffledQuestions[currentQuestion];
@@ -945,71 +976,94 @@ document.getElementById("btnPularPergunta").onclick = function() {
 
 document.getElementById("moedasQtd").textContent = moedas;
 
-    function checkAnswer(selected) {
-         const feedbackMessage = document.getElementById("feedbackMessage"); 
-        const current = shuffledQuestions[currentQuestion];
-        const correctAnswer = current.answer;
-        const timeTaken = (Date.now() - questionStartTime) / 1000;
-        let bonus = 0;
-        if (timeTaken <= 3) {
-            bonus = 5;
-            if (timeTaken <= 2) unlockAchievement("Resposta Rápida ⚡");
-        } else if (timeTaken <= 6) {
-            bonus = 3;
-        } else if (timeTaken <= 10) {
-            bonus = 1;
+function checkAnswer(selected) {
+    const feedbackMessage = document.getElementById("feedbackMessage");
+    const current = shuffledQuestions[currentQuestion];
+    const correctAnswer = current.answer;
+
+    if (selected === correctAnswer) {
+        correctAnswersCount++;
+        let basePoints = 10;
+        let moedasGanhas = 2;
+
+        if (currentDifficulty === "medio") {
+            basePoints = 15;
+            moedasGanhas = 5;
+        } else if (currentDifficulty === "dificil") {
+            basePoints = 20;
+            moedasGanhas = 10;
         }
 
-        if (selected === correctAnswer) {
-    correctAnswersCount++;
-    feedbackMessage.textContent = "✅ Você acertou!";
-    let basePoints = 10;
-    let moedasGanhas = 2;
-    if (currentDifficulty === "medio") {
-        basePoints = 15;
-        moedasGanhas = 5;
-    } else if (currentDifficulty === "dificil") {
-        basePoints = 20;
-        moedasGanhas = 10;
-    }
-    score += basePoints + bonus;
-    moedas += moedasGanhas;
-    localStorage.setItem("moedas", moedas);
-    document.getElementById("moedasQtd").textContent = moedas;
-    if (correctAnswersCount === 5) unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
-    correctStreak++;
-    timeLeft = Math.min(timeLeft + 5, getInitialTimeByDifficulty());
-    timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
-    acertoAudio.play();
-    document.getElementById("scoreValue").textContent = score;
-    if (correctStreak === 3) unlockAchievement("Acertou 3 seguidas 🔥");
-    if (score === 10) unlockAchievement("Primeira Resposta Correta ✅");
-    if (score >= 100) unlockAchievement("Pontuação 100 🔥");
-    if (correctAnswersCount >= 20) {
-        clearInterval(timerInterval);
-        showWinScreen();
-        return;
-    }
+     
+        if (isMultiplierSessionActive) {
+            moedasGanhas *= SESSION_COIN_MULTIPLIER;
+        }
+
+ 
+        if(feedbackMessage) feedbackMessage.textContent = `✅ Você acertou!`;
+
+       
+
+        score += basePoints; 
+        moedas += moedasGanhas;
+        localStorage.setItem("moedas", moedas.toString());
+        const moedasQtdSpan = document.getElementById("moedasQtd");
+        if (moedasQtdSpan) moedasQtdSpan.textContent = moedas;
+
+       
+        if (correctAnswersCount === 5) unlockAchievement("Respondeu 5 Perguntas Corretamente 🎓");
+        correctStreak++;
+        timeLeft = Math.min(timeLeft + 5, getInitialTimeByDifficulty());
+        
+        const timeLeftDisplayEl = document.getElementById("timeLeft");
+        if(timeLeftDisplayEl) timeLeftDisplayEl.textContent = `⏳ Tempo restante: ${timeLeft}s`;
+        
+        if(acertoAudio) acertoAudio.play();
+        
+        const scoreValueElementEl = document.getElementById("scoreValue");
+        if(scoreValueElementEl) scoreValueElementEl.textContent = score;
+
+        let firstCorrectUnlocked = (JSON.parse(localStorage.getItem("achievements")) || []).includes("Primeira Resposta Correta ✅");
+        if (!firstCorrectUnlocked && correctAnswersCount === 1) {
+            unlockAchievement("Primeira Resposta Correta ✅");
+        }
+            
+        if (score >= 100) unlockAchievement("Pontuação 100 🔥");
+        if (correctAnswersCount >= 20) {
+            if(timerInterval) clearInterval(timerInterval);
+            showWinScreen();
+            return;
+        }
+        nextQuestion();
+        startTimer();
+
+    } else {  
+        if(feedbackMessage) feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
+        errorCount++;
+        correctStreak = 0;
+        if(erroAudio) erroAudio.play();
+        
+        const errorCountDisplayEl = document.getElementById("errorCount");
+        if(errorCountDisplayEl) errorCountDisplayEl.textContent = `Erros: ${errorCount}/3`;
+        
+        if (errorCount >= 3) {
+            if(timerInterval) clearInterval(timerInterval);
+            setTimeout(showGameOver, 1000); 
+        } else {
             nextQuestion();
             startTimer();
-        } else {
-            feedbackMessage.textContent = `❌ Resposta correta: ${correctAnswer}`;
-            errorCount++;
-            correctStreak = 0;
-            erroAudio.play();
-            errorCountDisplay.textContent = `Erros: ${errorCount}/3`;
-            if (errorCount >= 3) {
-                clearInterval(timerInterval);
-                setTimeout(showGameOver, 1000);
-            } else {
-                nextQuestion();
-                startTimer();
-            }
         }
-        feedbackMessage.style.display = "block";
-        setTimeout(() => (feedbackMessage.style.display = "none"), 2000);
     }
 
+   
+    if(feedbackMessage) {
+        feedbackMessage.style.display = "block";
+        setTimeout(() => {
+            if(feedbackMessage) feedbackMessage.style.display = "none";
+          
+        }, 2000);
+    }
+}
     function nextQuestion() {
         currentQuestion++;
         if (currentQuestion >= shuffledQuestions.length) {
@@ -1083,7 +1137,7 @@ document.getElementById("moedasQtd").textContent = moedas;
 
     function updateRanking() {
 
-  if (username.toLowerCase() === "gustavo s") return; //secreto
+  if (username.toLowerCase() === "1272322619") return; //secreto
 
         let players = JSON.parse(localStorage.getItem("ranking")) || [];
         const existingPlayerIndex = players.findIndex(player => player.name.toLowerCase() === username.toLowerCase());
