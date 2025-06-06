@@ -50,8 +50,8 @@ const SESSION_COIN_MULTIPLIER = 2;
 ];
 
 const powerups = [
-  { nome: "Parar Tempo", img: "img/powerup_time.png", preco: 0, key: "powerupPararTempo" },
-  { nome: "Pular Pergunta", img: "img/powerup_skip.png", preco: 0, key: "powerupPularPergunta" }
+  { nome: "Parar Tempo", img: "img/powerup_time.png", preco: 50, key: "powerupPararTempo" },
+  { nome: "Pular Pergunta", img: "img/powerup_skip.png", preco: 100, key: "powerupPularPergunta" }
 ];
 
 let skinSelecionada = localStorage.getItem("skinSelecionada") || "img/bin.png";
@@ -75,75 +75,71 @@ function setSkinsDesbloqueadas(arr) {
 }
 
 function abrirLoja() {
-  document.getElementById("loginScreen").style.display = "none";
-  document.getElementById("shopScreen").style.display = "block";
-  const skinsList = document.getElementById("skinsList");
-  const powerupsList = document.getElementById("powerupsList");
-const moedasQtdShop = document.getElementById("moedasQtdShop");
-  if (moedasQtdShop) moedasQtdShop.textContent = moedas;
- 
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("shopScreen").style.display = "block";
+    const skinsList = document.getElementById("skinsList");
+    const powerupsList = document.getElementById("powerupsList");
+    const moedasQtdShop = document.getElementById("moedasQtdShop");
+    if (moedasQtdShop) moedasQtdShop.textContent = moedas;
 
+    skinsList.innerHTML = "";
+    powerupsList.innerHTML = "";
 
-skinsList.innerHTML = "";
-  powerupsList.innerHTML = "";
+    skins.forEach(skin => {
+        const skinsDesbloqueadas = getSkinsDesbloqueadas();
+        const desbloqueada = skinsDesbloqueadas.includes(skin.img);
+        const card = document.createElement("div");
+        card.className = "skin-card" + (skinSelecionada === skin.img ? " selected" : "");
+        card.innerHTML = `
+            <img src="${skin.img}" alt="${skin.nome}">
+            <div class="skin-name">${skin.nome}</div>
+            <div class="skin-cost">${skin.preco} <img src="img/moeda.png" alt="Moeda" class="coin-icon-small"></div>
+        `;
+        const btn = document.createElement("button");
+        if (skinSelecionada === skin.img) {
+            btn.textContent = "Selecionada";
+            btn.disabled = true;
+        } else if (desbloqueada) {
+            btn.textContent = "Selecionar";
+            btn.disabled = false;
+            btn.onclick = () => {
+                skinSelecionada = skin.img;
+                localStorage.setItem("skinSelecionada", skinSelecionada);
+                fecharLoja(); 
+            };
+        } else if (moedas >= skin.preco) {
+            btn.textContent = "Comprar";
+            btn.disabled = false;
+            btn.onclick = () => comprarSkin(skin);
+        } else {
+            btn.textContent = "Bloqueada";
+            btn.disabled = true;
+        }
+        card.appendChild(btn);
+        skinsList.appendChild(card);
+    });
 
- 
-  
-  skins.forEach(skin => {
-    const skinsDesbloqueadas = getSkinsDesbloqueadas();
-    const desbloqueada = skinsDesbloqueadas.includes(skin.img);
-    const card = document.createElement("div");
-    card.className = "skin-card" + (skinSelecionada === skin.img ? " selected" : "");
-    card.innerHTML = `
-      <img src="${skin.img}" alt="${skin.nome}">
-      <div class="skin-name">${skin.nome}</div>
-      <div class="skin-cost">${skin.preco} 🪙</div>
-    `;
-    const btn = document.createElement("button");
-    if (skinSelecionada === skin.img) {
-        btn.textContent = "Selecionada";
-        btn.disabled = true;
-    } else if (desbloqueada) {
-        btn.textContent = "Selecionar";
-        btn.disabled = false;
-        btn.onclick = () => {
-            skinSelecionada = skin.img;
-            localStorage.setItem("skinSelecionada", skinSelecionada);
-            fecharLoja();
-        };
-    } else if (moedas >= skin.preco) {
-        btn.textContent = "Comprar";
-        btn.disabled = false;
-        btn.onclick = () => comprarSkin(skin);
-    } else {
-        btn.textContent = "Bloqueada";
-        btn.disabled = true;
-    }
-    card.appendChild(btn);
-    skinsList.appendChild(card);
-});
+    const powerupQtd = {
+        powerupPararTempo,
+        powerupPularPergunta
+    };
 
-  const powerupQtd = {
-  powerupPararTempo,
-  powerupPularPergunta
-};
-
-  powerups.forEach(powerup => {
-    const card = document.createElement("div");
-    card.className = "skin-card";
-    card.innerHTML = `
-      <img src="${powerup.img}" alt="${powerup.nome}">
-      <div class="skin-name">${powerup.nome}</div>
-      <div class="skin-cost">${powerup.preco} 🪙</div>
-<div class="skin-qtd">Você tem: <span id="qtd_${powerup.key}">${powerupQtd[powerup.key]}</span></div>
-    `;
-    const btn = document.createElement("button");
-    btn.textContent = moedas >= powerup.preco ? "Comprar" : "Bloqueado";
-    btn.disabled = moedas < powerup.preco;
-    btn.onclick = () => comprarPowerup(powerup);
-    card.appendChild(btn);
-    powerupsList.appendChild(card);
-  });
+    powerups.forEach(powerup => {
+        const card = document.createElement("div");
+        card.className = "skin-card"; 
+        card.innerHTML = `
+            <img src="${powerup.img}" alt="${powerup.nome}">
+            <div class="skin-name">${powerup.nome}</div>
+            <div class="skin-cost">${powerup.preco} <img src="img/moeda.png" alt="Moeda" class="coin-icon-small"></div>
+            <div class="skin-qtd">Você tem: <span id="qtd_${powerup.key}">${powerupQtd[powerup.key]}</span></div>
+        `;
+        const btn = document.createElement("button");
+        btn.textContent = moedas >= powerup.preco ? "Comprar" : "Bloqueado";
+        btn.disabled = moedas < powerup.preco;
+        btn.onclick = () => comprarPowerup(powerup);
+        card.appendChild(btn);
+        powerupsList.appendChild(card);
+    });
 }
 function fecharLoja() {
   document.getElementById("shopScreen").style.display = "none";
@@ -1261,13 +1257,15 @@ function checkAnswer(selected) {
     darkModeToggleButton.addEventListener("click", toggleDarkMode);
     backToLoginButton.addEventListener("click", showLoginScreen);
     backToLoginFromAchievementsButton.addEventListener("click", showLoginScreen);
-    restartButton.addEventListener("click", () => {
-
-        gameOverMessage.style.display = "none";
-        gameScreen.style.display = "block";
-         audio.play(); 
-        resetGame();
-    });
+   
+   restartButton.addEventListener("click", () => {
+    gameOverMessage.style.display = "none";
+    gameScreen.style.display = "block";
+    if (musicPlaying) { 
+        audio.play();
+    }
+    resetGame();
+});
     menuButton.addEventListener("click", showLoginScreen);
     exitButton.addEventListener("click", exitGame);
 });
@@ -1377,16 +1375,31 @@ function ajustarCanvas() {
     canvas.height = canvas.offsetHeight;
 }
 
-   function ajustarTamanhos() {
-    if (!player || !canvas) return; 
+const LIXEIRA_PROPORCAO_LARGURA_ALTURA = 1.0;
+
+function ajustarTamanhos() {
+    if (!player || !canvas) return;
+
     if (isMobile()) {
-        player.width = canvas.width * 0.22;
-        player.height = canvas.height * 0.13;
-    } else {
-        player.width = canvas.width * 0.08;
-        player.height = canvas.height * 0.14;
+        player.width = canvas.width * 0.22; 
+        player.height = player.width / LIXEIRA_PROPORCAO_LARGURA_ALTURA; 
+
+       
+        if (player.height > canvas.height * 0.20) { 
+            player.height = canvas.height * 0.20; 
+        }
+
+    } else { 
+        player.width = canvas.width * 0.08; 
+        player.height = player.width / LIXEIRA_PROPORCAO_LARGURA_ALTURA;
+
+       
+        if (player.height > canvas.height * 0.18) {
+            player.height = canvas.height * 0.18;
+            player.width = player.height * LIXEIRA_PROPORCAO_LARGURA_ALTURA;
+        }
     }
-    player.x = (canvas.width - player.width) / 2;
+    player.x = (canvas.width - player.width) / 2; 
 }
 
     function drawHearts() {
@@ -1633,7 +1646,6 @@ if (pauseIcon) pauseIcon.src = 'img/pause.png';
         canvas.listenersAdded = true;
     }
 }
-
 
 window.addEventListener("resize", () => {
     if (canvas) {
