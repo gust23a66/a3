@@ -20,23 +20,25 @@
             <button id="achievementsButton">Ver Conquistas 🏅</button>
             <button id="musicToggleButton">🔈 Ligar/Desligar Música</button>
             <button id="darkModeToggleButton">🌙 Modo Black</button>
-             <button id="shopButton" onclick="abrirLoja()">🛒 Loja de Skins</button>
+             <button id="shopButton" onclick="abrirLoja()">🛒 Loja </button>
         </div>
        
 <div id="shopScreen" style="display:none;">
   <h2>Loja</h2>
   
 <div id="moedasDisplayShop" style="font-weight:bold; margin-bottom: 12px;">
-  🪙 <span id="moedasQtdShop">0</span>
+  <img src="img/moeda.png" alt="Moedas" class="coin-icon"> <span id="moedasQtdShop">0</span>
 </div>
   <div id="skinsSection">
-    <h3>Skins de Lixeira</h3>
-    <div id="skinsList"></div>
-  </div>
   <div id="powerupsSection">
     <h3>Power-ups</h3>
     <div id="powerupsList"></div>
   </div>
+
+    <h3>Skins de Lixeira</h3>
+    <div id="skinsList"></div>
+  </div>
+
   <button id="backToLoginFromShop">Voltar</button>
 </div>
 
@@ -51,8 +53,8 @@
 
       <div id="gameScreen" style="display: none;">
         <h1>EcoPlay 🌱</h1>
-      <div id="moedasDisplay" style="font-weight:bold; margin-top: 8px;">
-    🪙 <span id="moedasQtd">0</span> | Pontuação: <span id="scoreValue">0</span> | <span id="errorCount">Erros: 0/3</span>
+     <div id="moedasDisplay" style="font-weight:bold; margin-top: 8px;">
+  <img src="img/moeda.png" alt="Moedas" class="coin-icon"> <span id="moedasQtd">0</span> | Pontuação: <span id="scoreValue">0</span> | <span id="errorCount">Erros: 0/3</span>
 </div>
     <h2 id="themeTitle"></h2>
     
@@ -124,9 +126,6 @@
             </div>
         </div>
     </div>
-
-   
-
  
     <div id="gameOverMessage" class="message" style="display: none;">
         <h2 id="finalScoreQuiz"></h2>
@@ -144,8 +143,6 @@
         </div>
         <div id="sessionAchievements" class="session-achievements"></div>
     </div>
-
-
 
     <script src="app.js"></script>
 </body>
