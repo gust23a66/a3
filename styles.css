@@ -1790,3 +1790,253 @@ body.dark-mode ::-moz-selection {
 }
 
 
+.ranking-header-icon {
+    width: 36px;   
+    height: 36px;
+    vertical-align: middle; 
+    margin-right: 10px; 
+    user-select: none; 
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+
+.menu-trophy-icon {
+    width: 23px;   
+    height: 23px;
+    vertical-align: middle; 
+    margin-left: 8px; 
+    user-select: none; 
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.menu-shop-icon {
+    width: 23px;   
+    height: 23px;
+    vertical-align: middle; 
+    margin-left: 8px; 
+    user-select: none; 
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.menu-audio-icon {
+    width: 23px;  
+    height: 23px;
+    vertical-align: middle; 
+    margin-left: 8px;
+    user-select: none; 
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+body.dark-mode .menu-audio-icon {
+   
+   filter: invert(1); 
+}
+
+.achievement-medal-icon {
+    width: 23px;   
+    height: 23px;
+    vertical-align: middle; 
+    margin-right: 8px; 
+    user-select: none; 
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.achievement-locked-icon {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 8px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.menu-achievements-icon {
+    width: 24px;  
+    height: 24px;
+    vertical-align: middle; 
+    margin-left: 8px; 
+    user-select: none; 
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #e6f7ff; 
+    color: #2e3b4e;
+}
+
+
+html.dark-mode, 
+body.dark-mode {
+    background-color: #1e1e1e !important; 
+    color: #bcbbbb !important; 
+}
+
+
+
+.dark-mode-icon, .light-mode-icon {
+    width: 22px;   
+    height: 22px;
+    vertical-align: middle; 
+    margin-left: 5px; 
+    user-select: none; 
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+
+.dark-mode-icon {
+    display: inline-block; 
+}
+
+.light-mode-icon {
+    display: none; 
+}
+
+
+html.dark-mode .dark-mode-icon, 
+body.dark-mode .dark-mode-icon {
+    display: none;
+}
+
+html.dark-mode .light-mode-icon, 
+body.dark-mode .light-mode-icon {
+    display: inline-block;
+}
+
+.menu-fullscreen-icon {
+    width: 24px;   
+    height: 24px;  
+    vertical-align: middle; 
+    margin-left: 8px; 
+    user-select: none; 
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+body.dark-mode .menu-fullscreen-icon {
+   
+    filter: invert(1); 
+}
+
+.achievements-header-icon {
+    width: 36px;   
+    height: 36px;  
+    vertical-align: middle; 
+    margin-right: 10px; 
+    user-select: none; 
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+
+.session-header-icon {
+    width: 32px;  
+    height: 32px;
+    vertical-align: middle; 
+    margin-right: 8px; 
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.session-list-icon {
+    width: 20px;   
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 6px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+
+.pause-menu-fullscreen-icon {
+    width: 24px;   
+    height: 24px;  
+    vertical-align: middle; 
+    margin-left: 8px; 
+    user-select: none; 
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+body.dark-mode .pause-menu-fullscreen-icon {
+    
+     filter: invert(1); 
+}
+
+
+@media (max-width: 600px) {
+    .pause-menu-fullscreen-icon {
+        width: 20px; 
+        height: 20px;
+        margin-left: 5px; 
+    }
+}
+
+
+.pause-header-icon {
+    width: 36px;   
+    height: 36px;
+    vertical-align: middle; 
+    margin-right: 10px; 
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+
+.pause-btn-icon {
+    width: 24px;   
+    height: 24px;
+    vertical-align: middle; 
+    margin-right: 8px; 
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+body.dark-mode .pause-header-icon,
+body.dark-mode .pause-btn-icon {
+   
+    filter: invert(1); 
+}
+
+
+@media (max-width: 600px) {
+    .pause-header-icon {
+        width: 32px; 
+        height: 32px;
+    }
+    .pause-btn-icon {
+        width: 20px;
+        height: 20px;
+    }
+}
