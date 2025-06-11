@@ -215,7 +215,7 @@ document.getElementById("btnPularPergunta").onclick = function() {
   }
 };
 
-
+    const isDarkModeEnabled = localStorage.getItem('darkModeEnabled');
     const startButton = document.getElementById("startButton");
     const rankingButton = document.getElementById("rankingButton");
     const achievementsButton = document.getElementById("achievementsButton");
@@ -256,6 +256,23 @@ erroAudio.volume = currentSfxVolume;
 const audioSettingsScreen = document.getElementById("audioSettingsScreen");
 const backToLoginFromAudioButton = document.getElementById("backToLoginFromAudio");
 
+  if (isDarkModeEnabled === 'true') {
+        document.body.classList.add('dark-mode');
+        document.documentElement.classList.add('dark-mode');
+        
+       
+        loginScreen.classList.add('dark-mode');
+        difficultyScreen.classList.add('dark-mode');
+        gameScreen.classList.add('dark-mode');
+        rankingScreen.classList.add('dark-mode');
+        achievementsScreen.classList.add('dark-mode');
+        shopScreen.classList.add('dark-mode');
+        modonovoScreen.classList.add('dark-mode');
+        gameOverMessage.classList.add('dark-mode');
+        winScreen.classList.add('dark-mode');
+        audioSettingsScreen.classList.add('dark-mode');
+        
+    }
     
     const ALL_ACHIEVEMENTS = [
         "Primeira Vitória",
@@ -1155,35 +1172,39 @@ function checkAnswer(selected) {
     }
 
     function showWinScreen() {
-        unlockAchievement("Primeira Vitória");
-        if (errorCount === 0 && timeLeft > 15) unlockAchievement("Perfeição Verde");
-        updateRanking();
-        loginScreen.style.display = "none";
-        gameScreen.style.display = "none";
-        rankingScreen.style.display = "none";
-        achievementsScreen.style.display = "none";
-        gameOverMessage.style.display = "none";
-        document.getElementById("finalScoreWin").textContent = `Pontuação Final: ${score}`;
-        const sessionAchievementsDiv = document.getElementById("sessionAchievements");
-        if (currentSessionAchievements.length > 0) {
-            sessionAchievementsDiv.innerHTML = "<h3>🏆 Conquistas desbloqueadas:</h3>" +
-                "<ul>" + currentSessionAchievements.map(a => `<li>🏅 ${a}</li>`).join('') + "</ul>";
-        } else {
-            sessionAchievementsDiv.innerHTML = "<p>Nenhuma conquista desbloqueada nesta partida.</p>";
-        }
-        winScreen.style.display = "block";
-        setTimeout(() => {
-            winScreen.classList.add("show");
-        }, 50);
-        currentSessionAchievements = [];
-        gamesPlayed++;
-        localStorage.setItem("gamesPlayed", gamesPlayed);
-        if (gamesPlayed === 1) unlockAchievement("Aprendiz Verde");
-        if (gamesPlayed === 10) unlockAchievement("Veterano Verde");
-        if (gamesPlayed === 20) unlockAchievement("Viciado em Sustentabilidade");
-        perdeuSeguidas = 0;
-        localStorage.setItem("perdeuSeguidas", perdeuSeguidas);
+    unlockAchievement("Primeira Vitória");
+    if (errorCount === 0 && timeLeft > 15) unlockAchievement("Perfeição Verde");
+    updateRanking();
+    loginScreen.style.display = "none";
+    gameScreen.style.display = "none";
+    rankingScreen.style.display = "none";
+    achievementsScreen.style.display = "none";
+    gameOverMessage.style.display = "none";
+    document.getElementById("finalScoreWin").textContent = `Pontuação Final: ${score}`;
+    const sessionAchievementsDiv = document.getElementById("sessionAchievements");
+    
+    const trophyHeaderIcon = '<img src="img/trofeu.png" alt="Conquistas" class="session-header-icon">'; 
+    const medalListItemIcon = '<img src="img/medal_icon.png" alt="Medalha" class="session-list-icon">'; 
+
+    if (currentSessionAchievements.length > 0) {
+        sessionAchievementsDiv.innerHTML = `<h3>${trophyHeaderIcon} Conquistas desbloqueadas:</h3>` + 
+            "<ul>" + currentSessionAchievements.map(a => `<li>${medalListItemIcon} ${a}</li>`).join('') + "</ul>";
+    } else {
+        sessionAchievementsDiv.innerHTML = "<p>Nenhuma conquista desbloqueada nesta partida.</p>";
     }
+    winScreen.style.display = "block";
+    setTimeout(() => {
+        winScreen.classList.add("show");
+    }, 50);
+    currentSessionAchievements = [];
+    gamesPlayed++;
+    localStorage.setItem("gamesPlayed", gamesPlayed);
+    if (gamesPlayed === 1) unlockAchievement("Aprendiz Verde");
+    if (gamesPlayed === 10) unlockAchievement("Veterano Verde");
+    if (gamesPlayed === 20) unlockAchievement("Viciado em Sustentabilidade");
+    perdeuSeguidas = 0;
+    localStorage.setItem("perdeuSeguidas", perdeuSeguidas);
+}
 
     function escolherDificuldade(nivel) {
          document.body.classList.add('quiz-active');
@@ -1273,20 +1294,32 @@ function checkAnswer(selected) {
 
 
 function toggleDarkMode() {
+   
     document.body.classList.toggle('dark-mode');
+    document.documentElement.classList.toggle('dark-mode'); 
+
+  
     gameScreen.classList.toggle('dark-mode');
     loginScreen.classList.toggle('dark-mode');
     rankingScreen.classList.toggle('dark-mode');
     achievementsScreen.classList.toggle('dark-mode');
     gameOverMessage.classList.toggle('dark-mode');
+    winScreen.classList.toggle('dark-mode');
+    audioSettingsScreen.classList.toggle('dark-mode');
+    shopScreen.classList.toggle('dark-mode');
+    modonovoScreen.classList.toggle('dark-mode');
 
-    if (document.body.classList.contains('dark-mode')) {
-        localStorage.setItem('darkModeEnabled', 'true'); 
-        darkModeToggleButton.textContent = "☀️ Modo Claro";
+   if (document.body.classList.contains('dark-mode')) {
+       
+        darkModeToggleButton.innerHTML = `<img src="img/moon.png" alt="Lua (Tema Escuro)" class="dark-mode-icon"> <img src="img/sun.png" alt="Sol (Tema Claro)" class="light-mode-icon"> Tema Claro `;
     } else {
-        localStorage.setItem('darkModeEnabled', 'false'); 
-        darkModeToggleButton.textContent = "🌙 Modo Black";
+        
+        darkModeToggleButton.innerHTML = `<img src="img/moon.png" alt="Lua (Tema Escuro)" class="dark-mode-icon"> <img src="img/sun.png" alt="Sol (Tema Claro)" class="light-mode-icon"> Tema Escuro`;
     }
+  
+    localStorage.setItem('darkModeEnabled', document.body.classList.contains('dark-mode'));
+
+  
 }
 
     function showRanking() {
@@ -1312,14 +1345,25 @@ function toggleDarkMode() {
         const achievementsList = document.getElementById("achievementsList");
         achievementsList.innerHTML = "";
         const unlocked = JSON.parse(localStorage.getItem("achievements")) || [];
-        ALL_ACHIEVEMENTS.forEach(achievement => {
-            const p = document.createElement("p");
-            p.textContent = unlocked.includes(achievement)
-                ? `🏅 ${achievement}`
-                : `🔒 ${achievement}`;
-            achievementsList.appendChild(p);
-        });
-    }
+
+         const unlockedMedalHtml = '<img src="img/medal_icon.png" alt="Medalha Desbloqueada" class="achievement-medal-icon">'; 
+  
+    const lockedIconHtml = '<img src="img/locked_icon.png" alt="Bloqueado" class="achievement-locked-icon">'
+
+          ALL_ACHIEVEMENTS.forEach(achievement => {
+        const p = document.createElement("p");
+        
+        if (unlocked.includes(achievement)) {
+           
+            p.innerHTML = unlockedMedalHtml + achievement; 
+        } else {
+           
+            p.innerHTML = lockedIconHtml + achievement;
+        }
+        
+        achievementsList.appendChild(p);
+    });
+}
 
     function unlockAchievement(achievementName) {
         let achievements = JSON.parse(localStorage.getItem("achievements")) || [];
@@ -1727,7 +1771,6 @@ if (pauseIcon) pauseIcon.src = 'img/pause.png';
         canvas.listenersAdded = true;
     }
 }
-
 
 
 window.addEventListener("resize", () => {
