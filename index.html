@@ -16,13 +16,13 @@
             <input type="text" id="username" placeholder="Seu nome...">
             <button id="startButton">Começar</button>
             <button onclick="showModoNovo()">Abrir modo coleta</button>
-            <button id="rankingButton">Ver Ranking 🏆</button>
-            <button id="achievementsButton">Ver Conquistas 🏅</button>
-            <button id="audioControlsButton">🔊 Controles de Áudio</button> 
-            <button id="shopButton" onclick="abrirLoja()">🛒 Loja </button>
+             <button id="rankingButton"> <img src="img/trofeu.png" alt="Troféu" class="menu-trophy-icon"> Ver Ranking</button> 
+           <button id="achievementsButton"><img src="img/medal_icon.png" alt="Conquistas" class="menu-achievements-icon"> Ver Conquistas </button>
+             <button id="audioControlsButton"> <img src="img/audio.png" alt="Áudio" class="menu-audio-icon"> Controles de Áudio</button> 
+           <button id="shopButton" onclick="abrirLoja()">  <img src="img/shop.png" alt="Loja" class="menu-shop-icon"> Loja</button> 
             <div class="align-buttons-horizontal">
-                <button id="darkModeToggleButton">🌙 Modo Black</button>
-                <button id="fullscreenButton" onclick="toggleFullScreen()">🔳 Tela Cheia</button>
+                <button id="darkModeToggleButton"> <img src="img/moon.png" alt="Lua (Tema Escuro)" class="dark-mode-icon"> <img src="img/sun.png" alt="Sol (Tema Claro)" class="light-mode-icon"> Tema escuro </button>
+               <button id="fullscreenButton" onclick="toggleFullScreen()"><img src="img/fullscreen.png" alt="Tela Cheia" class="menu-fullscreen-icon"> Tela Cheia </button>
             </div>
             
         </div>
@@ -105,13 +105,13 @@
 </div>
 
         <div id="rankingScreen" style="display: none;">
-            <h2>🏆 Ranking Local</h2>
+            <h2><img src="img/trofeu.png" alt="Troféu" class="ranking-header-icon"> Ranking Local</h2> 
             <div id="rankingList"></div>
             <button id="backToLogin">Voltar</button>
         </div>
 
-        <div id="achievementsScreen" style="display: none;">
-            <h2>🏅 Conquistas</h2>
+       <div id="achievementsScreen" style="display: none;">
+            <h2><img src="img/medal_icon.png" alt="Conquistas" class="achievements-header-icon"> Conquistas</h2>
             <div id="achievementsList"></div>
             <button id="backToLoginFromAchievements">Voltar</button>
         </div>
@@ -119,12 +119,16 @@
        
         <div id="modonovoScreen" style="display:none">
             
-           <div id="pauseMenu">
-    <h2>⏸ Jogo Pausado</h2>
-    <button onclick="togglePause()">▶ Retomar</button>
-    <button onclick="restartGame()">↻ Reiniciar</button>
-     <button onclick="toggleFullScreen()">🔳 Tela Cheia</button>
-    <button onclick="hideModoNovo()">⬅ Voltar ao Menu</button>
+          <div id="pauseMenu">
+    <h2><img src="img/pause.png" alt="Jogo Pausado" class="pause-header-icon"> Jogo Pausado</h2>
+    
+    <button onclick="togglePause()"><img src="img/play.png" alt="Retomar" class="pause-btn-icon"> Retomar</button>
+    
+    <button onclick="restartGame()"><img src="img/restart.png" alt="Reiniciar" class="pause-btn-icon"> Reiniciar</button>
+    
+    <button onclick="toggleFullScreen()"> <img src="img/fullscreen.png" alt="Tela Cheia" class="pause-menu-fullscreen-icon"> Tela Cheia</button>
+    
+    <button onclick="hideModoNovo()"><img src="img/voltar.png" alt="Voltar" class="pause-btn-icon"> Voltar ao Menu</button>
 </div>
             
             <div id="modonovoGameContainer">
@@ -147,6 +151,8 @@
             </div>
         </div>
     </div>
+
+   
 
  
     <div id="gameOverMessage" class="message" style="display: none;">
