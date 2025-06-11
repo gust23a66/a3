@@ -1,6 +1,9 @@
 
 const acertoAudio = new Audio('audios/acerto.mp3');
 const erroAudio = new Audio('audios/erro.mp3');
+let musicPlaying = true;
+const audio = new Audio('audios/musica_fundo.mp3');
+audio.loop = true;
 let isPaused = false;
 let coletaState = {};
 let canvas, ctx, isPC, player, score, lives, gameOver, fallSpeed, lastSpeedIncreaseScore, trash, gameInterval, trashInterval;
@@ -179,7 +182,11 @@ function comprarPowerup(powerup) {
   }
 }
 
-
+audio.addEventListener('canplaythrough', () => {
+    if (audio.volume > 0) { 
+        audio.play();
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
      multiplierFireIcon = document.getElementById("multiplierFireIcon");
@@ -212,7 +219,6 @@ document.getElementById("btnPularPergunta").onclick = function() {
     const startButton = document.getElementById("startButton");
     const rankingButton = document.getElementById("rankingButton");
     const achievementsButton = document.getElementById("achievementsButton");
-    const musicToggleButton = document.getElementById("musicToggleButton");
     const backToLoginButton = document.getElementById("backToLogin");
     const backToLoginFromAchievementsButton = document.getElementById("backToLoginFromAchievements");
     const restartButton = document.getElementById("restartButton");
@@ -220,7 +226,7 @@ document.getElementById("btnPularPergunta").onclick = function() {
     const exitButton = document.getElementById("exitButton");
     const darkModeToggleButton = document.getElementById("darkModeToggleButton");
     const winScreen = document.getElementById("winScreen");
-
+    const audioControlsButton = document.getElementById("audioControlsButton");
     const loginScreen = document.getElementById("loginScreen");
     const gameScreen = document.getElementById("gameScreen");
     const rankingScreen = document.getElementById("rankingScreen");
@@ -232,7 +238,25 @@ document.getElementById("btnPularPergunta").onclick = function() {
     const restartButtonWin = document.getElementById("restartButtonWin");
     const menuButtonWin = document.getElementById("menuButtonWin");
     const difficultyScreen = document.getElementById("difficultyScreen");
+    const musicVolumeSlider = document.getElementById("musicVolume");
+    const sfxVolumeSlider = document.getElementById("sfxVolume");
+ 
 
+
+
+let currentMusicVolume = parseFloat(localStorage.getItem('musicVolume')) || 1;
+let currentSfxVolume = parseFloat(localStorage.getItem('sfxVolume')) || 1;
+
+audio.volume = currentMusicVolume;
+acertoAudio.volume = currentSfxVolume;
+erroAudio.volume = currentSfxVolume;
+
+
+
+const audioSettingsScreen = document.getElementById("audioSettingsScreen");
+const backToLoginFromAudioButton = document.getElementById("backToLoginFromAudio");
+
+    
     const ALL_ACHIEVEMENTS = [
         "Primeira Vitória",
         "Perfeição Verde",
@@ -271,13 +295,7 @@ document.getElementById("btnPularPergunta").onclick = function() {
 
     menuButtonWin.addEventListener("click", showLoginScreen);
 
-    let musicPlaying = true;
-    const audio = new Audio('audios/musica_fundo.mp3');
-    audio.loop = true;
-    audio.addEventListener('canplaythrough', () => {
-        if (musicPlaying) audio.play();
-    });
-   
+
 
     let gamesPlayed = parseInt(localStorage.getItem("gamesPlayed") || "0");
     let correctAnswersCount = 0;
@@ -846,17 +864,47 @@ document.getElementById("btnPularPergunta").onclick = function() {
     let currentDifficulty = "dificil";
     let perdeuSeguidas = parseInt(localStorage.getItem("perdeuSeguidas") || "0");
 
-    function toggleMusic() {
-        if (musicPlaying) {
-            audio.pause();
-            musicToggleButton.textContent = "🔇 Ligar Música";
-        } else {
-            audio.play();
-            musicToggleButton.textContent = "🔈 Desligar Música";
-        }
-        musicPlaying = !musicPlaying;
-    }
+    
+   
+musicVolumeSlider.value = currentMusicVolume;
+sfxVolumeSlider.value = currentSfxVolume;
 
+
+ musicVolumeSlider.addEventListener('input', () => {
+        currentMusicVolume = parseFloat(musicVolumeSlider.value);
+        audio.volume = currentMusicVolume;
+        localStorage.setItem('musicVolume', currentMusicVolume);
+        
+       
+        if (currentMusicVolume === 0) {
+            if (!audio.paused) { 
+                audio.pause();   
+            }
+        } else { 
+            if (audio.paused) { 
+                audio.play();   
+            }
+        }
+    });
+
+
+sfxVolumeSlider.addEventListener('input', () => {
+    currentSfxVolume = parseFloat(sfxVolumeSlider.value);
+    acertoAudio.volume = currentSfxVolume;
+    erroAudio.volume = currentSfxVolume;
+    localStorage.setItem('sfxVolume', currentSfxVolume); 
+});
+
+
+
+
+audioControlsButton.addEventListener('click', () => {
+    audioControlsButton.style.display = 'none'; 
+    
+});
+
+
+   
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -887,8 +935,39 @@ document.getElementById("btnPularPergunta").onclick = function() {
 
         loginScreen.style.display = "none";
         difficultyScreen.style.display = "block";
-        if (musicPlaying) audio.play();
+       
     }
+
+     if (audio.volume > 0) {
+        audio.play();
+    }
+
+audioControlsButton.addEventListener("click", showAudioSettingsScreen);
+
+
+backToLoginFromAudioButton.addEventListener("click", hideAudioSettingsScreen);
+
+
+
+function showAudioSettingsScreen() {
+    loginScreen.style.display = "none";
+    difficultyScreen.style.display = "none";
+    gameScreen.style.display = "none";
+    rankingScreen.style.display = "none";
+    achievementsScreen.style.display = "none";
+    shopScreen.style.display = "none";
+    modonovoScreen.style.display = "none"; 
+
+    audioSettingsScreen.style.display = "flex"; 
+   
+}
+function hideAudioSettingsScreen() {
+    audioSettingsScreen.style.display = "none";
+    loginScreen.style.display = "block";
+    audioControlsButton.style.display = "block"; 
+   
+}
+
 
    function resetGame() {
     score = 0;
@@ -1191,19 +1270,24 @@ function checkAnswer(selected) {
         winScreen.style.display = "none";
     }
 
-    function toggleDarkMode() {
-        document.body.classList.toggle('dark-mode');
-        gameScreen.classList.toggle('dark-mode');
-        loginScreen.classList.toggle('dark-mode');
-        rankingScreen.classList.toggle('dark-mode');
-        achievementsScreen.classList.toggle('dark-mode');
-        gameOverMessage.classList.toggle('dark-mode');
-        if (document.body.classList.contains('dark-mode')) {
-            darkModeToggleButton.textContent = "☀️ Modo Claro";
-        } else {
-            darkModeToggleButton.textContent = "🌙 Modo Black";
-        }
+
+
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    gameScreen.classList.toggle('dark-mode');
+    loginScreen.classList.toggle('dark-mode');
+    rankingScreen.classList.toggle('dark-mode');
+    achievementsScreen.classList.toggle('dark-mode');
+    gameOverMessage.classList.toggle('dark-mode');
+
+    if (document.body.classList.contains('dark-mode')) {
+        localStorage.setItem('darkModeEnabled', 'true'); 
+        darkModeToggleButton.textContent = "☀️ Modo Claro";
+    } else {
+        localStorage.setItem('darkModeEnabled', 'false'); 
+        darkModeToggleButton.textContent = "🌙 Modo Black";
     }
+}
 
     function showRanking() {
        document.getElementById("shopScreen").style.display = "none";
@@ -1253,7 +1337,7 @@ function checkAnswer(selected) {
     startButton.addEventListener("click", startGame);
     rankingButton.addEventListener("click", showRanking);
     achievementsButton.addEventListener("click", showAchievements);
-    musicToggleButton.addEventListener("click", toggleMusic);
+   
     darkModeToggleButton.addEventListener("click", toggleDarkMode);
     backToLoginButton.addEventListener("click", showLoginScreen);
     backToLoginFromAchievementsButton.addEventListener("click", showLoginScreen);
@@ -1336,10 +1420,7 @@ window.addEventListener("resize", () => {
     });
    
    
- 
 
-
-document.addEventListener('DOMContentLoaded', () => {
   
     window.addEventListener("resize", () => {
         ajustarCanvas();
@@ -1364,7 +1445,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('gameCanvas').addEventListener('touchmove', handleTouch, { passive: false });
     document.getElementById('gameCanvas').addEventListener('touchstart', ativarTelaCheiaMobile);
     document.getElementById('gameCanvas').addEventListener('click', ativarTelaCheiaMobile);
-});
+
 
 function ajustarCanvas() {
     if (!canvas) {
@@ -1646,6 +1727,8 @@ if (pauseIcon) pauseIcon.src = 'img/pause.png';
         canvas.listenersAdded = true;
     }
 }
+
+
 
 window.addEventListener("resize", () => {
     if (canvas) {
