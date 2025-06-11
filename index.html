@@ -18,9 +18,31 @@
             <button onclick="showModoNovo()">Abrir modo coleta</button>
             <button id="rankingButton">Ver Ranking 🏆</button>
             <button id="achievementsButton">Ver Conquistas 🏅</button>
-            <button id="musicToggleButton">🔈 Ligar/Desligar Música</button>
-            <button id="darkModeToggleButton">🌙 Modo Black</button>
-             <button id="shopButton" onclick="abrirLoja()">🛒 Loja </button>
+            <button id="audioControlsButton">🔊 Controles de Áudio</button> 
+            <button id="shopButton" onclick="abrirLoja()">🛒 Loja </button>
+            <div class="align-buttons-horizontal">
+                <button id="darkModeToggleButton">🌙 Modo Black</button>
+                <button id="fullscreenButton" onclick="toggleFullScreen()">🔳 Tela Cheia</button>
+            </div>
+            
+        </div>
+        
+         
+
+      <div id="audioSettingsScreen" style="display: none;">
+            <h2>🔊 Configurações de Áudio</h2>
+            
+            <div class="volume-control">
+                <label for="musicVolume">Volume da Música:</label>
+                <input type="range" id="musicVolume" min="0" max="1" step="0.01" value="1"> 
+            </div>
+
+            <div class="volume-control">
+                <label for="sfxVolume">Volume dos Efeitos Sonoros:</label>
+                <input type="range" id="sfxVolume" min="0" max="1" step="0.01" value="1">
+            </div>
+
+            <button id="backToLoginFromAudio">⬅ Voltar</button>
         </div>
        
 <div id="shopScreen" style="display:none;">
@@ -95,7 +117,6 @@
         </div>
 
        
-       
         <div id="modonovoScreen" style="display:none">
             
            <div id="pauseMenu">
@@ -126,6 +147,7 @@
             </div>
         </div>
     </div>
+
  
     <div id="gameOverMessage" class="message" style="display: none;">
         <h2 id="finalScoreQuiz"></h2>
@@ -143,6 +165,8 @@
         </div>
         <div id="sessionAchievements" class="session-achievements"></div>
     </div>
+
+
 
     <script src="app.js"></script>
 </body>
