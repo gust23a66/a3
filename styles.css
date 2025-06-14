@@ -5,6 +5,10 @@ html, body {
     overflow: hidden;
 }
 
+#loginScreen {
+    position: relative;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     background-color: #e6f7ff;
@@ -36,7 +40,7 @@ body {
 h1 {
     font-size: 2.5em;
     color: #4CAF50;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 }
 
 #loginScreen label {
@@ -1901,6 +1905,8 @@ body.dark-mode {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    position: relative; 
+    top: -2px;   
 }
 
 
@@ -1932,6 +1938,8 @@ body.dark-mode .light-mode-icon {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    position: relative; 
+    top: -2px;   
 }
 
 body.dark-mode .menu-fullscreen-icon {
@@ -1948,6 +1956,8 @@ body.dark-mode .menu-fullscreen-icon {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    position: relative; 
+    top: -2px;   
 }
 
 
@@ -1960,6 +1970,8 @@ body.dark-mode .menu-fullscreen-icon {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    position: relative; 
+    top: -2px;   
 }
 
 .session-list-icon {
@@ -1971,6 +1983,8 @@ body.dark-mode .menu-fullscreen-icon {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    position: relative; 
+    top: -2px;   
 }
 
 
@@ -1983,6 +1997,8 @@ body.dark-mode .menu-fullscreen-icon {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    position: relative; 
+    top: -2px;   
 }
 
 body.dark-mode .pause-menu-fullscreen-icon {
@@ -2009,6 +2025,8 @@ body.dark-mode .pause-menu-fullscreen-icon {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    position: relative; 
+    top: -2px;   
 }
 
 
@@ -2021,6 +2039,8 @@ body.dark-mode .pause-menu-fullscreen-icon {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    position: relative; 
+    top: -2px;   
 }
 
 body.dark-mode .pause-header-icon,
@@ -2040,3 +2060,100 @@ body.dark-mode .pause-btn-icon {
         height: 20px;
     }
 }
+
+.collect-mode-icon {
+    width: 28px;   
+    height: 28px;  
+    vertical-align: middle; 
+    margin-left: 8px; 
+    user-select: none; 
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    position: relative; 
+    top: -2px;   
+}
+
+.start-button-icon {
+    width: 28px;    
+    height: 28px;   
+    vertical-align: middle; 
+    margin-left: 10px; 
+    user-select: none; 
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    position: relative; 
+    top: -2px;         
+}
+
+.ecoplay-header-icon {
+    width: 240px;   
+    height: 85px;  
+    vertical-align: middle;
+    margin-left: 0px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+     position: relative;
+    top: -10px; 
+}
+
+@media (max-width: 600px) {
+  .ecoplay-header-icon {
+    
+    width: 180px;
+    height: auto;
+    margin-left: -5px;
+    top: -10px;
+  }
+
+  h1 {
+    margin-bottom: 0px;
+}
+
+}
+
+.ecoplay-header-icon-tela {
+    width: 270px;   
+    height: 100px;  
+    vertical-align: middle;
+    margin-left: 0px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+     position: relative;
+    top: -10px; 
+}
+
+
+#feedbackMenu {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1.2em;
+}
+
+.dark-mode #feedbackMenu{
+    background-color: hsl(0, 1%, 57%); 
+    color: #323131;
+    border: 1px solid #000000;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+
+.difficultyBtn img {
+    width: 28px;
+    height: 28px;
+    position: relative;
+    top: 8x; 
+}
+
