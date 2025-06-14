@@ -2,6 +2,7 @@
 const acertoAudio = new Audio('audios/acerto.mp3');
 const erroAudio = new Audio('audios/erro.mp3');
 let musicPlaying = true;
+let isGameActive = false;
 const audio = new Audio('audios/musica_fundo.mp3');
 audio.loop = true;
 let isPaused = false;
@@ -920,7 +921,54 @@ audioControlsButton.addEventListener('click', () => {
     
 });
 
+function loadAndApplyAudioSettings() {
+   
+    const savedMusicVolume = localStorage.getItem('musicVolume') || '1';
+    const savedSfxVolume = localStorage.getItem('sfxVolume') || '1';
 
+
+    const musicVolume = parseFloat(savedMusicVolume);
+    const sfxVolume = parseFloat(savedSfxVolume);
+
+    musicVolumeSlider.value = musicVolume;
+    sfxVolumeSlider.value = sfxVolume;
+
+   
+    audio.volume = musicVolume;
+    acertoAudio.volume = sfxVolume;
+    erroAudio.volume = sfxVolume;
+
+   
+    if (musicVolume > 0 && !audio.paused) {
+      audio.play().catch(e => console.log("Áudio aguardando interação do usuário."));
+    }
+}
+
+
+musicVolumeSlider.addEventListener('input', () => {
+    const newVolume = parseFloat(musicVolumeSlider.value);
+    audio.volume = newVolume; 
+    localStorage.setItem('musicVolume', newVolume); 
+
+    if (newVolume === 0) {
+        audio.pause();
+    } else {
+        if (audio.paused) {
+            audio.play().catch(e => console.log("Áudio aguardando interação do usuário."));
+        }
+    }
+});
+
+
+sfxVolumeSlider.addEventListener('input', () => {
+    const newVolume = parseFloat(sfxVolumeSlider.value);
+    acertoAudio.volume = newVolume; 
+    erroAudio.volume = newVolume;   
+    localStorage.setItem('sfxVolume', newVolume); 
+});
+
+
+loadAndApplyAudioSettings();
    
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -931,20 +979,23 @@ audioControlsButton.addEventListener('click', () => {
     }
 
     function startGame() {
+
+ username = document.getElementById("username").value.trim();
+    const feedbackMessage = document.getElementById("feedbackMessage"); 
+    const feedbackMenu = document.getElementById("feedbackMenu");
         atualizarPowerupsQuiz();
         document.getElementById("shopScreen").style.display = "none";
-        username = document.getElementById("username").value.trim();
         if (!username) {
-            feedbackMessage.textContent = "⚠️ Por favor, digite seu nome!";
-            feedbackMessage.style.display = "block";
+            feedbackMenu.textContent = "⚠️ Por favor, digite seu nome!";
+            feedbackMenu.style.display = "block";
             setTimeout(() => {
-                feedbackMessage.style.display = "none";
+                feedbackMenu.style.display = "none";
             }, 2000);
             return;
         }
 
-    if (username.toLowerCase() === "1272322619") {
-        moedas = 10000;
+    if (username.toLowerCase() === "ecoplay") {
+        moedas = 1000000;
         localStorage.setItem("moedas", moedas);
         document.getElementById("moedasQtd").textContent = moedas;
     } 
@@ -995,6 +1046,8 @@ function hideAudioSettingsScreen() {
     correctByTheme = { "Água": 0, "Energia": 0, "Lixo": 0, "Alimentação": 0 }; 
     timeLeft = getInitialTimeByDifficulty(); 
     
+    isGameActive = true; 
+
     const timeLeftDisplayEl = document.getElementById("timeLeft"); 
     if (timeLeftDisplayEl) timeLeftDisplayEl.textContent = `⏳ Tempo restante: ${timeLeft}s`;
     
@@ -1069,6 +1122,11 @@ function hideAudioSettingsScreen() {
 document.getElementById("moedasQtd").textContent = moedas;
 
 function checkAnswer(selected) {
+
+ if (!isGameActive) {
+        return; 
+    }
+
     const feedbackMessage = document.getElementById("feedbackMessage");
     const current = shuffledQuestions[currentQuestion];
     const correctAnswer = current.answer;
@@ -1139,6 +1197,13 @@ function checkAnswer(selected) {
         if(errorCountDisplayEl) errorCountDisplayEl.textContent = `Erros: ${errorCount}/3`;
         
         if (errorCount >= 3) {
+            isGameActive = false; 
+             const optionsContainer = document.getElementById("options");
+            const buttons = optionsContainer.getElementsByTagName('button');
+            for (const button of buttons) {
+                button.disabled = true;
+            }
+
             if(timerInterval) clearInterval(timerInterval);
             setTimeout(showGameOver, 1000); 
         } else {
@@ -1233,7 +1298,7 @@ function checkAnswer(selected) {
 
     function updateRanking() {
 
-  if (username.toLowerCase() === "1272322619") return; //secreto
+  if (username.toLowerCase() === "ecoplay") return; //secreto
 
         let players = JSON.parse(localStorage.getItem("ranking")) || [];
         const existingPlayerIndex = players.findIndex(player => player.name.toLowerCase() === username.toLowerCase());
@@ -1247,6 +1312,26 @@ function checkAnswer(selected) {
         players.sort((a, b) => b.score - a.score);
         localStorage.setItem("ranking", JSON.stringify(players));
     }
+
+function loadAndApplyAudioSettings() {
+   
+    const savedMusicVolume = localStorage.getItem('musicVolume') || '1';
+    const savedSfxVolume = localStorage.getItem('sfxVolume') || '1';
+    const musicVolume = parseFloat(savedMusicVolume);
+    const sfxVolume = parseFloat(savedSfxVolume);
+
+    musicVolumeSlider.value = musicVolume;
+    sfxVolumeSlider.value = sfxVolume;
+    audio.volume = musicVolume;
+    acertoAudio.volume = sfxVolume;
+    erroAudio.volume = sfxVolume;
+
+   
+    if (musicVolume > 0 && !audio.paused) {
+      audio.play().catch(e => console.log("Áudio aguardando interação do usuário."));
+    }
+}
+
 
     function showGameOver() {
         if (score >= 80 && errorCount >= 3) unlockAchievement("Quase Lá!");
@@ -1298,7 +1383,7 @@ function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
     document.documentElement.classList.toggle('dark-mode'); 
 
-  
+    difficultyScreen.classList.toggle('dark-mode'); 
     gameScreen.classList.toggle('dark-mode');
     loginScreen.classList.toggle('dark-mode');
     rankingScreen.classList.toggle('dark-mode');
