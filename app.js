@@ -1591,7 +1591,7 @@ function ajustarTamanhos() {
     if (!player || !canvas) return;
 
     if (isMobile()) {
-        player.width = canvas.width * 0.22; 
+        player.width = canvas.width * 0.27; 
         player.height = player.width / LIXEIRA_PROPORCAO_LARGURA_ALTURA; 
 
        
@@ -1664,87 +1664,94 @@ function ajustarTamanhos() {
     }
 
     function updateGame() {
-        if (gameOver || isPaused) return;
-        if (score >= lastSpeedIncreaseScore + 10 && fallSpeed < 20) {
-            fallSpeed += 0.5;
-            lastSpeedIncreaseScore = score;
-        }
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
-        ctx.drawImage(binImg, player.x, canvas.height - player.height, player.width, player.height);
-
-      for (let i = 0; i < trash.length; i++) {
-    let t = trash[i];
-    t.y += fallSpeed;
-    const img =
-        t.type === 'banana' ? bananaTrashImg :
-        t.type === 'egg_shell' ? eggShellImg :
-        t.type === 'organic' ? organicTrashImg :
-        t.type === 'special' ? specialTrashImg :
-        t.type === 'metal' ? metalTrashImg :
-        t.type === 'glass' ? glassTrashImg :
-        t.type === 'plastic' ? plasticTrashImg :
-        t.type === 'heart' ? heartItemImg :
-        t.type === 'papelao' ? papelaoImg :
-        t.type === 'jornal' ? jornalImg :
-        trashImg;
-
-    
-    let drawWidth = t.width;
-    let drawHeight = t.height;
-    if (t.type === 'heart') {
-        
-        const size = Math.min(t.width, t.height);
-        drawWidth = size;
-        drawHeight = size;
+    if (gameOver || isPaused) return;
+    if (score >= lastSpeedIncreaseScore + 10 && fallSpeed < 20) {
+        fallSpeed += 0.5;
+        lastSpeedIncreaseScore = score;
     }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(binImg, player.x, canvas.height - player.height, player.width, player.height);
 
-    ctx.drawImage(img, t.x, t.y, drawWidth, drawHeight);
    
 
-            const lixoBateuNoChao = t.y + t.height >= canvas.height;
-            const colidiuComLixeira =
-                t.x < player.x + player.width &&
-                t.x + t.width > player.x &&
-                t.y + t.height >= canvas.height - player.height;
-            if (colidiuComLixeira) {
-                const tipo = t.type;
-                trash.splice(i, 1);
-                i--;
-                if (tipo === 'organic' || tipo === 'banana'|| tipo === 'egg_shell' ) {
-                    erroAudio.currentTime = 0;
-                    erroAudio.play();
-                    lives--;
-                    if (lives <= 0) endGame();
-                } else if (tipo === 'heart') {
-                    if (lives < 3) {
-                        lives++;
-                        drawHearts();
-                    }
-                    acertoAudio.currentTime = 0;
-                    acertoAudio.play();
-                } else {
-                    acertoAudio.currentTime = 0;
-                    acertoAudio.play();
-                    switch (tipo) {
-                        case 'recycle': score += 1; break;
-                        case 'papelao': score += 1; break;
-                        case 'jornal':score += 2; break;
-                        case 'metal': score += 2; break;
-                        case 'plastic': score += 3; break;
-                        case 'glass': score += 4; break;
-                        case 'special': score += 10; break;
-                    }
-                }
-                document.getElementById('score').innerText = score;
-                drawHearts();
-            } else if (lixoBateuNoChao) {
-                trash.splice(i, 1);
-                i--;
-            }
-        }
-    }
+    for (let i = 0; i < trash.length; i++) {
+        let t = trash[i];
+        t.y += fallSpeed;
+        const img =
+            t.type === 'banana' ? bananaTrashImg :
+            t.type === 'egg_shell' ? eggShellImg :
+            t.type === 'organic' ? organicTrashImg :
+            t.type === 'special' ? specialTrashImg :
+            t.type === 'metal' ? metalTrashImg :
+            t.type === 'glass' ? glassTrashImg :
+            t.type === 'plastic' ? plasticTrashImg :
+            t.type === 'heart' ? heartItemImg :
+            t.type === 'papelao' ? papelaoImg :
+            t.type === 'jornal' ? jornalImg :
+            trashImg;
 
+        let drawWidth = t.width;
+        let drawHeight = t.height;
+        if (t.type === 'heart') {
+            const size = Math.min(t.width, t.height);
+            drawWidth = size;
+            drawHeight = size;
+        }
+
+        ctx.drawImage(img, t.x, t.y, drawWidth, drawHeight);
+
+        
+        const hitboxPaddingX = 20;
+        const hitboxPaddingY = 20;
+
+        const lixoBateuNoChao = t.y + t.height >= canvas.height;
+        
+        const colidiuComLixeira =
+            t.x < player.x + player.width - hitboxPaddingX &&
+            t.x + t.width > player.x + hitboxPaddingX &&
+            t.y + t.height >= (canvas.height - player.height) + hitboxPaddingY;
+
+
+        if (colidiuComLixeira) {
+            const tipo = t.type;
+            trash.splice(i, 1);
+            i--;
+            if (tipo === 'organic' || tipo === 'banana' || tipo === 'egg_shell') {
+                erroAudio.currentTime = 0;
+                erroAudio.play();
+                lives--;
+                drawHearts();
+                if (lives <= 0) endGame();
+            } else if (tipo === 'heart') {
+                if (lives < 3) {
+                    lives++;
+                    drawHearts();
+                }
+                acertoAudio.currentTime = 0;
+                acertoAudio.play();
+            } else {
+                acertoAudio.currentTime = 0;
+                acertoAudio.play();
+                switch (tipo) {
+                    case 'recycle': score += 1; break;
+                    case 'papelao': score += 1; break;
+                    case 'jornal': score += 2; break;
+                    case 'metal': score += 2; break;
+                    case 'plastic': score += 3; break;
+                    case 'glass': score += 4; break;
+                    case 'special': score += 10; break;
+                }
+            }
+            document.getElementById('score').innerText = score;
+           
+       } else if (lixoBateuNoChao) {
+    trash.splice(i, 1);
+    i--;
+
+}
+    }
+}
   function spawnTrash() {
     if (isPaused || gameOver) return;
     let baseWidth, baseHeight;
@@ -1856,6 +1863,7 @@ if (pauseIcon) pauseIcon.src = 'img/pause.png';
         canvas.listenersAdded = true;
     }
 }
+
 
 
 window.addEventListener("resize", () => {
