@@ -39,17 +39,22 @@ const SESSION_COIN_MULTIPLIER = 2;
   { nome: "Lixeira Brasil", img: "img/bin_brasil.png", preco: 200 } ,
    { nome: "Lixeira Robô", img: "img/bin_robo.png", preco: 250} ,
   { nome: "Lixeira Pirata", img: "img/bin_pirata.png", preco: 300} ,
-  { nome: "Lixeira Zombie", img: "img/bin_zombie.png", preco: 500} ,
-  { nome: "Lixeira Viking", img: "img/bin_viking.png", preco: 750} ,
-  { nome: "Lixeira do Dragão", img: "img/bin_dragonball.png", preco: 800 },
+  { nome: "Lixeira Zombie", img: "img/bin_zombie.png", preco: 350} ,
+  { nome: "Lixeira Viking", img: "img/bin_viking.png", preco: 400} ,
+  { nome: "Lixeira do Dragão", img: "img/bin_dragonball.png", preco: 500},
   { nome: "Lixeira do Tanjiro", img: "img/bin_tanjiro.png", preco: 850 },
   { nome: "Lixeira do Satoro", img: "img/bin_satoro.png", preco: 900 },
-  { nome: "Lixeira Batman", img: "img/bin_batman.png", preco: 950 },
-  { nome: "Lixeira Strange", img: "img/bin_strange.png", preco: 1000 },
-  { nome: "Lixeira Omnitrix", img: "img/bin_ben10.png", preco: 1500 },
-  { nome: "Lixeira Ninja", img: "img/bin_ninja.png", preco: 1750 },
-  { nome: "Lixeira Akatsuki", img: "img/bin_akatsuki.png", preco: 2000 },
-  { nome: "Lixeira Aranha", img: "img/bin_spider.png", preco: 2500}
+  { nome: "Lixeira Batman", img: "img/bin_batman.png", preco: 1000 },
+  { nome: "Lixeira Strange", img: "img/bin_strange.png", preco: 1250 },
+  { nome: "Lixeira Omnitrix", img: "img/bin_ben10.png", preco: 1300 },
+  { nome: "Lixeira Real", img: "img/bin_real.png", preco: 1500 },
+ { nome: "Lixeira Barça", img: "img/bin_barca.png", preco: 1750 },
+  { nome: "Lixeira Neymar", img: "img/bin_neymar.png", preco: 1750 },
+  { nome: "Lixeira Portugal", img: "img/bin_cr7.png", preco: 2000 },
+  { nome: "Lixeira Argentina", img: "img/bin_messi.png", preco: 2500 },
+  { nome: "Lixeira Ninja", img: "img/bin_ninja.png", preco: 3000 },
+  { nome: "Lixeira Akatsuki", img: "img/bin_akatsuki.png", preco: 3500 },
+  { nome: "Lixeira Aranha", img: "img/bin_spider.png", preco: 5000}
   
 ];
 
@@ -293,17 +298,17 @@ const backToLoginFromAudioButton = document.getElementById("backToLoginFromAudio
         "Primeiro Erro",
         "Sem Segunda Chance",
         "Começo Promissor",
-        "Primeira Resposta Correta ✅",
-        "Respondeu 5 Perguntas Corretamente 🎓",
-        "Acertou 3 seguidas 🔥",
-        "Pontuação 100 🔥",
-        "Partida Perfeita 🎯",
-        "Jogou 5 Partidas 🎮",
-        "Zero Erros 🌟",
-        "Tempo Sobrando ⏳",
-        "Resiliente 💪",
-        "Acabou o tempo ⏰",
-        "Resposta Rápida ⚡"
+        "Primeira Resposta Correta ",
+        "Respondeu 5 Perguntas Corretamente ",
+        "Acertou 3 seguidas ",
+        "Pontuação 100 ",
+        "Partida Perfeita ",
+        "Jogou 5 Partidas ",
+        "Zero Erros ",
+        "Tempo Sobrando ",
+        "Resiliente ",
+        "Acabou o tempo ",
+        "Resposta Rápida "
     ];
 
     restartButtonWin.addEventListener("click", () => {
@@ -626,7 +631,7 @@ const backToLoginFromAudioButton = document.getElementById("backToLoginFromAudio
     "Lixo": [
     {
         "question": "Qual cor da lixeira é destinada ao descarte de papel?",
-        "options": ["Azul", "Verde", "Amarela", "Preta"],
+        "options": ["Azul", "Verde", "Amarela", "Marrom"],
         "answer": "Azul"
     },
     {
@@ -666,7 +671,7 @@ const backToLoginFromAudioButton = document.getElementById("backToLoginFromAudio
     },
     {
         "question": "Qual é o destino adequado para resíduos eletrônicos?",
-        "options": ["Lixo comum", "Pontos de coleta específicos", "Lixeira amarela", "Lixeira preta"],
+        "options": ["Lixo comum", "Pontos de coleta específicos", "Lixeira amarela", "Lixeira marrom"],
         "answer": "Pontos de coleta específicos"
     },
     {
@@ -681,8 +686,8 @@ const backToLoginFromAudioButton = document.getElementById("backToLoginFromAudio
     },
     {
         "question": "Qual é a cor da lixeira destinada ao lixo orgânico?",
-        "options": ["Preta", "Verde", "Amarela", "Azul"],
-        "answer": "Preta"
+        "options": ["Marrom", "Verde", "Amarela", "Azul"],
+        "answer": "Marrom"
     },
     {
         "question": "O que é aterro sanitário?",
@@ -701,7 +706,7 @@ const backToLoginFromAudioButton = document.getElementById("backToLoginFromAudio
     },
     {
         "question": "Qual é a cor da lixeira destinada ao descarte de metais?",
-        "options": ["Amarela", "Azul", "Verde", "Preta"],
+        "options": ["Amarela", "Azul", "Verde", "Marrom"],
         "answer": "Amarela"
     },
     {
@@ -711,7 +716,7 @@ const backToLoginFromAudioButton = document.getElementById("backToLoginFromAudio
     },
     {
         "question": "Qual é o destino adequado para resíduos de construção civil?",
-        "options": ["Lixo comum", "Pontos de coleta específicos", "Lixeira amarela", "Lixeira preta"],
+        "options": ["Lixo comum", "Pontos de coleta específicos", "Lixeira amarela", "Lixeira marrom"],
         "answer": "Pontos de coleta específicos"
     },
     {
@@ -721,7 +726,7 @@ const backToLoginFromAudioButton = document.getElementById("backToLoginFromAudio
     },
     {
         "question": "Qual é a cor da lixeira destinada ao descarte de resíduos de saúde?",
-        "options": ["Branca", "Preta", "Amarela", "Verde"],
+        "options": ["Branca", "Marrom", "Amarela", "Verde"],
         "answer": "Amarela"
     },
     {
@@ -736,8 +741,8 @@ const backToLoginFromAudioButton = document.getElementById("backToLoginFromAudio
     },
     {
         "question": "Qual é a cor da lixeira destinada ao descarte de resíduos domiciliares?",
-        "options": ["Preta", "Verde", "Amarela", "Azul"],
-        "answer": "Preta"
+        "options": ["Marrom", "Verde", "Amarela", "Azul"],
+        "answer": "Marrom"
     }],
 
        "Alimentação": [
@@ -1090,7 +1095,7 @@ function hideAudioSettingsScreen() {
             timeLeftDisplay.textContent = `⏳ Tempo restante: ${timeLeft}s`;
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
-                unlockAchievement("Acabou o tempo ⏰");
+                unlockAchievement("Acabou o tempo ");
                 showGameOver();
             }
         }, 1000);
@@ -1173,12 +1178,12 @@ function checkAnswer(selected) {
         const scoreValueElementEl = document.getElementById("scoreValue");
         if(scoreValueElementEl) scoreValueElementEl.textContent = score;
 
-        let firstCorrectUnlocked = (JSON.parse(localStorage.getItem("achievements")) || []).includes("Primeira Resposta Correta ✅");
+        let firstCorrectUnlocked = (JSON.parse(localStorage.getItem("achievements")) || []).includes("Primeira Resposta Correta ");
         if (!firstCorrectUnlocked && correctAnswersCount === 1) {
-            unlockAchievement("Primeira Resposta Correta ✅");
+            unlockAchievement("Primeira Resposta Correta ");
         }
             
-        if (score >= 100) unlockAchievement("Pontuação 100 🔥");
+        if (score >= 100) unlockAchievement("Pontuação 100 ");
         if (correctAnswersCount >= 20) {
             if(timerInterval) clearInterval(timerInterval);
             showWinScreen();
@@ -1337,15 +1342,19 @@ function loadAndApplyAudioSettings() {
         if (score >= 80 && errorCount >= 3) unlockAchievement("Quase Lá!");
         updateRanking();
         if (errorCount === 0) {
-            unlockAchievement("Partida Perfeita 🎯");
+            unlockAchievement("Partida Perfeita ");
             gamesPlayed++;
             localStorage.setItem("gamesPlayed", gamesPlayed);
-            if (gamesPlayed === 5) unlockAchievement("Jogou 5 Partidas 🎮");
-            unlockAchievement("Zero Erros 🌟");
-            if (timeLeft > 15) unlockAchievement("Tempo Sobrando ⏳");
+            if (gamesPlayed === 5) unlockAchievement("Jogou 5 Partidas ");
+            unlockAchievement("Zero Erros ");
+            if (timeLeft > 15) unlockAchievement("Tempo Sobrando ");
         }
-        if (errorCount === 2) unlockAchievement("Resiliente 💪");
-        const finalScore = document.getElementById("finalScore");
+        if (errorCount === 2) unlockAchievement("Resiliente ");
+       const finalScoreDisplay = document.getElementById("finalScoreQuiz");
+
+    if (finalScoreDisplay) {
+        finalScoreDisplay.textContent = `Pontuação Final: ${score}`;
+    }
         document.getElementById("gameScreen").style.display = "none";
         document.getElementById("loginScreen").style.display = "none";
         document.getElementById("rankingScreen").style.display = "none";
@@ -1407,18 +1416,49 @@ function toggleDarkMode() {
   
 }
 
-    function showRanking() {
-       document.getElementById("shopScreen").style.display = "none";
-        loginScreen.style.display = "none";
-        gameScreen.style.display = "none";
-        achievementsScreen.style.display = "none";
-        gameOverMessage.style.display = "none";
-        rankingScreen.style.display = "block";
-        const rankingList = document.getElementById("rankingList");
-        const players = JSON.parse(localStorage.getItem("ranking")) || [];
-        players.sort((a, b) => b.score - a.score);
-        rankingList.innerHTML = players.map(player => `<p>${player.name}: ${player.score} pontos</p>`).join('');
+   function showRanking() {
+    
+    document.getElementById("shopScreen").style.display = "none";
+    loginScreen.style.display = "none";
+    gameScreen.style.display = "none";
+    achievementsScreen.style.display = "none";
+    gameOverMessage.style.display = "none";
+    rankingScreen.style.display = "block";
+
+   
+    const rankingList = document.getElementById("rankingList");
+    const quizPlayers = JSON.parse(localStorage.getItem("ranking")) || [];
+    rankingList.innerHTML = ''; 
+    if (quizPlayers.length > 0) {
+       
+        quizPlayers.sort((a, b) => b.score - a.score);
+
+       
+        const top5Quiz = quizPlayers.slice(0, 5);
+
+       
+        rankingList.innerHTML = top5Quiz.map(player => `<p>${player.name}: ${player.score} pontos</p>`).join('');
+    } else {
+        rankingList.innerHTML = "<p>Nenhuma pontuação registrada ainda.</p>";
     }
+
+   
+    const rankingColetaList = document.getElementById("rankingColetaList");
+    const coletaPlayers = JSON.parse(localStorage.getItem("rankingColeta")) || [];
+    rankingColetaList.innerHTML = '';
+    if (coletaPlayers.length > 0) {
+        
+        coletaPlayers.sort((a, b) => b.score - a.score);
+
+        
+        const top5Coleta = coletaPlayers.slice(0, 5);
+
+      
+        rankingColetaList.innerHTML = top5Coleta.map(player => `<p>${player.name}: ${player.score} pontos</p>`).join('');
+    } else {
+        rankingColetaList.innerHTML = "<p>Nenhuma pontuação registrada ainda.</p>";
+    }
+}
 
     function showAchievements() {
        document.getElementById("shopScreen").style.display = "none";
@@ -1789,15 +1829,56 @@ function ajustarTamanhos() {
         trash.push({ x, y: 0, width: baseWidth, height: baseHeight, type: 'heart' });
     }
 
- function endGame() {
+function endGame() {
+ 
     clearInterval(gameInterval);
     clearInterval(trashInterval);
     gameOver = true;
+
+  
+
+    const usernameInput = document.getElementById('username');
+    
+  
+    const finalName = (usernameInput && usernameInput.value.trim()) || "Anônimo";
+    
+    const finalScore = score;
+ 
+    updateColetaRanking(finalName, finalScore);
+
+   
     setTimeout(() => {
-        document.getElementById('finalScore').innerText = `Pontuação final: ${score}`;
+        const finalScoreDisplay = document.getElementById('finalScore');
+        if (finalScoreDisplay) {
+            finalScoreDisplay.innerText = `Pontuação final: ${finalScore}`;
+        }
         document.getElementById('gameOverScreen').classList.add('show');
         document.body.classList.add('game-over');
     }, 300);
+}
+
+
+function updateColetaRanking(name, scoreToSave) {
+    try {
+        let coletaPlayers = JSON.parse(localStorage.getItem("rankingColeta")) || [];
+        
+        const existingPlayerIndex = coletaPlayers.findIndex(p => p.name.toLowerCase() === name.toLowerCase());
+
+        if (existingPlayerIndex !== -1) {
+            
+            if (scoreToSave > coletaPlayers[existingPlayerIndex].score) {
+                coletaPlayers[existingPlayerIndex].score = scoreToSave;
+            }
+        } else {
+            coletaPlayers.push({ name: name, score: scoreToSave });
+        }
+        
+        coletaPlayers.sort((a, b) => b.score - a.score);
+        localStorage.setItem("rankingColeta", JSON.stringify(coletaPlayers));
+
+    } catch (e) {
+        console.error("ERRO ao tentar salvar o ranking de coleta:", e);
+    }
 }
 
 function startColetaGame() {
@@ -1863,7 +1944,6 @@ if (pauseIcon) pauseIcon.src = 'img/pause.png';
         canvas.listenersAdded = true;
     }
 }
-
 
 
 window.addEventListener("resize", () => {
