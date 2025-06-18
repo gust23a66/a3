@@ -17,10 +17,10 @@
             <label for="username">Digite seu nome:</label>
             <input type="text" id="username" placeholder="Seu nome...">
              <button id="startButton"> <img src="img/start_leaf.png" alt="Começar Jogo" class="start-button-icon">Começar  </button>
-               <button onclick="showModoNovo()"> <img src="img/coleta.png" alt="Modo Coleta" class="collect-mode-icon">Abrir modo coleta </button>
-             <button id="rankingButton"> <img src="img/trofeu.png" alt="Troféu" class="menu-trophy-icon"> Ver Ranking</button> 
-           <button id="achievementsButton"><img src="img/medal_icon.png" alt="Conquistas" class="menu-achievements-icon"> Ver Conquistas </button>
-             <button id="audioControlsButton"> <img src="img/audio.png" alt="Áudio" class="menu-audio-icon"> Controles de Áudio</button> 
+               <button onclick="showModoNovo()"> <img src="img/coleta.png" alt="Modo Coleta" class="collect-mode-icon">Coleta </button>
+             <button id="rankingButton"> <img src="img/trofeu.png" alt="Troféu" class="menu-trophy-icon"> Rankings</button> 
+           <button id="achievementsButton"><img src="img/medal_icon.png" alt="Conquistas" class="menu-achievements-icon">  Conquistas </button>
+             <button id="audioControlsButton"> <img src="img/audio.png" alt="Áudio" class="menu-audio-icon">  Áudio</button> 
            <button id="shopButton" onclick="abrirLoja()">  <img src="img/shop.png" alt="Loja" class="menu-shop-icon"> Loja</button> 
             <div class="align-buttons-horizontal">
                 <button id="darkModeToggleButton"> <img src="img/moon.png" alt="Lua (Tema Escuro)" class="dark-mode-icon"> <img src="img/sun.png" alt="Sol (Tema Claro)" class="light-mode-icon"> Tema escuro </button>
@@ -88,7 +88,14 @@
 </div>
 
       <div id="gameScreen" style="display: none;">
+
          <h1> <img src="img/ecoplay_icon.png" alt="EcoPlay Ícone" class="ecoplay-header-icon"></h1>
+
+
+<div class="multiplier-icon-container">
+        <img id="multiplierFireIcon" src="img/fire_icon.png" alt="Multiplicador Ativo"> <span class="multiplier-tooltip-message">Essa partida possuir multiplicador de moedas!</span>
+    </div>
+
      <div id="moedasDisplay" style="font-weight:bold; margin-top: 8px;">
   <img src="img/moeda.png" alt="Moedas" class="coin-icon"> <span id="moedasQtd">0</span> | Pontuação: <span id="scoreValue">0</span> | <span id="errorCount">Erros: 0/3</span>
 </div>
@@ -97,9 +104,8 @@
     <p id="questionText"></p>
     <div id="options"></div>
      <div id="feedbackMessage" class="message" style="display: none;"></div>
-   <div class="multiplier-icon-container">
-        <img id="multiplierFireIcon" src="img/fire_icon.png" alt="Multiplicador Ativo"> <span class="multiplier-tooltip-message">Essa partida possuir multiplicador de moedas!</span>
-    </div>
+ 
+    
     <div id="powerupsQuiz" style="margin: 8px 0;">
         <button id="btnPararTempo">
             <img src="img/powerup_time.png" alt="Parar Tempo" style="width:20px;vertical-align:middle;">
@@ -111,6 +117,8 @@
         </button>
         
     </div>
+
+    
    <div id="statusBar" style="display: flex; justify-content: center; gap: 24px; align-items: center; margin-top: 8px;">
     <p id="timeLeft" style="margin: 0;"></p>
     
@@ -119,10 +127,15 @@
 </div>
 
         <div id="rankingScreen" style="display: none;">
-            <h2><img src="img/trofeu.png" alt="Troféu" class="ranking-header-icon"> Ranking Local</h2> 
-            <div id="rankingList"></div>
-            <button id="backToLogin">Voltar</button>
-        </div>
+    
+    <h2><img src="img/trofeu.png" alt="Troféu" class="ranking-header-icon"> Ranking - Quiz</h2>
+    <div id="rankingList"></div>
+
+    <h3 style="margin-top: 50px;"><img src="img/coleta.png" alt="Coleta" class="ranking-header-icon"> Ranking - Coleta</h3>
+    <div id="rankingColetaList"></div>
+    <button id="backToLogin" style="margin-top: 20px;">Voltar</button>
+
+</div>
 
        <div id="achievementsScreen" style="display: none;">
             <h2><img src="img/medal_icon.png" alt="Conquistas" class="achievements-header-icon"> Conquistas</h2>
@@ -171,8 +184,8 @@
 
  
     <div id="gameOverMessage" class="message" style="display: none;">
+        <h1> <img src="img/ecoplay_icon.png" alt="EcoPlay Ícone" class="ecoplay-header-icon"></h1>
         <h2 id="finalScoreQuiz"></h2>
-         <h1> <img src="img/ecoplay_icon.png" alt="EcoPlay Ícone" class="ecoplay-header-icon"></h1>
         <button id="restartButton">Reiniciar</button>
         <button id="menuButton">Menu</button>
         <button id="exitButton">Sair</button>
